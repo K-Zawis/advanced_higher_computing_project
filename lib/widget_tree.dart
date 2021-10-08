@@ -16,12 +16,22 @@ class _WidgetTreeState extends State<WidgetTree> {
         child: (ResponsiveLayout.isTinyLimit(context) || ResponsiveLayout.isTinyHeightLimit(context)) ? Container() : AppBar(),
         preferredSize: const Size(double.infinity, 100),
       ),
-      body: ResponsiveLayout(
-        tiny: Container(),
-        phone: Container(),
-        tablet: Container(),
-        largeTablet: Container(),
-        computer: Container(),
+      body: const ResponsiveLayout(
+        tiny: Text(
+          'tiny',
+        ),
+        phone: Text(
+          'phone',
+        ),
+        tablet: Text(
+          'tablet',
+        ),
+        largeTablet: Text(
+          'large tablet',
+        ),
+        computer: Text(
+          'computer',
+        ),
       ),
     );
   }
