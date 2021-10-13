@@ -99,50 +99,25 @@
       // Service workers not supported. Just drop the <script> tag.
       loadMainDartJs();
     }
-
 </script>
-<script type="module">
-
-  // Import the functions you need from the SDKs you need
-
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
-
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-analytics.js";
-
-  // TODO: Add SDKs for Firebase products that you want to use
-
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-
-  // Your web app's Firebase configuration
-
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+<script src="main.dart.js" type="application/javascript"></script>
+<script>
   const firebaseConfig = {
-
     apiKey: "AIzaSyAjgrBmfuBVwyTI33JSxhmaVVlWI1ALhnc",
-
     authDomain: "learn-languages-71bed.firebaseapp.com",
-
+    databaseURL: "https://learn-languages-71bed-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "learn-languages-71bed",
-
     storageBucket: "learn-languages-71bed.appspot.com",
-
     messagingSenderId: "480650552024",
-
     appId: "1:480650552024:web:610e620de993ffb4e3adad",
-
     measurementId: "G-NQJLFZTQXL"
+   };
 
-  };
-
-
-  // Initialize Firebase
-
-  const app = initializeApp(firebaseConfig);
-
-  const analytics = getAnalytics(app);
-
+   // Initialize Firebase
+   firebase.initializeApp(firebaseConfig);
 </script>
 </body>
 </html>
