@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:learn_languages/constants.dart';
 
 import 'package:learn_languages/widget_tree.dart';
 
@@ -18,9 +19,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: MaterialColor(primaryColour, color),
+        scaffoldBackgroundColor: scaffoldColour,
+        canvasColor: canvasColour,
+        textTheme: const TextTheme(
+          bodyText1: TextStyle(),
+          bodyText2:  TextStyle(),
+        ).apply(
+          bodyColor: textColour,
+          displayColor: textColour,
+        ),
       ),
       home: const MyHomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
