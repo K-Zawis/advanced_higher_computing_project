@@ -33,7 +33,7 @@ class _WidgetTreeState extends State<WidgetTree> {
             MenuDrawer(
               elevation: 0.0,
             ),
-            HomePage(),
+            Expanded(child: HomePage()),
           ],
         ),
       ),

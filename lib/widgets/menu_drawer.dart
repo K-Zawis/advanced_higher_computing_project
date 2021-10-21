@@ -12,7 +12,7 @@ class MenuDrawer extends StatelessWidget {
       child: Column(
         children: [
           const Placeholder(
-            fallbackHeight: 300,
+            fallbackHeight: 250,
           ),
           Expanded(
             child: SingleChildScrollView(
