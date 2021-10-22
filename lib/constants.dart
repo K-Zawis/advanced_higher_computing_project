@@ -20,8 +20,8 @@ Map<int, Color> color =
 const scaffoldColour = Color(0xFF18191C);
 const canvasColour = Color(0xFF1B1C23);
 const primaryColour = 0xFF3B4669;
-const textColour = Color(0xFFBED5D0);
-const dropdownFillColour = Color(0xFFBED5D0);
-const iconColour = Color(0xFFBED5D0);
+const textColour = Color(0xFFD6DEDC);
+const dropdownFillColour = Color(0xFFD6DEDC);
+const iconColour = Color(0xFFD6DEDC);
 
 // * providers
