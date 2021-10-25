@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import 'package:learn_languages/constants.dart';
 
@@ -12,6 +13,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
+  final _multiKey = GlobalKey<FormFieldState>();
+  var _selectedTopics = [];
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +106,11 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               onChanged: (val) {
-                                _formKey.currentState!.fields['topics']!.didChange(null);
+                                _multiKey.currentState?.save();
+                                _multiKey.currentState?.didChange(null);
+                                setState(() {
+                                  _selectedTopics = [];
+                                });
                               },
                             ),
                           ),
@@ -150,18 +157,22 @@ class _HomePageState extends State<HomePage> {
                                 items: ['test', 'values']
                                     .map(
                                       (item) => DropdownMenuItem(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 18,
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                )
+                                    )
                                     .toList(),
                                 onChanged: (value) {
-                                  _formKey.currentState!.fields['topics']!.didChange(null);
+                                  _multiKey.currentState?.save();
+                                  _multiKey.currentState?.didChange(null);
+                                  setState(() {
+                                    _selectedTopics = [];
+                                  });
                                 },
                               ),
                             ),
@@ -171,38 +182,90 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         height: 50,
                       ),
-                      const Text(
-                        'Topics:',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
-                          child: FormBuilderDropdown(
-                            dropdownColor: dropdownFillColour,
-                            decoration: const InputDecoration(
-                              fillColor: dropdownFillColour,
-                              filled: true,
-                              border: OutlineInputBorder(),
+                      Row(
+                        children: [
+                          const Text(
+                            'Topics:',
+                              style: TextStyle(
+                              fontSize: 20,
+                              //color: scaffoldColour,
                             ),
-                            name: 'topics',
-                            items: ['test', 'values']
-                                .map(
-                                  (item) => DropdownMenuItem(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                  ),
+                          ),
+                          Visibility(
+                            visible: !(_selectedTopics.length == 2),
+                            child: MultiSelectBottomSheetField(
+                              key: _multiKey,
+                              initialValue: _selectedTopics,
+                              title: const Text(
+                                'Topics:',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  //color: scaffoldColour,
                                 ),
                               ),
-                            )
-                                .toList(),
+                              itemsTextStyle: const TextStyle(
+                                color: textColour,
+                              ),
+                              selectedItemsTextStyle: const TextStyle(
+                                color: textColour,
+                              ),
+                              buttonText: const Text(''),
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(2)),
+                              ),
+                              buttonIcon: const Icon(
+                                Icons.add,
+                                color: textColour,
+                              ),
+                              onSelectionChanged: (values) {
+                                if (values.length > 2) {
+                                  values.removeLast();
+                                }
+                              },
+                              onConfirm: (List<dynamic> values) {
+                                setState(() {
+                                  _selectedTopics = values;
+                                });
+                              },
+                              validator: (values) {
+                                if (values == null || values.isEmpty) {
+                                  return 'Field cannot be empty';
+                                }
+                                return null;
+                              },
+                              items: ['the aksjdfkasjbdasdf', 'test SfSDASAsdDA SfSDF', 'value SLHAkdQDLHVSAdbIGDs']
+                                  .map(
+                                    (e) => MultiSelectItem(e, e),
+                              )
+                                  .toList(),
+                              chipDisplay: MultiSelectChipDisplay.none(),
+                            ),
                           ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, bottom: 20, right: 10),
+                        child: MultiSelectChipDisplay(
+                          items: _selectedTopics
+                              .map(
+                                (e) => (MultiSelectItem(e, e)),
+                          )
+                              .toList(),
+                          chipWidth: double.infinity,
+                          chipColor: Colors.transparent,
+                          textStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 18,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
+                          ),
+                          onTap: (value) {
+                            setState(() {
+                              _selectedTopics.remove(value);
+                            });
+                          },
                         ),
                       ),
                     ],
