@@ -18,6 +18,7 @@ class _HomePageState extends State<HomePage> {
     return FormBuilder(
       key: _formKey,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
             height: 250,
@@ -28,7 +29,7 @@ class _HomePageState extends State<HomePage> {
                   height: 250,
                   width: double.infinity,
                   child: Image.network(
-                    'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/pexels-pixabay-267491.jpg?alt=media&token=435c1b11-5f27-4327-b208-c47bbf5dc43b',
+                    'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/pexels-lilartsy-1925536.jpg?alt=media&token=df33a026-149b-46fb-b291-d57eb5e8c0d3',
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -70,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                             horizontal: 15,
                           ),
                           child: SizedBox(
-                            height: 48,
+                            height: 52,
                             width: 100,
                             child: FormBuilderDropdown(
                               name: 'language',
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                                       value: item,
                                       child: Text(
                                         item,
-                                        style: const TextStyle(fontSize: 16, color: textColour),
+                                        style: const TextStyle(fontSize: 14, color: textColour),
                                       ),
                                     ),
                                   )
@@ -101,6 +102,9 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                               ),
+                              onChanged: (val) {
+                                _formKey.currentState!.fields['topics']!.didChange(null);
+                              },
                             ),
                           ),
                         ),
@@ -114,11 +118,12 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Center(
               child: Container(
+                padding: const EdgeInsets.all(50),
                 constraints: const BoxConstraints(
                   maxWidth: 850,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -145,15 +150,15 @@ class _HomePageState extends State<HomePage> {
                                 items: ['test', 'values']
                                     .map(
                                       (item) => DropdownMenuItem(
-                                        value: item,
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                          ),
-                                        ),
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                        fontSize: 18,
                                       ),
-                                    )
+                                    ),
+                                  ),
+                                )
                                     .toList(),
                                 onChanged: (value) {
                                   _formKey.currentState!.fields['topics']!.didChange(null);
@@ -172,9 +177,10 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 20,
                         ),
                       ),
-                      Expanded(
+                      SizedBox(
+                        width: double.infinity,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
                           child: FormBuilderDropdown(
                             dropdownColor: dropdownFillColour,
                             decoration: const InputDecoration(
@@ -186,15 +192,15 @@ class _HomePageState extends State<HomePage> {
                             items: ['test', 'values']
                                 .map(
                                   (item) => DropdownMenuItem(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ),
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(
+                                    fontSize: 18,
                                   ),
-                                )
+                                ),
+                              ),
+                            )
                                 .toList(),
                           ),
                         ),
@@ -205,44 +211,66 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(50.0),
-            child: Wrap(
-              spacing: 50,
-              runSpacing: 50,
-              alignment: WrapAlignment.center,
-              children: [
-                SizedBox(
-                  width: 250,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'PRACTICE MODE',
-                        style: TextStyle(
-                          fontSize: 20,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 50),
+              child: Wrap(
+                spacing: 50,
+                runSpacing: 10,
+                alignment: WrapAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 250,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text(
+                          'PRACTICE MODE',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
+                      ),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                            side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
+                          ),
+                        ),
+                        backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                        elevation: MaterialStateProperty.all(0),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: 250,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'ASSIGNMENT MODE',
-                        style: TextStyle(
-                          fontSize: 20,
+                  SizedBox(
+                    width: 250,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: const Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Text(
+                          'ASSIGNMENT MODE',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
                         ),
+                      ),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                        ),
+                        elevation: MaterialStateProperty.all(0),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
