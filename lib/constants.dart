@@ -2,6 +2,11 @@ library my_prj.constants;
 
 import 'dart:ui';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/providers/language_provider.dart';
+import 'package:learn_languages/providers/qualification_provider.dart';
+import 'package:learn_languages/providers/topic_provider.dart';
+
 // * colours
 Map<int, Color> color =
 {
@@ -19,9 +24,18 @@ Map<int, Color> color =
 
 const scaffoldColour = Color(0xFF18191C);
 const canvasColour = Color(0xFF1B1C23);
-const primaryColour = 0xFF3B4669;
+//const primaryColour = 0xFF3B4669;
+//
+const primaryColour = 0xFF4D5A92;
 const textColour = Color(0xFFD6DEDC);
 const dropdownFillColour = Color(0xFFD6DEDC);
 const iconColour = Color(0xFFD6DEDC);
 
 // * providers
+final languageProvider = ChangeNotifierProvider.autoDispose((ref) => Languages());
+final qualificationProvider = ChangeNotifierProvider.autoDispose((ref) => Qualifications());
+final topicProvider = StateNotifierProvider.autoDispose((ref) {
+  var lan = ref.watch(languageProvider).getLanguage();
+  var level = ref.watch(qualificationProvider).getLevel();
+  return Topics(lan, level);
+});

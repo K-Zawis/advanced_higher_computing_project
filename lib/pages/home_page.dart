@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import 'package:learn_languages/constants.dart';
@@ -15,7 +15,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
+  final _scrollController = ScrollController(initialScrollOffset: 0.0);
   var _selectedTopics = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,46 +85,40 @@ class _HomePageState extends State<HomePage> {
                             child: SizedBox(
                               height: 52,
                               width: 100,
-                              child: FormBuilderDropdown(
-                                name: 'language',
-                                initialValue: 'ES',
-                                items: ['ES', 'FR']
-                                    .map(
-                                      (item) => DropdownMenuItem(
-                                        value: item,
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(fontSize: 14, color: Colors.white),
-                                        ),
+                              child: Consumer(builder: (context, watch, child) {
+                                watch(languageProvider);
+                                return FormBuilderDropdown(
+                                  name: 'language',
+                                  //initialValue: 'es',
+                                  items: context.read(languageProvider.notifier).getDropdownItems(context),
+                                  iconEnabledColor: Colors.white,
+                                  decoration: const InputDecoration(
+                                    fillColor: Color(0x451C1C1C),
+                                    filled: true,
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.white,
+                                        width: 2,
                                       ),
-                                    )
-                                    .toList(),
-                                iconEnabledColor: Colors.white,
-                                decoration: const InputDecoration(
-                                  fillColor: Color(0x451C1C1C),
-                                  filled: true,
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.white,
-                                      width: 2,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: dropdownFillColour,
+                                        width: 2,
+                                      ),
                                     ),
                                   ),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: dropdownFillColour,
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                                onChanged: (val) {
-                                  _multiKey.currentState?.save();
-                                  _multiKey.currentState?.didChange(null);
-                                  setState(() {
-                                    _selectedTopics = [];
-                                  });
-                                },
-                              ),
+                                  onChanged: (val) {
+                                    _multiKey.currentState?.save();
+                                    _multiKey.currentState?.didChange(null);
+                                    setState(() {
+                                      _selectedTopics = [];
+                                    });
+                                    context.read(languageProvider.notifier).setLanguage(val.toString());
+                                  },
+                                );
+                              }),
                             ),
                           ),
                         ],
@@ -139,158 +139,164 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.only(top: 50, right: 50, left: 50),
-                        constraints: const BoxConstraints(
-                          maxWidth: 850,
-                        ),
                         decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Row(
+                        padding: const EdgeInsets.only(right: 10, top: 50),
+                        child: Scrollbar(
+                          isAlwaysShown: true,
+                          controller: _scrollController,
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            physics: const BouncingScrollPhysics(),
+                            child: Container(
+                              padding: const EdgeInsets.only(right: 40, left: 50),
+                              constraints: const BoxConstraints(
+                                maxWidth: 850,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  const Text(
-                                    'Level of Study:',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                      child: FormBuilderDropdown(
-                                        dropdownColor: dropdownFillColour,
-                                        decoration: const InputDecoration(
-                                          fillColor: dropdownFillColour,
-                                          filled: true,
-                                          border: OutlineInputBorder(),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'Level of Study:',
+                                        style: TextStyle(
+                                          fontSize: 20,
                                         ),
-                                        name: 'level',
-                                        items: ['test', 'values']
-                                            .map(
-                                              (item) => DropdownMenuItem(
-                                                value: item,
-                                                child: Text(
-                                                  item,
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                  ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          child: Consumer(builder: (context, watch, child) {
+                                            watch(qualificationProvider);
+                                            return FormBuilderDropdown(
+                                              iconEnabledColor: Theme.of(context).colorScheme.secondary,
+                                              decoration: InputDecoration(
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                                  borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
+                                                ),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                                  borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
                                                 ),
                                               ),
-                                            )
-                                            .toList(),
-                                        onChanged: (value) {
-                                          _multiKey.currentState?.save();
-                                          _multiKey.currentState?.didChange(null);
-                                          setState(() {
-                                            _selectedTopics = [];
-                                          });
-                                        },
+                                              name: 'level',
+                                              items: context.read(qualificationProvider.notifier).getDropdownItems(context),
+                                              onChanged: (value) {
+                                                _multiKey.currentState?.save();
+                                                _multiKey.currentState?.didChange(null);
+                                                setState(() {
+                                                  _selectedTopics = [];
+                                                });
+                                                context.read(qualificationProvider.notifier).setLevel(value.toString());
+                                              },
+                                            );
+                                          }),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 50,
+                                  ),
+                                  const Text(
+                                    'Topics:',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      //color: scaffoldColour,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 20, right: 10),
+                                    child: MultiSelectChipDisplay(
+                                      items: _selectedTopics
+                                          .map(
+                                            (e) => (MultiSelectItem(e, e)),
+                                          )
+                                          .toList(),
+                                      chipWidth: double.infinity,
+                                      chipColor: Colors.transparent,
+                                      textStyle: TextStyle(
+                                        color: Theme.of(context).colorScheme.secondary,
+                                        fontSize: 18,
+                                      ),
+                                      icon: Icon(
+                                        Icons.clear,
+                                        color: Theme.of(context).colorScheme.secondary,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                        side: BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
+                                      ),
+                                      onTap: (value) {
+                                        setState(() {
+                                          _selectedTopics.remove(value);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Visibility(
+                                      visible: !(_selectedTopics.length == 2),
+                                      child: FittedBox(
+                                        child: Consumer(builder: (context, watch, child) {
+                                          var topics = watch(topicProvider);
+                                          return MultiSelectBottomSheetField(
+                                            key: _multiKey,
+                                            initialValue: _selectedTopics,
+                                            title: const Text(
+                                              'Topics:',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                //color: scaffoldColour,
+                                              ),
+                                            ),
+                                            itemsTextStyle: const TextStyle(
+                                              color: textColour,
+                                            ),
+                                            selectedItemsTextStyle: const TextStyle(
+                                              color: textColour,
+                                            ),
+                                            buttonText: Text(
+                                              'ADD TOPIC ',
+                                              style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
+                                            ),
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(2)),
+                                            ),
+                                            buttonIcon: Icon(
+                                              Icons.add,
+                                              color: Theme.of(context).colorScheme.secondary,
+                                            ),
+                                            onSelectionChanged: (values) {
+                                              if (values.length > 2) {
+                                                values.removeLast();
+                                              }
+                                            },
+                                            onConfirm: (List<dynamic> values) {
+                                              setState(() {
+                                                _selectedTopics = values;
+                                              });
+                                            },
+                                            validator: (values) {
+                                              if (values == null || values.isEmpty) {
+                                                return 'Field cannot be empty';
+                                              }
+                                              return null;
+                                            },
+                                            items: !(topics.length == 0)
+                                                ? context.read(topicProvider.notifier).getMultiSelectItems()
+                                                : [MultiSelectItem(null, 'Please pick level and langage first')],
+                                            chipDisplay: MultiSelectChipDisplay.none(),
+                                          );
+                                        }),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(
-                                height: 50,
-                              ),
-                              const Text(
-                                'Topics:',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  //color: scaffoldColour,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 20, right: 10),
-                                child: MultiSelectChipDisplay(
-                                  items: _selectedTopics
-                                      .map(
-                                        (e) => (MultiSelectItem(e, e)),
-                                      )
-                                      .toList(),
-                                  chipWidth: double.infinity,
-                                  chipColor: Colors.transparent,
-                                  textStyle: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
-                                  ),
-                                  icon: const Icon(Icons.clear),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                    side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
-                                  ),
-                                  onTap: (value) {
-                                    setState(() {
-                                      _selectedTopics.remove(value);
-                                    });
-                                  },
-                                ),
-                              ),
-                              Center(
-                                child: Visibility(
-                                  visible: !(_selectedTopics.length == 2),
-                                  child: FittedBox(
-                                    child: MultiSelectBottomSheetField(
-                                      key: _multiKey,
-                                      initialValue: _selectedTopics,
-                                      title: const Text(
-                                        'Topics:',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          //color: scaffoldColour,
-                                        ),
-                                      ),
-                                      itemsTextStyle: const TextStyle(
-                                        color: textColour,
-                                      ),
-                                      selectedItemsTextStyle: const TextStyle(
-                                        color: textColour,
-                                      ),
-                                      buttonText: Text(
-                                        'ADD TOPIC ',
-                                        style: TextStyle(
-                                          color: Theme.of(context).colorScheme.primary,
-                                          fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(2)),
-                                      ),
-                                      buttonIcon: Icon(
-                                        Icons.add,
-                                        color: Theme.of(context).colorScheme.primary,
-                                      ),
-                                      onSelectionChanged: (values) {
-                                        if (values.length > 2) {
-                                          values.removeLast();
-                                        }
-                                      },
-                                      onConfirm: (List<dynamic> values) {
-                                        setState(() {
-                                          _selectedTopics = values;
-                                        });
-                                      },
-                                      validator: (values) {
-                                        if (values == null || values.isEmpty) {
-                                          return 'Field cannot be empty';
-                                        }
-                                        return null;
-                                      },
-                                      items: ['the aksjdfkasjbdasdf', 'test SfSDASAsdDA SfSDF', 'value SLHAkdQDLHVSAdbIGDs']
-                                          .map(
-                                            (e) => MultiSelectItem(e, e),
-                                          )
-                                          .toList(),
-                                      chipDisplay: MultiSelectChipDisplay.none(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
