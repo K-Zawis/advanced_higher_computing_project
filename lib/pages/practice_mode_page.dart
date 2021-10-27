@@ -136,10 +136,17 @@ class _PracticeModeState extends State<PracticeMode> {
                           constraints: const BoxConstraints(
                             maxWidth: 850,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            children: const [],
+                          child: Consumer(
+                            builder: (context, watch, child) {
+                              var questions = watch(questionProvider);
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(questions.toString()),
+                                ],
+                              );
+                            }
                           ),
                         ),
                       ),

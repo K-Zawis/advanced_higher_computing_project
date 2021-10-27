@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/providers/language_provider.dart';
 import 'package:learn_languages/providers/qualification_provider.dart';
+import 'package:learn_languages/providers/question_provider.dart';
 import 'package:learn_languages/providers/topic_provider.dart';
 
 // * colours
@@ -42,4 +43,8 @@ final topicProvider = ChangeNotifierProvider((ref) {
   var lan = ref.watch(languageProvider).getLanguage();
   var level = ref.watch(qualificationProvider).getLevel();
   return Topics(lan, level);
+});
+final questionProvider = StateNotifierProvider((ref) {
+  var topic = ref.watch(topicProvider).getTopicIds();
+  return Questions(topic);
 });
