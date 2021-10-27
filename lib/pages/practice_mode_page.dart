@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
+import '../widget_tree.dart';
 
 class PracticeMode extends StatefulWidget {
   const PracticeMode({Key? key}) : super(key: key);
@@ -12,12 +12,16 @@ class PracticeMode extends StatefulWidget {
 class _PracticeModeState extends State<PracticeMode> {
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        selectPage(context, 'Home Page', '');
-        return true;
+    return IconButton(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+      icon: const Icon(
+        Icons.home_filled,
+        color: Colors.white,
+        size: 25,
+      ),
+      onPressed: () {
+        selectPage(context, 'Home Page');
       },
-      child: Container(),
     );
   }
 }

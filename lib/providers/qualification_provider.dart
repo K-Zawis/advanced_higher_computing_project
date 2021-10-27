@@ -72,6 +72,7 @@ class Qualifications extends ChangeNotifier {
         value: item.id,
         child: Text(
           item.level,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: textColour,
           ),

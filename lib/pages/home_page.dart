@@ -3,7 +3,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-import 'package:learn_languages/constants.dart';
+import '../constants.dart';
+import '../widget_tree.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                                 var language = context.read(languageProvider).getLanguage();
                                 return FormBuilderDropdown(
                                   name: 'language',
-                                  initialValue: language == ''? null : language,
+                                  initialValue: language == '' ? null : language,
                                   items: context.read(languageProvider.notifier).getDropdownItems(context),
                                   iconEnabledColor: Colors.white,
                                   decoration: const InputDecoration(
@@ -170,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                                         child: Consumer(builder: (context, watch, child) {
                                           var level = context.read(qualificationProvider).getLevel();
                                           return FormBuilderDropdown(
-                                            initialValue: level == ''? null : level,
+                                            initialValue: level == '' ? null : level,
                                             iconEnabledColor: Theme.of(context).colorScheme.secondary,
                                             decoration: InputDecoration(
                                               enabledBorder: OutlineInputBorder(
@@ -212,7 +213,9 @@ class _HomePageState extends State<HomePage> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 20, right: 10),
                                   child: MultiSelectChipDisplay(
-                                    items: context.read(topicProvider).getTopics()
+                                    items: context
+                                        .read(topicProvider)
+                                        .getTopics()
                                         .map(
                                           (e) => (MultiSelectItem(e, e)),
                                         )
@@ -264,8 +267,7 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                             buttonText: Text(
                                               'ADD TOPIC ',
-                                              style:
-                                                  TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
+                                              style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
                                             ),
                                             decoration: const BoxDecoration(
                                               borderRadius: BorderRadius.all(Radius.circular(2)),
@@ -326,7 +328,7 @@ class _HomePageState extends State<HomePage> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   ModalRoute.of(context)!.addLocalHistoryEntry(LocalHistoryEntry());
-                                  selectPage(context, 'Practice Mode', '');
+                                  selectPage(context, 'Practice Mode');
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),

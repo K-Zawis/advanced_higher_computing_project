@@ -3,7 +3,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-import 'package:learn_languages/constants.dart';
+import '../constants.dart';
+import '../widget_tree.dart';
 
 class DesktopHomePage extends StatefulWidget {
   const DesktopHomePage({Key? key}) : super(key: key);
@@ -314,7 +315,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                               width: 250,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  selectPage(context, 'Practice Mode', 'Comp');
+                                  selectPage(context, 'Practice Mode');
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),
