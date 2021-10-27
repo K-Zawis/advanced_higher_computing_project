@@ -324,7 +324,10 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  ModalRoute.of(context)!.addLocalHistoryEntry(LocalHistoryEntry());
+                                  selectPage(context, 'Practice Mode', '');
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),
                                   child: Text(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/pages/home_page.dart';
 import 'package:learn_languages/pages/home_page_desktop.dart';
 import 'package:learn_languages/responsive_layout.dart';
@@ -14,30 +16,32 @@ class WidgetTree extends StatefulWidget {
 class _WidgetTreeState extends State<WidgetTree> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: const MenuDrawer(
-        elevation: 10.0,
-      ),
-      /*appBar: PreferredSize(
-        child: (ResponsiveLayout.isTinyLimit(context) || ResponsiveLayout.isTinyHeightLimit(context)) ? Container() : AppBar(),
-        preferredSize: const Size(double.infinity, 50),
-      ),*/
-      body: ResponsiveLayout(
-        tiny: const Text(
-          '',
+    return Consumer(builder: (context, watch, child) {
+      final selectedPageBuilder = watch(selectedPageBuilderProvider(''));
+      final selectedDesktopPageBuilder = watch(selectedPageBuilderProvider('Comp'));
+      return Scaffold(
+        drawer: const MenuDrawer(
+          elevation: 10.0,
         ),
-        phone: const HomePage(),
-        tablet: const HomePage(),
-        largeTablet: const HomePage(),
-        computer: Row(
-          children: const [
-            MenuDrawer(
-              elevation: 0.0,
-            ),
-            Expanded(child: DesktopHomePage()),
-          ],
+        body: ResponsiveLayout(
+          tiny: const Text(
+            '',
+          ),
+          phone: selectedPageBuilder(context),
+          tablet: selectedPageBuilder(context),
+          largeTablet: selectedPageBuilder(context),
+          computer: Row(
+            children: [
+              const MenuDrawer(
+                elevation: 0.0,
+              ),
+              Expanded(
+                child: selectedDesktopPageBuilder(context),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

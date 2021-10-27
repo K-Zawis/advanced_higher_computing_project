@@ -203,10 +203,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                   child: MultiSelectChipDisplay(
                                     items: context.read(topicProvider).getTopics()
                                         .map(
-                                          (e) {
-                                            print(context.read(topicProvider).getTopics());
-                                            return (MultiSelectItem(e, e));
-                                          },
+                                          (e) => (MultiSelectItem(e, e)),
                                         )
                                         .toList(),
                                     chipWidth: double.infinity,
@@ -316,7 +313,9 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  selectPage(context, 'Practice Mode', 'Comp');
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),
                                   child: Text(
