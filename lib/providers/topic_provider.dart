@@ -1,14 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/models/topic_model.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-class Topics extends StateNotifier<Map<dynamic, dynamic>> {
+class Topics extends ChangeNotifier {
   final languages = FirebaseFirestore.instance.collection("topic");
 
   final Map<String, Topic> items = {};
+  var _selectedTopics = [];
 
-  Topics(lan, level) : super({}) {
+  Topics(lan, level) {
     _listenToData(lan, level);
   }
 
@@ -38,7 +40,7 @@ class Topics extends StateNotifier<Map<dynamic, dynamic>> {
                 }
             }
           });
-          state = Map.from(items);
+          notifyListeners();
         }
       });
     } catch (e) {
@@ -56,6 +58,15 @@ class Topics extends StateNotifier<Map<dynamic, dynamic>> {
 
   Future<void> updateDocument(Map data, String id) {
     return languages.doc(id).update(data as Map<String, dynamic>);
+  }
+
+  List<dynamic> getTopics() {
+    return _selectedTopics;
+  }
+
+  void setTopics(values) {
+    _selectedTopics = values;
+    notifyListeners();
   }
 
   List<MultiSelectItem<dynamic>> getMultiSelectItems() {

@@ -30,11 +30,12 @@ const primaryColour = 0xFF4D5A92;
 const textColour = Color(0xFFD6DEDC);
 const dropdownFillColour = Color(0xFFD6DEDC);
 const iconColour = Color(0xFFD6DEDC);
+const hintColour = Color(0xFF494B50);
 
 // * providers
-final languageProvider = ChangeNotifierProvider.autoDispose((ref) => Languages());
-final qualificationProvider = ChangeNotifierProvider.autoDispose((ref) => Qualifications());
-final topicProvider = StateNotifierProvider.autoDispose((ref) {
+final languageProvider = ChangeNotifierProvider((ref) => Languages());
+final qualificationProvider = ChangeNotifierProvider((ref) => Qualifications());
+final topicProvider = ChangeNotifierProvider((ref) {
   var lan = ref.watch(languageProvider).getLanguage();
   var level = ref.watch(qualificationProvider).getLevel();
   return Topics(lan, level);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:learn_languages/pages/home_page.dart';
+import 'package:learn_languages/pages/home_page_desktop.dart';
 import 'package:learn_languages/responsive_layout.dart';
 import 'package:learn_languages/widgets/menu_drawer.dart';
 
@@ -33,7 +34,7 @@ class _WidgetTreeState extends State<WidgetTree> {
             MenuDrawer(
               elevation: 0.0,
             ),
-            Expanded(child: HomePage()),
+            Expanded(child: DesktopHomePage()),
           ],
         ),
       ),

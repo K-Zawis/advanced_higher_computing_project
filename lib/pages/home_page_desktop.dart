@@ -5,14 +5,14 @@ import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import 'package:learn_languages/constants.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class DesktopHomePage extends StatefulWidget {
+  const DesktopHomePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _DesktopHomePageState createState() => _DesktopHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _DesktopHomePageState extends State<DesktopHomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
   final _scrollController = ScrollController(initialScrollOffset: 0.0);
@@ -31,7 +31,6 @@ class _HomePageState extends State<HomePage> {
       child: FormBuilder(
         key: _formKey,
         child: Column(
-          //mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               height: 250,
@@ -69,16 +68,6 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            icon: const Icon(
-                              Icons.menu,
-                              color: Colors.white,
-                              size: 35,
-                            ),
-                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 15,
@@ -135,7 +124,6 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   color: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 child: Column(
@@ -168,6 +156,7 @@ class _HomePageState extends State<HomePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                         child: Consumer(builder: (context, watch, child) {
+                                          watch(qualificationProvider);
                                           var level = context.read(qualificationProvider).getLevel();
                                           return FormBuilderDropdown(
                                             initialValue: level == ''? null : level,
@@ -214,7 +203,10 @@ class _HomePageState extends State<HomePage> {
                                   child: MultiSelectChipDisplay(
                                     items: context.read(topicProvider).getTopics()
                                         .map(
-                                          (e) => (MultiSelectItem(e, e)),
+                                          (e) {
+                                            print(context.read(topicProvider).getTopics());
+                                            return (MultiSelectItem(e, e));
+                                          },
                                         )
                                         .toList(),
                                     chipWidth: double.infinity,
@@ -241,14 +233,14 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Center(
                                   child: Visibility(
-                                    visible: !(_selectedTopics.length == 2),
+                                    visible: !(context.read(topicProvider).getTopics().length == 2),
                                     child: FittedBox(
                                       child: Consumer(builder: (context, watch, child) {
                                         var topics = watch(topicProvider);
                                         if (topics.items.isNotEmpty) {
                                           return MultiSelectBottomSheetField(
                                             key: _multiKey,
-                                            initialValue: _selectedTopics,
+                                            initialValue: topics.getTopics(),
                                             title: const Text(
                                               'Topics:',
                                               style: TextStyle(
