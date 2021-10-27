@@ -119,19 +119,70 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> {
                   Expanded(
                     child: Container(
                       decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
-                      padding: const EdgeInsets.only(right: 10, top: 50),
+                      padding: const EdgeInsets.only(top: 20),
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
                         child: Container(
-                          padding: const EdgeInsets.only(right: 40, left: 50),
+                          padding: const EdgeInsets.only(right: 50, left: 50),
                           constraints: const BoxConstraints(
                             maxWidth: 850,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            children: const [],
-                          ),
+                          child: Consumer(builder: (context, watch, child) {
+                            var questions = watch(questionProvider);
+                            if (questions.isNotEmpty) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(questions.toString()),
+                                ],
+                              );
+                            } else {
+                              // TODO -- add counter widget
+                              return Column(
+                                children: [
+                                  Image.network(
+                                    'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/data-not-found-1965034-1662569.png?alt=media&token=a13358ff-8ade-4b2b-855a-22756dba91d8',
+                                    color: textColour,
+                                    height: 200,
+                                  ),
+                                  const Text(
+                                    'No Data Found',
+                                    style: TextStyle(
+                                      color: textColour,
+                                      fontSize: 25,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'No questions were found in this topic, try again or pick a different topic',
+                                    style: TextStyle(
+                                      color: Theme.of(context).hintColor,
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pushReplacement(
+                                        PageRouteBuilder(pageBuilder: (_, __, ___) => super.widget),
+                                      );
+                                    },
+                                    icon: Icon(
+                                      Icons.refresh,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    iconSize: 65,
+                                  ),
+                                ],
+                              );
+                            }
+                          }),
                         ),
                       ),
                     ),

@@ -133,7 +133,7 @@ class _PracticeModeState extends State<PracticeMode> {
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
                           child: Container(
-                            padding: const EdgeInsets.only(right: 40, left: 50),
+                            padding: const EdgeInsets.only(right: 50, left: 50),
                             constraints: const BoxConstraints(
                               maxWidth: 850,
                             ),
