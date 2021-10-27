@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/models/qualification_model.dart';
 
@@ -15,7 +14,7 @@ class Qualifications extends ChangeNotifier {
   }
 
   _listenToData() async {
-    languages.snapshots().listen((snap) {
+    languages.where('level', isEqualTo: 'Higher').snapshots().listen((snap) {
       {
         snap.docChanges.forEach((change) {
           switch (change.type) {

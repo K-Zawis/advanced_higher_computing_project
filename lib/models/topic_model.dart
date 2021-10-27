@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Topic {
   final String id;
-  final String level;
+  final List level;
   final String language;
   final String name;
 
@@ -17,7 +17,7 @@ class Topic {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Topic(
       id: id,
-      level: data['qualification']?? '',
+      level: data['qualification']?? [],
       language: data['language']?? '',
       name: data['topic']?? '',
     );

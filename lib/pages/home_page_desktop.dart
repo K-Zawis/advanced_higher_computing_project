@@ -16,7 +16,6 @@ class DesktopHomePage extends StatefulWidget {
 class _DesktopHomePageState extends State<DesktopHomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
-  final _scrollController = ScrollController(initialScrollOffset: 0.0);
   var _selectedTopics = [];
 
   @override
@@ -101,6 +100,9 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                       ),
                                     ),
                                   ),
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                  ]),
                                   onChanged: (val) {
                                     _multiKey.currentState?.save();
                                     _multiKey.currentState?.didChange(null);
@@ -134,7 +136,6 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                         decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
                         padding: const EdgeInsets.only(right: 10, top: 50),
                         child: SingleChildScrollView(
-                          controller: _scrollController,
                           physics: const BouncingScrollPhysics(),
                           child: Container(
                             padding: const EdgeInsets.only(right: 40, left: 50),
@@ -173,6 +174,9 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                               ),
                                             ),
                                             name: 'level',
+                                            validator: FormBuilderValidators.compose([
+                                              FormBuilderValidators.required(context),
+                                            ]),
                                             items: context.read(qualificationProvider.notifier).getDropdownItems(context),
                                             onChanged: (value) {
                                               _multiKey.currentState?.save();
@@ -315,7 +319,11 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                               width: 250,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  selectPage(context, 'Practice Mode');
+                                  _formKey.currentState?.save();
+                                  _multiKey.currentState?.save();
+                                  if (_formKey.currentState!.validate()){
+                                    selectPage(context, 'Practice Mode');
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),

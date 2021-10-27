@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'pages/home_page.dart';
-import 'pages/home_page_desktop.dart';
-import 'responsive_layout.dart';
-import 'widgets/menu_drawer.dart';
-import 'pages/practice_mode_page.dart';
+import '../pages/practice_mode_page_desktop.dart';
+import '../pages/home_page.dart';
+import '../pages/home_page_desktop.dart';
+import '../responsive_layout.dart';
+import '../widgets/menu_drawer.dart';
+import '../pages/practice_mode_page.dart';
 
-// TODO -- Find out how to deal with desktop version of pages
 // a map of ("page name", WidgetBuilder) pairs
 final _availablePages = <String, WidgetBuilder>{
   'Home Page' : (_) => const HomePage(),
@@ -15,7 +15,7 @@ final _availablePages = <String, WidgetBuilder>{
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page' : (_) => const DesktopHomePage(),
-  'Practice Mode' : (_) => const PracticeMode(),
+  'Practice Mode' : (_) => const DesktopPracticeMode(),
 };
 
 // this is a `StateProvider` so we can change its value

@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/models/langauge_model.dart';
 
 class Languages extends ChangeNotifier {
-  final languages = FirebaseFirestore.instance.collection("language");
+  final _languages = FirebaseFirestore.instance.collection("language");
   var _language = '';
 
   final Map<String, Language> items = {};
@@ -14,7 +13,7 @@ class Languages extends ChangeNotifier {
   }
 
   _listenToData() async {
-    languages.snapshots().listen((snap) {
+    _languages.where('language', isEqualTo: 'Spanish').snapshots().listen((snap) {
       {
         snap.docChanges.forEach((change) {
           switch (change.type) {
@@ -42,17 +41,21 @@ class Languages extends ChangeNotifier {
       }
     });
   }
+  Future<Language> getDocumentById(String id) async {
+    var doc = await _languages.doc(id).get();
+    return Language.fromFirestore(doc, doc.id);
+  }
 
   Future<void> removeDocument(String id) {
-    return languages.doc(id).delete();
+    return _languages.doc(id).delete();
   }
 
   Future<DocumentReference> addDocument(Map data) {
-    return languages.add(data as Map<String, dynamic>);
+    return _languages.add(data as Map<String, dynamic>);
   }
 
   Future<void> updateDocument(Map data, String id) {
-    return languages.doc(id).update(data as Map<String, dynamic>);
+    return _languages.doc(id).update(data as Map<String, dynamic>);
   }
 
   void setLanguage (String val) {

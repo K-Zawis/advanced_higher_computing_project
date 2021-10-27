@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/models/topic_model.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
@@ -16,7 +15,7 @@ class Topics extends ChangeNotifier {
 
   _listenToData(lan, level) async {
     try {
-      languages.where('qualification', isEqualTo: level).where('language', isEqualTo: lan).snapshots().listen((snap) {
+      languages.where('qualification', arrayContains: level).where('language', isEqualTo: lan).snapshots().listen((snap) {
         {
           snap.docChanges.forEach((change) {
             switch (change.type) {
@@ -43,9 +42,7 @@ class Topics extends ChangeNotifier {
           notifyListeners();
         }
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e){}
   }
 
   Future<void> removeDocument(String id) {

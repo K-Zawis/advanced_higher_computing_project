@@ -4,14 +4,14 @@ import 'package:learn_languages/constants.dart';
 
 import '../widget_tree.dart';
 
-class PracticeMode extends StatefulWidget {
-  const PracticeMode({Key? key}) : super(key: key);
+class DesktopPracticeMode extends StatefulWidget {
+  const DesktopPracticeMode({Key? key}) : super(key: key);
 
   @override
-  _PracticeModeState createState() => _PracticeModeState();
+  _DesktopPracticeModeState createState() => _DesktopPracticeModeState();
 }
 
-class _PracticeModeState extends State<PracticeMode> {
+class _DesktopPracticeModeState extends State<DesktopPracticeMode> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,68 +49,60 @@ class _PracticeModeState extends State<PracticeMode> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Scaffold.of(context).openDrawer();
-                        },
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        icon: const Icon(
-                          Icons.menu,
-                          color: Colors.white,
-                          size: 35,
+                  child: SizedBox(
+                    height: 48,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          icon: const Icon(
+                            Icons.home_filled,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                          onPressed: () {
+                            selectPage(context, 'Home Page');
+                          },
                         ),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        icon: const Icon(
-                          Icons.home_filled,
-                          color: Colors.white,
-                          size: 25,
-                        ),
-                        onPressed: () {
-                          selectPage(context, 'Home Page');
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                        ),
-                        child: SizedBox(
-                          height: 52,
-                          width: 100,
-                          child: Consumer(builder: (context, watch, child) {
-                            var prov = watch(languageProvider);
-                            var language = prov.items[prov.getLanguage()];
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0x451C1C1C),
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                          ),
+                          child: SizedBox(
+                            height: 52,
+                            width: 100,
+                            child: Consumer(builder: (context, watch, child) {
+                              var prov = watch(languageProvider);
+                              var language = prov.items[prov.getLanguage()];
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: const Color(0x451C1C1C),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4.0),
                                 ),
-                                borderRadius: BorderRadius.circular(4.0),
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text(
-                                    language!.ISOcode,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    child: Text(
+                                      language!.ISOcode,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            }),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -120,7 +112,6 @@ class _PracticeModeState extends State<PracticeMode> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                 color: Theme.of(context).scaffoldBackgroundColor,
               ),
               child: Column(

@@ -16,7 +16,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
-  final _scrollController = ScrollController(initialScrollOffset: 0.0);
   var _selectedTopics = [];
 
   @override
@@ -32,7 +31,6 @@ class _HomePageState extends State<HomePage> {
       child: FormBuilder(
         key: _formKey,
         child: Column(
-          //mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               height: 250,
@@ -65,68 +63,69 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: SizedBox(
-                      height: 48,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            icon: const Icon(
-                              Icons.menu,
-                              color: Colors.white,
-                              size: 35,
-                            ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          icon: const Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                            size: 35,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                            ),
-                            child: SizedBox(
-                              height: 52,
-                              width: 100,
-                              child: Consumer(builder: (context, watch, child) {
-                                watch(languageProvider);
-                                var language = context.read(languageProvider).getLanguage();
-                                return FormBuilderDropdown(
-                                  name: 'language',
-                                  initialValue: language == '' ? null : language,
-                                  items: context.read(languageProvider.notifier).getDropdownItems(context),
-                                  iconEnabledColor: Colors.white,
-                                  decoration: const InputDecoration(
-                                    fillColor: Color(0x451C1C1C),
-                                    filled: true,
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.white,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: dropdownFillColour,
-                                        width: 2,
-                                      ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                          ),
+                          child: SizedBox(
+                            height: 52,
+                            width: 100,
+                            child: Consumer(builder: (context, watch, child) {
+                              watch(languageProvider);
+                              var language = context.read(languageProvider).getLanguage();
+                              return FormBuilderDropdown(
+                                name: 'language',
+                                initialValue: language == '' ? null : language,
+                                items: context.read(languageProvider.notifier).getDropdownItems(context),
+                                iconEnabledColor: Colors.white,
+                                decoration: const InputDecoration(
+                                  fillColor: Color(0x451C1C1C),
+                                  filled: true,
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.white,
+                                      width: 2,
                                     ),
                                   ),
-                                  onChanged: (val) {
-                                    _multiKey.currentState?.save();
-                                    _multiKey.currentState?.didChange(null);
-                                    setState(() {
-                                      _selectedTopics = [];
-                                    });
-                                    context.read(topicProvider).setTopics([]);
-                                    context.read(languageProvider.notifier).setLanguage(val.toString());
-                                  },
-                                );
-                              }),
-                            ),
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: dropdownFillColour,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                validator: FormBuilderValidators.compose([
+                                  FormBuilderValidators.required(context),
+                                ]),
+                                onChanged: (val) {
+                                  _multiKey.currentState?.save();
+                                  _multiKey.currentState?.didChange(null);
+                                  setState(() {
+                                    _selectedTopics = [];
+                                  });
+                                  context.read(topicProvider).setTopics([]);
+                                  context.read(languageProvider.notifier).setLanguage(val.toString());
+                                },
+                              );
+                            }),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -146,7 +145,6 @@ class _HomePageState extends State<HomePage> {
                         decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
                         padding: const EdgeInsets.only(right: 10, top: 50),
                         child: SingleChildScrollView(
-                          controller: _scrollController,
                           physics: const BouncingScrollPhysics(),
                           child: Container(
                             padding: const EdgeInsets.only(right: 40, left: 50),
@@ -184,6 +182,9 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                             ),
                                             name: 'level',
+                                            validator: FormBuilderValidators.compose([
+                                              FormBuilderValidators.required(context),
+                                            ]),
                                             items: context.read(qualificationProvider.notifier).getDropdownItems(context),
                                             onChanged: (value) {
                                               _multiKey.currentState?.save();
@@ -327,8 +328,11 @@ class _HomePageState extends State<HomePage> {
                               width: 250,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  ModalRoute.of(context)!.addLocalHistoryEntry(LocalHistoryEntry());
-                                  selectPage(context, 'Practice Mode');
+                                  _formKey.currentState?.save();
+                                  _multiKey.currentState?.save();
+                                  if (_formKey.currentState!.validate()){
+                                    selectPage(context, 'Practice Mode');
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),
