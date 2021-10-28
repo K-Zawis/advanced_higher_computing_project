@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/constants.dart';
 
@@ -16,6 +19,10 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
   final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 4;
   late AnimationController _animationController;
   bool _playing = false;
+
+  Random rnd = Random();
+  randomListItem(List lst) => lst[rnd.nextInt(lst.length)];
+  String question = '';
 
   @override
   void initState() {
@@ -73,66 +80,78 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        IconButton(
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          icon: const Icon(
-                            Icons.menu,
-                            color: Colors.white,
-                            size: 35,
-                          ),
-                        ),
-                        IconButton(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          icon: const Icon(
-                            Icons.home_filled,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                          onPressed: () {
-                            selectPage(context, 'Home Page');
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                          ),
-                          child: SizedBox(
-                            height: 52,
-                            width: 100,
-                            child: Consumer(builder: (context, watch, child) {
-                              var prov = watch(languageProvider);
-                              var language = prov.items[prov.getLanguage()];
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0x451C1C1C),
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                                    child: Text(
-                                      language!.ISOcode,
-                                      style: const TextStyle(
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Scaffold.of(context).openDrawer();
+                              },
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              icon: const Icon(
+                                Icons.menu,
+                                color: Colors.white,
+                                size: 35,
+                              ),
+                            ),
+                            IconButton(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              icon: const Icon(
+                                Icons.home_filled,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                              onPressed: () {
+                                selectPage(context, 'Home Page');
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              child: SizedBox(
+                                height: 52,
+                                width: 100,
+                                child: Consumer(builder: (context, watch, child) {
+                                  var prov = watch(languageProvider);
+                                  var language = prov.items[prov.getLanguage()];
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0x451C1C1C),
+                                      border: Border.all(
                                         color: Colors.white,
-                                        fontSize: 18,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(4.0),
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                                        child: Text(
+                                          language!.ISOcode,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Text(
+                          'PRACTICE MODE',
+                          style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -150,6 +169,26 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                 ),
                 child: Column(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: FormBuilderCheckbox(
+                        name: 'visible',
+                        initialValue: context.read(questionProvider.notifier).getVisible(),
+                        activeColor: Theme.of(context).colorScheme.primary,
+                        title: const Text(
+                          'Show Question?',
+                          style: TextStyle(
+                            color: textColour,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onChanged: (val) {
+                          setState(() {
+                            context.read(questionProvider.notifier).setVisible(val as bool);
+                          });
+                        },
+                      ),
+                    ),
                     Expanded(
                       child: Container(
                         decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
@@ -164,32 +203,19 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                             child: Consumer(builder: (context, watch, child) {
                               var questions = watch(questionProvider);
                               if (questions.isNotEmpty) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(questions.toString()),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          if (!_playing) {
-                                            _animationController.forward();
-                                            _playing = true;
-                                          } else {
-                                            _animationController.reverse();
-                                            _playing = false;
-                                          }
-                                        },
-                                        icon: AnimatedIcon(
-                                          progress: _animationController,
-                                          icon: AnimatedIcons.play_pause,
-                                          color: Theme.of(context).colorScheme.primary,
-                                        ),
-                                        iconSize: 70,
+                                question = randomListItem(questions.values.toList()).question;
+                                return Visibility(
+                                  visible: context.read(questionProvider.notifier).getVisible(),
+                                  child: Center(
+                                    child: Text(
+                                      question,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        color: textColour,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                  ],
+                                  ),
                                 );
                               } else {
                                 return CountdownTimer(
@@ -245,6 +271,43 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                             }),
                           ),
                         ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              if (!_playing) {
+                                _animationController.forward();
+                                _playing = true;
+                              } else {
+                                _animationController.reverse();
+                                _playing = false;
+                              }
+                            },
+                            icon: AnimatedIcon(
+                              progress: _animationController,
+                              icon: AnimatedIcons.play_pause,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            iconSize: 70,
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                question = randomListItem(context.read(questionProvider).values.toList()).question;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.skip_next,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            iconSize: 70,
+                          ),
+                        ],
                       ),
                     ),
                   ],

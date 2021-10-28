@@ -7,6 +7,7 @@ class Questions extends StateNotifier<Map<dynamic, dynamic>> {
   final _questions = FirebaseFirestore.instance.collection("questions");
 
   final Map<String, Question> items = {};
+  bool _visible = false;
 
   Questions(topics) : super({}) {
     _listenToData(topics);
@@ -41,6 +42,14 @@ class Questions extends StateNotifier<Map<dynamic, dynamic>> {
         state = Map.of(items);
       }
     });
+  }
+
+  void setVisible(bool val){
+    _visible = val;
+  }
+
+  bool getVisible(){
+    return _visible;
   }
 
   Future<void> removeDocument(String id) {
