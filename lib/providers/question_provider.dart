@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../models/question_model.dart';
 
-class Questions extends StateNotifier<Map<dynamic, dynamic>> {
+class Questions extends ChangeNotifier {
   final _questions = FirebaseFirestore.instance.collection("questions");
 
   final Map<String, Question> items = {};
   bool _visible = false;
 
-  Questions(topics) : super({}) {
+  Questions(topics) {
     _listenToData(topics);
   }
 
@@ -39,13 +39,14 @@ class Questions extends StateNotifier<Map<dynamic, dynamic>> {
               }
           }
         });
-        state = Map.of(items);
+        notifyListeners();
       }
     });
   }
 
   void setVisible(bool val){
     _visible = val;
+    notifyListeners();
   }
 
   bool getVisible(){

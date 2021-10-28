@@ -42,7 +42,7 @@ final topicProvider = ChangeNotifierProvider((ref) {
   var level = ref.watch(qualificationProvider).getLevel();
   return Topics(lan, level);
 });
-final questionProvider = StateNotifierProvider((ref) {
+final questionProvider = ChangeNotifierProvider((ref) {
   var topic = ref.watch(topicProvider).getTopicIds();
   return Questions(topic);
 });

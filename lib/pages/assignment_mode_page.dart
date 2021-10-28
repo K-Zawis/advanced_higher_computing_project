@@ -141,7 +141,8 @@ class _AssignmentModeState extends State<AssignmentMode> {
                               maxWidth: 850,
                             ),
                             child: Consumer(builder: (context, watch, child) {
-                              var questions = watch(questionProvider);
+                              var prov = watch(questionProvider);
+                              var questions = prov.items;
                               if (questions.isNotEmpty) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

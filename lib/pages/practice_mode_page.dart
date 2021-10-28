@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:learn_languages/constants.dart';
+import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
 import '../widget_tree.dart';
 
@@ -18,7 +21,8 @@ class PracticeMode extends StatefulWidget {
 class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMixin {
   final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 4;
   late AnimationController _animationController;
-  bool _playing = false;
+  late FlutterTts flutterTts;
+  final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
 
   Random rnd = Random();
   randomListItem(List lst) => lst[rnd.nextInt(lst.length)];
@@ -33,11 +37,24 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
         milliseconds: 450,
       ),
     );
+    initTts();
+  }
+
+  initTts() {
+    flutterTts = FlutterTts();
+    flutterTts.setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
+
+    flutterTts.setCompletionHandler(() {
+      _animationController.reverse();
+      _playing.value = false;
+      flutterTts.stop();
+    });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    flutterTts.stop();
     super.dispose();
   }
 
@@ -70,7 +87,11 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                       height: 80,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color.fromARGB(255, 0, 0, 0), Color.fromARGB(150, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                          colors: [
+                            Color.fromARGB(255, 0, 0, 0),
+                            Color.fromARGB(150, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
+                          ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                         ),
@@ -183,9 +204,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                           ),
                         ),
                         onChanged: (val) {
-                          setState(() {
-                            context.read(questionProvider.notifier).setVisible(val as bool);
-                          });
+                          context.read(questionProvider.notifier).setVisible(val as bool);
                         },
                       ),
                     ),
@@ -201,11 +220,14 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                               maxWidth: 850,
                             ),
                             child: Consumer(builder: (context, watch, child) {
-                              var questions = watch(questionProvider);
+                              var prov = watch(questionProvider);
+                              var questions = prov.items;
                               if (questions.isNotEmpty) {
-                                question = randomListItem(questions.values.toList()).question;
+                                if (question == ''){
+                                  question = randomListItem(questions.values.toList()).question;
+                                }
                                 return Visibility(
-                                  visible: context.read(questionProvider.notifier).getVisible(),
+                                  visible: prov.getVisible(),
                                   child: Center(
                                     child: Text(
                                       question,
@@ -273,19 +295,39 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                         ),
                       ),
                     ),
+                    ValueListenableBuilder(
+                      valueListenable: _playing,
+                      builder: (BuildContext context, bool value, Widget? child) {
+                        return Visibility(
+                          visible: value,
+                          child: Container(
+                            width: 80,
+                            constraints: const BoxConstraints(
+                              minHeight: 120,
+                            ),
+                            child: SoundWave(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () {
-                              if (!_playing) {
+                            onPressed: () async {
+                              if (!_playing.value) {
                                 _animationController.forward();
-                                _playing = true;
+                                _playing.value = true;
+                                await flutterTts.speak(question);
                               } else {
                                 _animationController.reverse();
-                                _playing = false;
+                                _playing.value = false;
+                                await flutterTts.stop();
                               }
                             },
                             icon: AnimatedIcon(
@@ -296,10 +338,13 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                             iconSize: 70,
                           ),
                           IconButton(
-                            onPressed: () {
+                            onPressed: () async {
                               setState(() {
-                                question = randomListItem(context.read(questionProvider).values.toList()).question;
+                                _animationController.reverse();
+                                _playing.value = false;
+                                question = randomListItem(context.read(questionProvider).items.values.toList()).question;
                               });
+                              await flutterTts.stop();
                             },
                             icon: Icon(
                               Icons.skip_next,
