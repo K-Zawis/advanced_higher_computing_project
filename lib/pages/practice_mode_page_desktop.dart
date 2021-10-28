@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/constants.dart';
 
@@ -11,7 +13,28 @@ class DesktopPracticeMode extends StatefulWidget {
   _DesktopPracticeModeState createState() => _DesktopPracticeModeState();
 }
 
-class _DesktopPracticeModeState extends State<DesktopPracticeMode> {
+class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerProviderStateMixin {
+  final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 4;
+  late AnimationController _animationController;
+  bool _playing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 450,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -135,51 +158,78 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Text(questions.toString()),
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        if (!_playing) {
+                                          _animationController.forward();
+                                          _playing = true;
+                                        } else {
+                                          _animationController.reverse();
+                                          _playing = false;
+                                        }
+                                      },
+                                      icon: AnimatedIcon(
+                                        progress: _animationController,
+                                        icon: AnimatedIcons.play_pause,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                      iconSize: 70,
+                                    ),
+                                  ),
                                 ],
                               );
                             } else {
-                              // TODO -- add counter widget
-                              return Column(
-                                children: [
-                                  Image.network(
-                                    'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/data-not-found-1965034-1662569.png?alt=media&token=a13358ff-8ade-4b2b-855a-22756dba91d8',
-                                    color: textColour,
-                                    height: 200,
-                                  ),
-                                  const Text(
-                                    'No Data Found',
-                                    style: TextStyle(
-                                      color: textColour,
-                                      fontSize: 25,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'No questions were found in this topic, try again or pick a different topic',
-                                    style: TextStyle(
-                                      color: Theme.of(context).hintColor,
-                                      fontSize: 16,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pushReplacement(
-                                        PageRouteBuilder(pageBuilder: (_, __, ___) => super.widget),
+                              return CountdownTimer(
+                                  endTime: endTime,
+                                  widgetBuilder: (context, time) {
+                                    if (time == null) {
+                                      return Center(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.network(
+                                              'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/data-not-found-1965034-1662569.png?alt=media&token=a13358ff-8ade-4b2b-855a-22756dba91d8',
+                                              color: textColour,
+                                              height: 200,
+                                              colorBlendMode: BlendMode.srcIn,
+                                            ),
+                                            const Text(
+                                              'No Data Found',
+                                              style: TextStyle(
+                                                color: textColour,
+                                                fontSize: 25,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              'No questions were found in this topic, try again later or pick a different topic',
+                                              style: TextStyle(
+                                                color: Theme.of(context).hintColor,
+                                                fontSize: 16,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        ),
                                       );
-                                    },
-                                    icon: Icon(
-                                      Icons.refresh,
-                                      color: Theme.of(context).colorScheme.primary,
-                                    ),
-                                    iconSize: 65,
-                                  ),
-                                ],
+                                    } else {
+                                      return const Padding(
+                                        padding: EdgeInsets.only(top: 100),
+                                        child: SizedBox(
+                                          height: 50,
+                                          width: 50,
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    }
+                                  }
                               );
                             }
                           }),

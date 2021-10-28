@@ -34,8 +34,6 @@ const dropdownFillColour = Color(0xFFD6DEDC);
 const iconColour = Color(0xFFD6DEDC);
 const hintColour = Color(0xFF494B50);
 
-// * page map
-
 // * providers
 final languageProvider = ChangeNotifierProvider((ref) => Languages());
 final qualificationProvider = ChangeNotifierProvider((ref) => Qualifications());

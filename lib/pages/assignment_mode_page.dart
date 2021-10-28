@@ -5,34 +5,15 @@ import 'package:learn_languages/constants.dart';
 
 import '../widget_tree.dart';
 
-class PracticeMode extends StatefulWidget {
-  const PracticeMode({Key? key}) : super(key: key);
+class AssignmentMode extends StatefulWidget {
+  const AssignmentMode({Key? key}) : super(key: key);
 
   @override
-  _PracticeModeState createState() => _PracticeModeState();
+  _AssignmentModeState createState() => _AssignmentModeState();
 }
 
-class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMixin {
-  final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 4;
-  late AnimationController _animationController;
-  bool _playing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(
-        milliseconds: 450,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
+class _AssignmentModeState extends State<AssignmentMode> {
+  final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 2;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +22,6 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
         color: Colors.black,
         child: Column(
           children: [
-            // * image bar
             SizedBox(
               height: 250,
               width: double.infinity,
@@ -140,7 +120,6 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                 ],
               ),
             ),
-            // * body
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -169,26 +148,6 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(questions.toString()),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          if (!_playing) {
-                                            _animationController.forward();
-                                            _playing = true;
-                                          } else {
-                                            _animationController.reverse();
-                                            _playing = false;
-                                          }
-                                        },
-                                        icon: AnimatedIcon(
-                                          progress: _animationController,
-                                          icon: AnimatedIcons.play_pause,
-                                          color: Theme.of(context).colorScheme.primary,
-                                        ),
-                                        iconSize: 70,
-                                      ),
-                                    ),
                                   ],
                                 );
                               } else {
@@ -240,7 +199,8 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                                           ),
                                         );
                                       }
-                                    });
+                                    }
+                                );
                               }
                             }),
                           ),

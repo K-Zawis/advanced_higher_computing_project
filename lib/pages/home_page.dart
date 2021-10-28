@@ -252,7 +252,7 @@ class _HomePageState extends State<HomePage> {
                                         if (topics.items.isNotEmpty) {
                                           return MultiSelectBottomSheetField(
                                             key: _multiKey,
-                                            initialValue: _selectedTopics,
+                                            initialValue: topics.getTopics(),
                                             title: const Text(
                                               'Topics:',
                                               style: TextStyle(
