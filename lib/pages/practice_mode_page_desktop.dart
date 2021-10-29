@@ -43,10 +43,25 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
     flutterTts = FlutterTts();
     flutterTts.setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
 
+    flutterTts.setCancelHandler(() {
+      _animationController.reverse();
+      _playing.value = false;
+    });
+    flutterTts.setPauseHandler(() {
+      _animationController.reverse();
+      _playing.value = false;
+    });
+    flutterTts.setContinueHandler(() {
+      _animationController.forward();
+      _playing.value = true;
+    });
     flutterTts.setCompletionHandler(() {
       _animationController.reverse();
       _playing.value = false;
-      flutterTts.stop();
+    });
+    flutterTts.setStartHandler(() {
+      _animationController.forward();
+      _playing.value = true;
     });
   }
 
@@ -300,18 +315,18 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                     builder: (BuildContext context, bool value, Widget? child) {
                       return Visibility(
                         visible: value,
-                        child: Container(
-                          width: 80,
-                          constraints: const BoxConstraints(
-                            minHeight: 120,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 50),
+                          child: Container(
+                            width: 80,
+                            constraints: const BoxConstraints(
+                              minHeight: 120,
+                            ),
+                            child: SoundWave(),
                           ),
-                          child: SoundWave(),
                         ),
                       );
                     },
-                  ),
-                  const SizedBox(
-                    height: 50,
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -321,12 +336,8 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                         IconButton(
                           onPressed: () async {
                             if (!_playing.value) {
-                              _animationController.forward();
-                              _playing.value = true;
                               await flutterTts.speak(question);
                             } else {
-                              _animationController.reverse();
-                              _playing.value = false;
                               await flutterTts.stop();
                             }
                           },
@@ -339,12 +350,10 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                         ),
                         IconButton(
                           onPressed: () async {
+                            await flutterTts.stop();
                             setState(() {
-                              _animationController.reverse();
-                              _playing.value = false;
                               question = randomListItem(context.read(questionProvider).items.values.toList()).question;
                             });
-                            await flutterTts.stop();
                           },
                           icon: Icon(
                             Icons.skip_next,

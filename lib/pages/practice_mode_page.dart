@@ -5,7 +5,6 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
@@ -23,6 +22,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
   late AnimationController _animationController;
   late FlutterTts flutterTts;
   final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
+  String errorMsg = '';
 
   Random rnd = Random();
   randomListItem(List lst) => lst[rnd.nextInt(lst.length)];
@@ -44,10 +44,36 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
     flutterTts = FlutterTts();
     flutterTts.setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
 
+    // TODO -- find out why stop() doesn't work in safari and how to fix it
+    flutterTts.setCancelHandler(() {
+      _animationController.reverse();
+      setState(() {
+        _playing.value = false;
+      });
+    });
+    flutterTts.setPauseHandler(() {
+      _animationController.reverse();
+      setState(() {
+        _playing.value = false;
+      });
+    });
+    flutterTts.setContinueHandler(() {
+      _animationController.forward();
+      setState(() {
+        _playing.value = true;
+      });
+    });
     flutterTts.setCompletionHandler(() {
       _animationController.reverse();
-      _playing.value = false;
-      flutterTts.stop();
+      setState(() {
+        _playing.value = false;
+      });
+    });
+    flutterTts.setStartHandler(() {
+      _animationController.forward();
+      setState(() {
+        _playing.value = true;
+      });
     });
   }
 
@@ -223,7 +249,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                               var prov = watch(questionProvider);
                               var questions = prov.items;
                               if (questions.isNotEmpty) {
-                                if (question == ''){
+                                if (question == '') {
                                   question = randomListItem(questions.values.toList()).question;
                                 }
                                 return Visibility(
@@ -295,23 +321,24 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                         ),
                       ),
                     ),
+                    Text(errorMsg),
                     ValueListenableBuilder(
                       valueListenable: _playing,
                       builder: (BuildContext context, bool value, Widget? child) {
                         return Visibility(
                           visible: value,
-                          child: Container(
-                            width: 80,
-                            constraints: const BoxConstraints(
-                              minHeight: 120,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 50),
+                            child: Container(
+                              width: 80,
+                              constraints: const BoxConstraints(
+                                minHeight: 120,
+                              ),
+                              child: SoundWave(),
                             ),
-                            child: SoundWave(),
                           ),
                         );
                       },
-                    ),
-                    const SizedBox(
-                      height: 50,
                     ),
                     Align(
                       alignment: Alignment.bottomCenter,
@@ -321,12 +348,8 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                           IconButton(
                             onPressed: () async {
                               if (!_playing.value) {
-                                _animationController.forward();
-                                _playing.value = true;
                                 await flutterTts.speak(question);
                               } else {
-                                _animationController.reverse();
-                                _playing.value = false;
                                 await flutterTts.stop();
                               }
                             },
@@ -339,12 +362,11 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                           ),
                           IconButton(
                             onPressed: () async {
-                              setState(() {
-                                _animationController.reverse();
-                                _playing.value = false;
-                                question = randomListItem(context.read(questionProvider).items.values.toList()).question;
-                              });
                               await flutterTts.stop();
+                              setState(() {
+                                question =
+                                    randomListItem(context.read(questionProvider).items.values.toList()).question;
+                              });
                             },
                             icon: Icon(
                               Icons.skip_next,

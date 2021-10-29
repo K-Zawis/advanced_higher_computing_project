@@ -26,10 +26,10 @@ class _VisualComponentState extends State<VisualComponent> with SingleTickerProv
     );
     final curvedAnimation = CurvedAnimation(
       parent: animController,
-      curve: Curves.easeInCubic,
+      curve: Curves.easeInOutCubic,
     );
 
-    animation = Tween<double>(begin: 0, end: 100).animate(curvedAnimation)
+    animation = Tween<double>(begin: 10, end: 100).animate(curvedAnimation)
       ..addListener(() {
         setState(() {});
       });
@@ -47,11 +47,17 @@ class _VisualComponentState extends State<VisualComponent> with SingleTickerProv
       ),
     );
   }
+
+  @override
+  void dispose(){
+    animController.dispose();
+    super.dispose();
+  }
 }
 
 class SoundWave extends StatelessWidget {
   SoundWave({Key? key}) : super(key: key);
-  final List<int> duration = [900, 700, 600, 800, 500];
+  final List<int> duration = [300, 700, 500, 900, 600];
 
   @override
   Widget build(BuildContext context) {
