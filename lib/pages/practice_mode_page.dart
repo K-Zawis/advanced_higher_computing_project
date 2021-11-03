@@ -22,7 +22,6 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
   late AnimationController _animationController;
   late FlutterTts flutterTts;
   final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
-  String errorMsg = '';
 
   Random rnd = Random();
   randomListItem(List lst) => lst[rnd.nextInt(lst.length)];
@@ -30,7 +29,6 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
 
   @override
   void initState() {
-    super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(
@@ -38,6 +36,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
       ),
     );
     initTts();
+    super.initState();
   }
 
   initTts() {
@@ -321,7 +320,6 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                         ),
                       ),
                     ),
-                    Text(errorMsg),
                     ValueListenableBuilder(
                       valueListenable: _playing,
                       builder: (BuildContext context, bool value, Widget? child) {

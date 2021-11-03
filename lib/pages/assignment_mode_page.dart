@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/models/question_model.dart';
+import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
 import '../widget_tree.dart';
 
@@ -13,12 +15,72 @@ class AssignmentMode extends StatefulWidget {
   _AssignmentModeState createState() => _AssignmentModeState();
 }
 
-class _AssignmentModeState extends State<AssignmentMode> {
+class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStateMixin {
   final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 2;
+  late AnimationController _animationController;
+  late FlutterTts flutterTts;
+  final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
   bool shuffled = false;
   List<Question> topic1 = [];
   List<Question> topic2 = [];
   Map<String, List<Question>>? topicMap;
+  String question = '';
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 450,
+      ),
+    );
+    initTts();
+    super.initState();
+  }
+
+  initTts() {
+    flutterTts = FlutterTts();
+    flutterTts.setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
+
+    // TODO -- find out why stop() doesn't work in safari and how to fix it
+    flutterTts.setCancelHandler(() {
+      _animationController.reverse();
+      setState(() {
+        _playing.value = false;
+      });
+    });
+    flutterTts.setPauseHandler(() {
+      _animationController.reverse();
+      setState(() {
+        _playing.value = false;
+      });
+    });
+    flutterTts.setContinueHandler(() {
+      _animationController.forward();
+      setState(() {
+        _playing.value = true;
+      });
+    });
+    flutterTts.setCompletionHandler(() {
+      _animationController.reverse();
+      setState(() {
+        _playing.value = false;
+      });
+    });
+    flutterTts.setStartHandler(() {
+      _animationController.forward();
+      setState(() {
+        _playing.value = true;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    flutterTts.stop();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +111,11 @@ class _AssignmentModeState extends State<AssignmentMode> {
                       height: 80,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color.fromARGB(255, 0, 0, 0), Color.fromARGB(150, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                          colors: [
+                            Color.fromARGB(255, 0, 0, 0),
+                            Color.fromARGB(150, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
+                          ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                         ),
@@ -59,66 +125,78 @@ class _AssignmentModeState extends State<AssignmentMode> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        IconButton(
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          icon: const Icon(
-                            Icons.menu,
-                            color: Colors.white,
-                            size: 35,
-                          ),
-                        ),
-                        IconButton(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          icon: const Icon(
-                            Icons.home_filled,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                          onPressed: () {
-                            selectPage(context, 'Home Page');
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                          ),
-                          child: SizedBox(
-                            height: 52,
-                            width: 100,
-                            child: Consumer(builder: (context, watch, child) {
-                              var prov = watch(languageProvider);
-                              var language = prov.items[prov.getLanguage()];
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0x451C1C1C),
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                                    child: Text(
-                                      language!.ISOcode,
-                                      style: const TextStyle(
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Scaffold.of(context).openDrawer();
+                              },
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              icon: const Icon(
+                                Icons.menu,
+                                color: Colors.white,
+                                size: 35,
+                              ),
+                            ),
+                            IconButton(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              icon: const Icon(
+                                Icons.home_filled,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                              onPressed: () {
+                                selectPage(context, 'Home Page');
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              child: SizedBox(
+                                height: 52,
+                                width: 100,
+                                child: Consumer(builder: (context, watch, child) {
+                                  var prov = watch(languageProvider);
+                                  var language = prov.items[prov.getLanguage()];
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0x451C1C1C),
+                                      border: Border.all(
                                         color: Colors.white,
-                                        fontSize: 18,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(4.0),
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                                        child: Text(
+                                          language!.ISOcode,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Text(
+                          'ASSIGNMENT MODE',
+                          style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -134,98 +212,151 @@ class _AssignmentModeState extends State<AssignmentMode> {
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   color: Theme.of(context).scaffoldBackgroundColor,
                 ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
-                        padding: const EdgeInsets.only(top: 20),
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Container(
-                            padding: const EdgeInsets.only(right: 50, left: 50),
-                            constraints: const BoxConstraints(
-                              maxWidth: 850,
+                child: Consumer(
+                  builder: (context, watch, child) {
+                    var prov = watch(questionProvider);
+                    var questions = prov.items;
+                    print(questions);
+                    if (questions.isNotEmpty) {
+                      // * only happens once
+                      if (!shuffled){
+                        topicMap = prov.getAssignmentLists();
+                        topic1 = topicMap!.values.toList()[0];
+                        topic2 = topicMap!.values.toList()[1];
+                        topic1.shuffle();
+                        topic2.shuffle();
+                        shuffled = true;
+                      }
+                      return Column(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+                              padding: const EdgeInsets.only(top: 20),
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: Container(
+                                  padding: const EdgeInsets.only(right: 50, left: 50),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 850,
+                                  ),
+                                ),
+                              ),
                             ),
-                            child: Consumer(builder: (context, watch, child) {
-                              var prov = watch(questionProvider);
-                              var questions = prov.items;
-                              if (questions.isNotEmpty) {
-                                // * only happens once
-                                if (!shuffled){
-                                  topicMap = prov.getAssignmentLists();
-                                  topic1 = topicMap!.values.toList()[0];
-                                  topic2 = topicMap!.values.toList()[1];
-                                  topic1.shuffle();
-                                  topic2.shuffle();
-                                  shuffled = true;
-                                }
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(topic1.toString()),
-                                    Text(topic2.toString()),
-                                  ],
-                                );
-                              } else {
-                                return CountdownTimer(
-                                    endTime: endTime,
-                                    widgetBuilder: (context, time) {
-                                      if (time == null) {
-                                        return Center(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Image.network(
-                                                'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/data-not-found-1965034-1662569.png?alt=media&token=a13358ff-8ade-4b2b-855a-22756dba91d8',
-                                                color: textColour,
-                                                height: 200,
-                                                colorBlendMode: BlendMode.srcIn,
-                                              ),
-                                              const Text(
-                                                'No Data Found',
-                                                style: TextStyle(
-                                                  color: textColour,
-                                                  fontSize: 25,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Text(
-                                                'No questions were found in this topic, try again later or pick a different topic',
-                                                style: TextStyle(
-                                                  color: Theme.of(context).hintColor,
-                                                  fontSize: 16,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      } else {
-                                        return const Padding(
-                                          padding: EdgeInsets.only(top: 100),
-                                          child: SizedBox(
-                                            height: 50,
-                                            width: 50,
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                        );
-                                      }
-                                    }
-                                );
-                              }
-                            }),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
+                          ValueListenableBuilder(
+                            valueListenable: _playing,
+                            builder: (BuildContext context, bool value, Widget? child) {
+                              return Visibility(
+                                visible: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 50),
+                                  child: Container(
+                                    width: 80,
+                                    constraints: const BoxConstraints(
+                                      minHeight: 120,
+                                    ),
+                                    child: SoundWave(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    if (!_playing.value) {
+                                      await flutterTts.speak(question);
+                                    } else {
+                                      await flutterTts.stop();
+                                    }
+                                  },
+                                  icon: AnimatedIcon(
+                                    progress: _animationController,
+                                    icon: AnimatedIcons.play_pause,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  iconSize: 70,
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    await flutterTts.stop();
+                                    setState(() {
+                                      question = '';
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.skip_next,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  iconSize: 70,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return CountdownTimer(
+                          endTime: endTime,
+                          widgetBuilder: (context, time) {
+                            if (time == null) {
+                              return Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(50),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.network(
+                                        'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/data-not-found-1965034-1662569.png?alt=media&token=a13358ff-8ade-4b2b-855a-22756dba91d8',
+                                        color: textColour,
+                                        height: 200,
+                                        colorBlendMode: BlendMode.srcIn,
+                                      ),
+                                      const Text(
+                                        'No Data Found',
+                                        style: TextStyle(
+                                          color: textColour,
+                                          fontSize: 25,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'No questions were found in this topic, try again later or pick a different topic',
+                                        style: TextStyle(
+                                          color: Theme.of(context).hintColor,
+                                          fontSize: 16,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else {
+                              // ! fix sizing
+                              return const Padding(
+                                padding: EdgeInsets.only(top: 100),
+                                child: SizedBox(
+                                  height: 50,
+                                  width: 50,
+                                  child: FittedBox(child: CircularProgressIndicator()),
+                                ),
+                              );
+                            }
+                          }
+                      );
+                    }
+                  }
                 ),
               ),
             ),
