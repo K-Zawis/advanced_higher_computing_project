@@ -17,6 +17,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
   var _selectedTopics = [];
+  bool _assignment = false;
 
   @override
   void initState() {
@@ -242,7 +243,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                         if (topics.items.isNotEmpty) {
                                           return MultiSelectBottomSheetField(
                                             key: _multiKey,
-                                            initialValue: topics.getTopics(),
+                                            initialValue: topics.getTopics().isEmpty? null : topics.getTopics(),
                                             title: const Text(
                                               'Topics:',
                                               style: TextStyle(
@@ -278,10 +279,17 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                               setState(() {
                                                 _selectedTopics = values;
                                               });
+                                              if (values.isEmpty){
+                                                _multiKey.currentState!.reset();
+                                              }
                                             },
                                             validator: (values) {
                                               if (values == null || values.isEmpty) {
                                                 return 'Field cannot be empty';
+                                              } else if (_assignment) {
+                                                if (values.length != 2){
+                                                  return '2 topics required for Assignment Mode';
+                                                }
                                               }
                                               return null;
                                             },
@@ -319,9 +327,10 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                               width: 250,
                               child: ElevatedButton(
                                 onPressed: () {
+                                  _assignment = false;
                                   _formKey.currentState?.save();
                                   _multiKey.currentState?.save();
-                                  if (_formKey.currentState!.validate()){
+                                  if (_formKey.currentState!.validate()) {
                                     selectPage(context, 'Practice Mode');
                                   }
                                 },
@@ -350,7 +359,16 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  _assignment = true;
+                                  _formKey.currentState?.save();
+                                  _multiKey.currentState?.save();
+                                  if (_formKey.currentState!.validate()) {
+                                    if (_selectedTopics.length == 2) {
+                                      selectPage(context, 'Assignment Mode');
+                                    }
+                                  }
+                                },
                                 child: const Padding(
                                   padding: EdgeInsets.all(15.0),
                                   child: Text(

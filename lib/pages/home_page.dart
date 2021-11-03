@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
   var _selectedTopics = [];
+  bool _assignment = false;
 
   @override
   void initState() {
@@ -53,7 +54,11 @@ class _HomePageState extends State<HomePage> {
                       height: 80,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color.fromARGB(255, 0, 0, 0), Color.fromARGB(150, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                          colors: [
+                            Color.fromARGB(255, 0, 0, 0),
+                            Color.fromARGB(150, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
+                          ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                         ),
@@ -174,18 +179,21 @@ class _HomePageState extends State<HomePage> {
                                             decoration: InputDecoration(
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
+                                                borderSide: BorderSide(
+                                                    width: 3, color: Theme.of(context).colorScheme.secondary),
                                               ),
                                               border: OutlineInputBorder(
                                                 borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
+                                                borderSide: BorderSide(
+                                                    width: 3, color: Theme.of(context).colorScheme.secondary),
                                               ),
                                             ),
                                             name: 'level',
                                             validator: FormBuilderValidators.compose([
                                               FormBuilderValidators.required(context),
                                             ]),
-                                            items: context.read(qualificationProvider.notifier).getDropdownItems(context),
+                                            items:
+                                                context.read(qualificationProvider.notifier).getDropdownItems(context),
                                             onChanged: (value) {
                                               _multiKey.currentState?.save();
                                               _multiKey.currentState?.didChange(null);
@@ -252,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                                         if (topics.items.isNotEmpty) {
                                           return MultiSelectBottomSheetField(
                                             key: _multiKey,
-                                            initialValue: topics.getTopics(),
+                                            initialValue: topics.getTopics().isEmpty? null : topics.getTopics(),
                                             title: const Text(
                                               'Topics:',
                                               style: TextStyle(
@@ -268,7 +276,9 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                             buttonText: Text(
                                               'ADD TOPIC ',
-                                              style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  color: Theme.of(context).colorScheme.secondary,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             decoration: const BoxDecoration(
                                               borderRadius: BorderRadius.all(Radius.circular(2)),
@@ -281,6 +291,7 @@ class _HomePageState extends State<HomePage> {
                                               if (values.length > 2) {
                                                 values.removeLast();
                                               }
+                                              _multiKey.currentState!.setState(() {});
                                             },
                                             onConfirm: (List<dynamic> values) {
                                               topics.setTopics(values);
@@ -291,10 +302,14 @@ class _HomePageState extends State<HomePage> {
                                             validator: (values) {
                                               if (values == null || values.isEmpty) {
                                                 return 'Field cannot be empty';
+                                              } else if (_assignment) {
+                                                if (values.length != 2){
+                                                  return '2 topics required for Assignment Mode';
+                                                }
                                               }
                                               return null;
                                             },
-                                            items: context.read(topicProvider.notifier).getMultiSelectItems(),
+                                            items: context.read(topicProvider).getMultiSelectItems(),
                                             chipDisplay: MultiSelectChipDisplay.none(),
                                           );
                                         } else {
@@ -328,9 +343,10 @@ class _HomePageState extends State<HomePage> {
                               width: 250,
                               child: ElevatedButton(
                                 onPressed: () async {
+                                  _assignment = false;
                                   _formKey.currentState?.save();
                                   _multiKey.currentState?.save();
-                                  if (_formKey.currentState!.validate()){
+                                  if (_formKey.currentState!.validate()) {
                                     selectPage(context, 'Practice Mode');
                                   }
                                 },
@@ -359,7 +375,17 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  _assignment = true;
+                                  _formKey.currentState?.save();
+                                  _multiKey.currentState?.save();
+                                  if (_formKey.currentState!.validate()) {
+                                    if (_selectedTopics.length == 2) {
+                                      selectPage(context, 'Assignment Mode');
+                                    } else {
+                                    }
+                                  }
+                                },
                                 child: const Padding(
                                   padding: EdgeInsets.all(15.0),
                                   child: Text(

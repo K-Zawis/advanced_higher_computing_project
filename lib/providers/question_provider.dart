@@ -44,6 +44,31 @@ class Questions extends ChangeNotifier {
     });
   }
 
+  Map<String, List<Question>> getAssignmentLists() {
+    final Map<String, List<Question>> out = {};
+    List<Question> topic1 = [];
+    List<Question> topic2 = [];
+    Question? _question;
+
+    items.values.forEach((question) {
+      // print(question.topic);
+      if (_question == null) {
+        _question = question;
+        topic1.add(question);
+      } else {
+        if (question.topic == _question!.topic) {
+          topic1.add(question);
+        } else {
+          topic2.add(question);
+        }
+      }
+    });
+    out.putIfAbsent(topic1[0].topic, () => topic1);
+    out.putIfAbsent(topic2[0].topic, () => topic2);
+
+    return out;
+  }
+
   void setVisible(bool val){
     _visible = val;
     notifyListeners();

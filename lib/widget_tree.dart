@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/pages/assignment_mode_page.dart';
 
 import '../pages/practice_mode_page_desktop.dart';
 import '../pages/home_page.dart';
@@ -12,10 +13,12 @@ import '../pages/practice_mode_page.dart';
 final _availablePages = <String, WidgetBuilder>{
   'Home Page' : (_) => const HomePage(),
   'Practice Mode' : (_) => const PracticeMode(),
+  'Assignment Mode' : (_) => const AssignmentMode(),
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page' : (_) => const DesktopHomePage(),
   'Practice Mode' : (_) => const DesktopPracticeMode(),
+  'Assignment Mode' : (_) => const AssignmentMode(),
 };
 
 // this is a `StateProvider` so we can change its value

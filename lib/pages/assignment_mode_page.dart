@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/constants.dart';
+import 'package:learn_languages/models/question_model.dart';
 
 import '../widget_tree.dart';
 
@@ -14,6 +15,10 @@ class AssignmentMode extends StatefulWidget {
 
 class _AssignmentModeState extends State<AssignmentMode> {
   final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 2;
+  bool shuffled = false;
+  List<Question> topic1 = [];
+  List<Question> topic2 = [];
+  Map<String, List<Question>>? topicMap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +27,7 @@ class _AssignmentModeState extends State<AssignmentMode> {
         color: Colors.black,
         child: Column(
           children: [
+            // * image banner
             SizedBox(
               height: 250,
               width: double.infinity,
@@ -120,6 +126,7 @@ class _AssignmentModeState extends State<AssignmentMode> {
                 ],
               ),
             ),
+            // * body
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -144,11 +151,21 @@ class _AssignmentModeState extends State<AssignmentMode> {
                               var prov = watch(questionProvider);
                               var questions = prov.items;
                               if (questions.isNotEmpty) {
+                                // * only happens once
+                                if (!shuffled){
+                                  topicMap = prov.getAssignmentLists();
+                                  topic1 = topicMap!.values.toList()[0];
+                                  topic2 = topicMap!.values.toList()[1];
+                                  topic1.shuffle();
+                                  topic2.shuffle();
+                                  shuffled = true;
+                                }
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(questions.toString()),
+                                    Text(topic1.toString()),
+                                    Text(topic2.toString()),
                                   ],
                                 );
                               } else {
