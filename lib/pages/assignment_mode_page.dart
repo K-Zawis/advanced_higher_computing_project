@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -271,6 +272,66 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                 constraints: const BoxConstraints(
                                   maxWidth: 850,
                                 ),
+                                child: Visibility(
+                                  visible: _complete,
+                                  child: SingleChildScrollView(
+                                    padding: const EdgeInsets.all(50),
+                                    physics: const BouncingScrollPhysics(),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.network(
+                                          'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/medal_icon.png?alt=media&token=d981c36e-6b33-4d2a-8783-b564ab439b7e',
+                                          //color: textColour,
+                                          height: 200,
+                                          //colorBlendMode: BlendMode.srcIn,
+                                        ),
+                                        Text(
+                                          'CONGRATULATIONS!',
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.primary,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text(
+                                          'You have completed Assignment Mode!',
+                                          style: TextStyle(
+                                            color: textColour,
+                                            fontSize: 16,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pushReplacement(
+                                              PageRouteBuilder(
+                                                pageBuilder: (BuildContext context, _, __) => super.widget,
+                                              ),
+                                            );
+                                          },
+                                          icon: const Icon(Icons.replay),
+                                          color: Theme.of(context).hintColor,
+                                          iconSize: 80,
+                                        ),
+                                        Text(
+                                          'Replay?',
+                                          style: TextStyle(
+                                            color: Theme.of(context).hintColor,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -293,65 +354,68 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                             );
                           },
                         ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () async {
-                                  if (!_playing.value) {
-                                    await _flutterTts.speak(_question);
-                                  } else {
-                                    await _flutterTts.stop();
-                                  }
-                                },
-                                icon: AnimatedIcon(
-                                  progress: _animationController,
-                                  icon: AnimatedIcons.play_pause,
-                                  color: Theme.of(context).colorScheme.primary,
+                        Visibility(
+                          visible: !_complete,
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    if (!_playing.value) {
+                                      await _flutterTts.speak(_question);
+                                    } else {
+                                      await _flutterTts.stop();
+                                    }
+                                  },
+                                  icon: AnimatedIcon(
+                                    progress: _animationController,
+                                    icon: AnimatedIcons.play_pause,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  iconSize: 70,
                                 ),
-                                iconSize: 70,
-                              ),
-                              IconButton(
-                                onPressed: () async {
-                                  await _flutterTts.stop();
-                                  if (!(_usedQuestions[_topic1[0].topic]?.length == _topic1.length &&
-                                      _usedQuestions[_topic2[0].topic]?.length == _topic2.length)) {
-                                    if (_index == 0) {
-                                      if (_usedQuestions[_topic1[0].topic]?.length == _topic1.length) {
-                                        setState(() {
-                                          nextQuestion(_topic2);
-                                        });
+                                IconButton(
+                                  onPressed: () async {
+                                    await _flutterTts.stop();
+                                    if (!(_usedQuestions[_topic1[0].topic]?.length == _topic1.length &&
+                                        _usedQuestions[_topic2[0].topic]?.length == _topic2.length)) {
+                                      if (_index == 0) {
+                                        if (_usedQuestions[_topic1[0].topic]?.length == _topic1.length) {
+                                          setState(() {
+                                            nextQuestion(_topic2);
+                                          });
+                                        } else {
+                                          setState(() {
+                                            nextQuestion(_topic1);
+                                          });
+                                        }
                                       } else {
-                                        setState(() {
-                                          nextQuestion(_topic1);
-                                        });
+                                        if (_usedQuestions[_topic2[0].topic]?.length == _topic2.length) {
+                                          setState(() {
+                                            nextQuestion(_topic1);
+                                          });
+                                        } else {
+                                          setState(() {
+                                            nextQuestion(_topic2);
+                                          });
+                                        }
                                       }
                                     } else {
-                                      if (_usedQuestions[_topic2[0].topic]?.length == _topic2.length) {
-                                        setState(() {
-                                          nextQuestion(_topic1);
-                                        });
-                                      } else {
-                                        setState(() {
-                                          nextQuestion(_topic2);
-                                        });
-                                      }
+                                      setState(() {
+                                        _complete = true;
+                                      });
                                     }
-                                  } else {
-                                    setState(() {
-                                      _complete = true;
-                                    });
-                                  }
-                                },
-                                icon: Icon(
-                                  Icons.skip_next,
-                                  color: Theme.of(context).colorScheme.primary,
+                                  },
+                                  icon: Icon(
+                                    Icons.skip_next,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  iconSize: 70,
                                 ),
-                                iconSize: 70,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
