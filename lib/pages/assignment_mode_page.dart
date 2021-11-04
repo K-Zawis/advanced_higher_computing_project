@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,15 +18,39 @@ class AssignmentMode extends StatefulWidget {
 }
 
 class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStateMixin {
-  final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 2;
+  final int _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 2;
   late AnimationController _animationController;
-  late FlutterTts flutterTts;
+  late FlutterTts _flutterTts;
   final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
-  bool shuffled = false;
-  List<Question> topic1 = [];
-  List<Question> topic2 = [];
-  Map<String, List<Question>>? topicMap;
-  String question = '';
+  bool _shuffled = false;
+  List<Question> _topic1 = [];
+  List<Question> _topic2 = [];
+  final Map<dynamic, List<dynamic>> _usedQuestions = {};
+  final _index = Random().nextInt(1);
+  Map<String, List<Question>>? _topicMap;
+  String _question = '';
+  bool _complete = false;
+
+  void nextQuestion(List<Question> topic) {
+    Random rnd = Random();
+    _question = '';
+    int? index;
+    while (_question == '') {
+      index = rnd.nextInt(topic.length);
+      if (_usedQuestions[topic[index].topic] != null) {
+        if (!_usedQuestions[topic[index].topic]!.contains(topic[index].question)) {
+          _question = topic[index].question;
+        }
+      } else {
+        _question = topic[index].question;
+      }
+    }
+    _usedQuestions.update(
+      topic[index!].topic,
+      (list) => list..add(topic[index!].question),
+      ifAbsent: () => [topic[index!].question],
+    );
+  }
 
   @override
   void initState() {
@@ -39,35 +65,36 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
   }
 
   initTts() {
-    flutterTts = FlutterTts();
-    flutterTts.setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
+    _flutterTts = FlutterTts();
+    _flutterTts
+        .setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
 
     // TODO -- find out why stop() doesn't work in safari and how to fix it
-    flutterTts.setCancelHandler(() {
+    _flutterTts.setCancelHandler(() {
       _animationController.reverse();
       setState(() {
         _playing.value = false;
       });
     });
-    flutterTts.setPauseHandler(() {
+    _flutterTts.setPauseHandler(() {
       _animationController.reverse();
       setState(() {
         _playing.value = false;
       });
     });
-    flutterTts.setContinueHandler(() {
+    _flutterTts.setContinueHandler(() {
       _animationController.forward();
       setState(() {
         _playing.value = true;
       });
     });
-    flutterTts.setCompletionHandler(() {
+    _flutterTts.setCompletionHandler(() {
       _animationController.reverse();
       setState(() {
         _playing.value = false;
       });
     });
-    flutterTts.setStartHandler(() {
+    _flutterTts.setStartHandler(() {
       _animationController.forward();
       setState(() {
         _playing.value = true;
@@ -78,7 +105,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
   @override
   void dispose() {
     _animationController.dispose();
-    flutterTts.stop();
+    _flutterTts.stop();
     super.dispose();
   }
 
@@ -212,152 +239,178 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   color: Theme.of(context).scaffoldBackgroundColor,
                 ),
-                child: Consumer(
-                  builder: (context, watch, child) {
-                    var prov = watch(questionProvider);
-                    var questions = prov.items;
-                    print(questions);
-                    if (questions.isNotEmpty) {
-                      // * only happens once
-                      if (!shuffled){
-                        topicMap = prov.getAssignmentLists();
-                        topic1 = topicMap!.values.toList()[0];
-                        topic2 = topicMap!.values.toList()[1];
-                        topic1.shuffle();
-                        topic2.shuffle();
-                        shuffled = true;
+                child: Consumer(builder: (context, watch, child) {
+                  var prov = watch(questionProvider);
+                  var questions = prov.items;
+                  if (questions.isNotEmpty) {
+                    // * only happens once
+                    if (!_shuffled) {
+                      _topicMap = prov.getAssignmentLists();
+                      _topic1 = _topicMap!.values.toList()[0];
+                      _topic2 = _topicMap!.values.toList()[1];
+                      _topic1.shuffle();
+                      _topic2.shuffle();
+                      if (_index == 0) {
+                        nextQuestion(_topic1);
+                      } else {
+                        nextQuestion(_topic2);
                       }
-                      return Column(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
-                              padding: const EdgeInsets.only(top: 20),
-                              child: SingleChildScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                child: Container(
-                                  padding: const EdgeInsets.only(right: 50, left: 50),
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 850,
-                                  ),
+                      _shuffled = true;
+                    }
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration:
+                                const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+                            padding: const EdgeInsets.only(top: 20),
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Container(
+                                padding: const EdgeInsets.only(right: 50, left: 50),
+                                constraints: const BoxConstraints(
+                                  maxWidth: 850,
                                 ),
                               ),
                             ),
                           ),
-                          ValueListenableBuilder(
-                            valueListenable: _playing,
-                            builder: (BuildContext context, bool value, Widget? child) {
-                              return Visibility(
-                                visible: value,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 50),
-                                  child: Container(
-                                    width: 80,
-                                    constraints: const BoxConstraints(
-                                      minHeight: 120,
-                                    ),
-                                    child: SoundWave(),
+                        ),
+                        ValueListenableBuilder(
+                          valueListenable: _playing,
+                          builder: (BuildContext context, bool value, Widget? child) {
+                            return Visibility(
+                              visible: value,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 50),
+                                child: Container(
+                                  width: 80,
+                                  constraints: const BoxConstraints(
+                                    minHeight: 120,
                                   ),
+                                  child: SoundWave(),
                                 ),
-                              );
-                            },
-                          ),
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  onPressed: () async {
-                                    if (!_playing.value) {
-                                      await flutterTts.speak(question);
+                              ),
+                            );
+                          },
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () async {
+                                  if (!_playing.value) {
+                                    await _flutterTts.speak(_question);
+                                  } else {
+                                    await _flutterTts.stop();
+                                  }
+                                },
+                                icon: AnimatedIcon(
+                                  progress: _animationController,
+                                  icon: AnimatedIcons.play_pause,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                iconSize: 70,
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  await _flutterTts.stop();
+                                  if (!(_usedQuestions[_topic1[0].topic]?.length == _topic1.length &&
+                                      _usedQuestions[_topic2[0].topic]?.length == _topic2.length)) {
+                                    if (_index == 0) {
+                                      if (_usedQuestions[_topic1[0].topic]?.length == _topic1.length) {
+                                        setState(() {
+                                          nextQuestion(_topic2);
+                                        });
+                                      } else {
+                                        setState(() {
+                                          nextQuestion(_topic1);
+                                        });
+                                      }
                                     } else {
-                                      await flutterTts.stop();
+                                      if (_usedQuestions[_topic2[0].topic]?.length == _topic2.length) {
+                                        setState(() {
+                                          nextQuestion(_topic1);
+                                        });
+                                      } else {
+                                        setState(() {
+                                          nextQuestion(_topic2);
+                                        });
+                                      }
                                     }
-                                  },
-                                  icon: AnimatedIcon(
-                                    progress: _animationController,
-                                    icon: AnimatedIcons.play_pause,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                                  iconSize: 70,
-                                ),
-                                IconButton(
-                                  onPressed: () async {
-                                    await flutterTts.stop();
+                                  } else {
                                     setState(() {
-                                      question = '';
+                                      _complete = true;
                                     });
-                                  },
-                                  icon: Icon(
-                                    Icons.skip_next,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                                  iconSize: 70,
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.skip_next,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
-                              ],
-                            ),
+                                iconSize: 70,
+                              ),
+                            ],
                           ),
-                        ],
-                      );
-                    } else {
-                      return CountdownTimer(
-                          endTime: endTime,
-                          widgetBuilder: (context, time) {
-                            if (time == null) {
-                              return Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(50),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Image.network(
-                                        'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/data-not-found-1965034-1662569.png?alt=media&token=a13358ff-8ade-4b2b-855a-22756dba91d8',
+                        ),
+                      ],
+                    );
+                  } else {
+                    return CountdownTimer(
+                        endTime: _endTime,
+                        widgetBuilder: (context, time) {
+                          if (time == null) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(50),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.network(
+                                      'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/data-not-found-1965034-1662569.png?alt=media&token=a13358ff-8ade-4b2b-855a-22756dba91d8',
+                                      color: textColour,
+                                      height: 200,
+                                      colorBlendMode: BlendMode.srcIn,
+                                    ),
+                                    const Text(
+                                      'No Data Found',
+                                      style: TextStyle(
                                         color: textColour,
-                                        height: 200,
-                                        colorBlendMode: BlendMode.srcIn,
+                                        fontSize: 25,
                                       ),
-                                      const Text(
-                                        'No Data Found',
-                                        style: TextStyle(
-                                          color: textColour,
-                                          fontSize: 25,
-                                        ),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'No questions were found in this topic, try again later or pick a different topic',
+                                      style: TextStyle(
+                                        color: Theme.of(context).hintColor,
+                                        fontSize: 16,
                                       ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        'No questions were found in this topic, try again later or pick a different topic',
-                                        style: TextStyle(
-                                          color: Theme.of(context).hintColor,
-                                          fontSize: 16,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                    ],
-                                  ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
                                 ),
-                              );
-                            } else {
-                              // ! fix sizing
-                              return const Padding(
-                                padding: EdgeInsets.only(top: 100),
-                                child: SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: FittedBox(child: CircularProgressIndicator()),
-                                ),
-                              );
-                            }
+                              ),
+                            );
+                          } else {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 100),
+                              child: SizedBox(
+                                height: 50,
+                                width: 50,
+                                child: Center(child: FittedBox(child: CircularProgressIndicator())),
+                              ),
+                            );
                           }
-                      );
-                    }
+                        });
                   }
-                ),
+                }),
               ),
             ),
           ],

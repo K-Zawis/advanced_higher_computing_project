@@ -15,7 +15,7 @@ class ResponsiveLayout extends StatelessWidget {
     required this.computer,
     Key? key}) : super(key: key);
 
-  static const int tinyHeightLimit = 100;
+  static const int tinyHeightLimit = 410;
   static const int tinyLimit = 270;
   static const int phoneLimit = 550;
   static const int tabletLimit = 800;
