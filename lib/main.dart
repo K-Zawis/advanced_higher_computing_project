@@ -15,12 +15,12 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
-
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, watch) {
+    watch(firebaseAuthProvider).signInAnonymously();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

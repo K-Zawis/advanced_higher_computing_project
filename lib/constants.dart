@@ -2,6 +2,7 @@ library my_prj.constants;
 
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/providers/language_provider.dart';
@@ -35,6 +36,7 @@ const iconColour = Color(0xFFD6DEDC);
 const hintColour = Color(0xFF494B50);
 
 // * providers
+final firebaseAuthProvider = Provider((_) => FirebaseAuth.instance);
 final languageProvider = ChangeNotifierProvider((ref) => Languages());
 final qualificationProvider = ChangeNotifierProvider((ref) => Qualifications());
 final topicProvider = ChangeNotifierProvider((ref) {

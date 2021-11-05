@@ -11,14 +11,14 @@ import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
 import '../widget_tree.dart';
 
-class AssignmentMode extends StatefulWidget {
-  const AssignmentMode({Key? key}) : super(key: key);
+class DesktopAssignmentMode extends StatefulWidget {
+  const DesktopAssignmentMode({Key? key}) : super(key: key);
 
   @override
-  _AssignmentModeState createState() => _AssignmentModeState();
+  _DesktopAssignmentModeState createState() => _DesktopAssignmentModeState();
 }
 
-class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStateMixin {
+class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with TickerProviderStateMixin {
   final int _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 2;
   late AnimationController _animationController;
   late FlutterTts _flutterTts;
@@ -48,7 +48,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
     }
     _usedQuestions.update(
       topic[index!].topic,
-      (list) => list..add(topic[index!].question),
+          (list) => list..add(topic[index!].question),
       ifAbsent: () => [topic[index!].question],
     );
   }
@@ -241,7 +241,6 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   color: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 child: Consumer(builder: (context, watch, child) {
@@ -267,7 +266,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                         Expanded(
                           child: Container(
                             decoration:
-                                const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+                            const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
                             padding: const EdgeInsets.only(top: 50),
                             child: SingleChildScrollView(
                               physics: const BouncingScrollPhysics(),
@@ -304,25 +303,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                         const Text(
                                           'You have completed Assignment Mode!',
                                           style: TextStyle(
-                                            color: textColour,/*const SizedBox(
-                                          height: 30,
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            selectPage(context, 'Assignment Mode');
-                                          },
-                                          icon: const Icon(Icons.replay),
-                                          color: Theme.of(context).colorScheme.primary,
-                                          iconSize: 80,
-                                        ),
-                                        Text(
-                                          'Replay?',
-                                          style: TextStyle(
-                                            color: Theme.of(context).colorScheme.primary,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),*/
+                                            color: textColour,
                                             fontSize: 16,
                                           ),
                                           textAlign: TextAlign.center,
