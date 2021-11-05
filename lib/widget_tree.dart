@@ -14,12 +14,18 @@ import 'pages/assignment_mode_page.dart';
 final _availablePages = <String, WidgetBuilder>{
   'Home Page' : (_) => const HomePage(),
   'Practice Mode' : (_) => const PracticeMode(),
-  'Assignment Mode' : (_) => const AssignmentMode(),
+  'Assignment Mode' : (_) {
+    // TODO -- shuffle the questions here
+    return const AssignmentMode();
+  },
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page' : (_) => const DesktopHomePage(),
   'Practice Mode' : (_) => const DesktopPracticeMode(),
-  'Assignment Mode' : (_) => const DesktopAssignmentMode(),
+  'Assignment Mode' : (_) {
+    // TODO -- shuffle the questions here
+    return const DesktopAssignmentMode();
+  },
 };
 
 // this is a `StateProvider` so we can change its value

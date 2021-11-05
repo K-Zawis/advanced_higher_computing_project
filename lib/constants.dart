@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/providers/assesment_provider.dart';
 import 'package:learn_languages/providers/language_provider.dart';
 import 'package:learn_languages/providers/qualification_provider.dart';
 import 'package:learn_languages/providers/question_provider.dart';
@@ -47,4 +48,8 @@ final topicProvider = ChangeNotifierProvider((ref) {
 final questionProvider = ChangeNotifierProvider((ref) {
   var topic = ref.watch(topicProvider).getTopicIds();
   return Questions(topic);
+});
+final assessmentProvider = ChangeNotifierProvider((ref){
+  var questions = ref.watch(questionProvider);
+  return AssessmentProvider();
 });
