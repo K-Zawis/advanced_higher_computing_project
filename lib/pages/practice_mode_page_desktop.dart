@@ -239,7 +239,7 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                             var questions = prov.items;
                             if (questions.isNotEmpty) {
                               if (question == ''){
-                                question = randomListItem(questions.values.toList())._question;
+                                question = randomListItem(questions.values.toList()).question;
                               }
                               return Visibility(
                                 visible: prov.getVisible(),
@@ -352,7 +352,7 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                           onPressed: () async {
                             await flutterTts.stop();
                             setState(() {
-                              question = randomListItem(context.read(questionProvider).items.values.toList())._question;
+                              question = randomListItem(context.read(questionProvider).items.values.toList()).question;
                             });
                           },
                           icon: Icon(
