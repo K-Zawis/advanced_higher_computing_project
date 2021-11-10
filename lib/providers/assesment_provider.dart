@@ -7,7 +7,7 @@ import '../models/question_model.dart';
 class AssessmentProvider extends ChangeNotifier {
   bool _complete = false;
   final Map<dynamic, List<dynamic>> _usedQuestions = {};
-  final _index = Random().nextInt(1);
+  int? _index = null;
   Map<String, List<Question>>? _topicMap;
   String _question = '';
 
@@ -32,5 +32,11 @@ class AssessmentProvider extends ChangeNotifier {
       (list) => list..add(val),
       ifAbsent: () => [val],
     );
+  }
+
+  void resetIndex() {
+    print('resetting');
+    _index = Random().nextInt(1);
+    print(_index);
   }
 }

@@ -360,6 +360,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                               width: 250,
                               child: ElevatedButton(
                                 onPressed: () {
+                                  context.read(assessmentProvider).resetIndex();
                                   _assignment = true;
                                   _formKey.currentState?.save();
                                   _multiKey.currentState?.save();

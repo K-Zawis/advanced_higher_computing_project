@@ -92,12 +92,12 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
           children: [
             // * image bar
             SizedBox(
-              height: 250,
+              height: MediaQuery.of(context).size.height * 0.3,
               width: double.infinity,
               child: Stack(
                 children: [
                   SizedBox(
-                    height: 250,
+                    height: MediaQuery.of(context).size.height * 0.3,
                     width: double.infinity,
                     child: Image.network(
                       'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/pexels-lilartsy-1925536.jpg?alt=media&token=df33a026-149b-46fb-b291-d57eb5e8c0d3',

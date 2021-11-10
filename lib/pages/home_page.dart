@@ -34,12 +34,12 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             SizedBox(
-              height: 250,
+              height: MediaQuery.of(context).size.height * 0.3,
               width: double.infinity,
               child: Stack(
                 children: [
                   SizedBox(
-                    height: 250,
+                    height: MediaQuery.of(context).size.height * 0.3,
                     width: double.infinity,
                     child: Image.network(
                       'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/pexels-lilartsy-1925536.jpg?alt=media&token=df33a026-149b-46fb-b291-d57eb5e8c0d3',
@@ -138,7 +138,6 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: Container(
-                //height: MediaQuery.of(context).size.height - 250,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
@@ -323,101 +322,93 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           ),
-                          Container(
-                            //height: 100,
-                            width: MediaQuery.of(context).size.width,
-                            constraints: const BoxConstraints(
-                              maxHeight: 100,
-                              minHeight: 50,
-                            ),
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 20),
-                                child: Wrap(
-                                  spacing: 50,
-                                  runSpacing: 10,
-                                  alignment: WrapAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 250,
-                                      child: ElevatedButton(
-                                        onPressed: () async {
-                                          _assignment = false;
-                                          _formKey.currentState?.save();
-                                          _multiKey.currentState?.save();
-                                          if (_formKey.currentState!.validate()) {
-                                            selectPage(context, 'Practice Mode');
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 15.0, /*horizontal: 10*/),
-                                          child: Text(
-                                            'PRACTICE MODE',
-                                            softWrap: false,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              color: Theme.of(context).colorScheme.primary,
-                                            ),
-                                          ),
-                                        ),
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(15.0),
-                                              side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
-                                            ),
-                                          ),
-                                          backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                                          elevation: MaterialStateProperty.all(0),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 250,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          _assignment = true;
-                                          _formKey.currentState?.save();
-                                          _multiKey.currentState?.save();
-                                          if (_formKey.currentState!.validate()) {
-                                            if (_selectedTopics.length == 2) {
-                                              selectPage(context, 'Assignment Mode');
-                                            } else {
-                                            }
-                                          }
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 15.0, /*horizontal: 10*/),
-                                          child: Text(
-                                            'ASSIGNMENT MODE',
-                                            softWrap: false,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(15.0),
-                                            ),
-                                          ),
-                                          elevation: MaterialStateProperty.all(0),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 50,
-                          ),
                         ],
                       ),
                     ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Wrap(
+                    spacing: 50,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 250,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            _assignment = false;
+                            _formKey.currentState?.save();
+                            _multiKey.currentState?.save();
+                            if (_formKey.currentState!.validate()) {
+                              selectPage(context, 'Practice Mode');
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0, /*horizontal: 10*/),
+                            child: Text(
+                              'PRACTICE MODE',
+                              softWrap: false,
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                            elevation: MaterialStateProperty.all(0),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 250,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            //context.read(assessmentProvider).resetIndex();
+                            _assignment = true;
+                            _formKey.currentState?.save();
+                            _multiKey.currentState?.save();
+                            if (_formKey.currentState!.validate()) {
+                              if (_selectedTopics.length == 2) {
+                                selectPage(context, 'Assignment Mode');
+                              }
+                            }
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15.0,),
+                            child: Text(
+                              'ASSIGNMENT MODE',
+                              softWrap: false,
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                            ),
+                            elevation: MaterialStateProperty.all(0),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
