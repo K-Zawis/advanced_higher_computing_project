@@ -378,7 +378,6 @@ class _HomePageState extends State<HomePage> {
                         width: 250,
                         child: ElevatedButton(
                           onPressed: () {
-                            //context.read(assessmentProvider).resetIndex();
                             _assignment = true;
                             _formKey.currentState?.save();
                             _multiKey.currentState?.save();

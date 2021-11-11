@@ -50,6 +50,6 @@ final questionProvider = ChangeNotifierProvider((ref) {
   return Questions(topic);
 });
 final assessmentProvider = ChangeNotifierProvider((ref){
-  var questions = ref.watch(questionProvider);
+  // var questions = ref.watch(questionProvider);
   return AssessmentProvider();
 });

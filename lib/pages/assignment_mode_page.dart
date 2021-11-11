@@ -22,32 +22,9 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
   late AnimationController _animationController;
   late FlutterTts _flutterTts;
   final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
-  bool _shuffled = false;
   List<Question> _topic1 = [];
   List<Question> _topic2 = [];
-  //final Map<dynamic, List<dynamic>> _usedQuestions = {};
-  final _index = Random().nextInt(1);
   Map<String, List<Question>>? _topicMap;
-  String _question = '';
-  // TODO -- check complete
-  bool _complete = false;
-
-  void nextQuestion(List<Question> topic) {
-    Random rnd = Random();
-    _question = '';
-    int? index;
-    while (_question == '') {
-      index = rnd.nextInt(topic.length);
-      if (context.read(assessmentProvider).getUsedQuestions()[topic[index].topic] != null) {
-        if (!context.read(assessmentProvider).getUsedQuestions()[topic[index].topic]!.contains(topic[index].question)) {
-          _question = topic[index].question;
-        }
-      } else {
-        _question = topic[index].question;
-      }
-    }
-    context.read(assessmentProvider).setUsedQuestions(topic[index!].topic, topic[index].question);
-  }
 
   @override
   void initState() {
@@ -172,6 +149,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                     color: Colors.white,
                                     size: 35,
                                   ),
+                                  tooltip: 'Menu',
                                 ),
                                 IconButton(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -181,12 +159,14 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                     size: 25,
                                   ),
                                   onPressed: () {
-                                    if (_complete) {
+                                    if (assessment.getCompleteStatus()) {
+                                      assessment.reset();
                                       selectPage(context, 'Home Page');
                                     } else {
                                       _showDialog(context);
                                     }
                                   },
+                                  tooltip: 'Home Page',
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -249,18 +229,18 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                       var questions = prov.items;
                       if (questions.isNotEmpty) {
                         // * only happens once
-                        if (!_shuffled) {
+                        if (!assessment.getShuffledStatus()) {
                           _topicMap = prov.getAssignmentLists();
                           _topic1 = _topicMap!.values.toList()[0];
                           _topic2 = _topicMap!.values.toList()[1];
                           _topic1.shuffle();
                           _topic2.shuffle();
-                          if (_index == 0) {
-                            nextQuestion(_topic1);
+                          if (assessment.getIndex() == 0) {
+                            assessment.nextQuestion(_topic1);
                           } else {
-                            nextQuestion(_topic2);
+                            assessment.nextQuestion(_topic2);
                           }
-                          _shuffled = true;
+                          assessment.setShuffledStatus(true);
                         }
                         return Column(
                           children: [
@@ -277,7 +257,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                       maxWidth: 850,
                                     ),
                                     child: Visibility(
-                                      visible: _complete,
+                                      visible: assessment.getCompleteStatus(),
                                       child: SingleChildScrollView(
                                         padding: const EdgeInsets.only(bottom: 20),
                                         physics: const BouncingScrollPhysics(),
@@ -336,7 +316,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                               },
                             ),
                             Visibility(
-                              visible: !_complete,
+                              visible: !assessment.getCompleteStatus(),
                               child: Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Row(
@@ -345,7 +325,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                     IconButton(
                                       onPressed: () async {
                                         if (!_playing.value) {
-                                          await _flutterTts.speak(_question);
+                                          await _flutterTts.speak(assessment.getQuestion());
                                         } else {
                                           await _flutterTts.stop();
                                         }
@@ -356,36 +336,37 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                         color: Theme.of(context).colorScheme.primary,
                                       ),
                                       iconSize: 70,
+                                      tooltip: _playing.value? 'Stop' : 'Play',
                                     ),
                                     IconButton(
                                       onPressed: () async {
                                         await _flutterTts.stop();
                                         if (!(_usedQuestions[_topic1[0].topic]?.length == _topic1.length &&
                                             _usedQuestions[_topic2[0].topic]?.length == _topic2.length)) {
-                                          if (_index == 0) {
+                                          if (assessment.getIndex() == 0) {
                                             if (_usedQuestions[_topic1[0].topic]?.length == _topic1.length) {
                                               setState(() {
-                                                nextQuestion(_topic2);
+                                                assessment.nextQuestion(_topic2);
                                               });
                                             } else {
                                               setState(() {
-                                                nextQuestion(_topic1);
+                                                assessment.nextQuestion(_topic1);
                                               });
                                             }
                                           } else {
                                             if (_usedQuestions[_topic2[0].topic]?.length == _topic2.length) {
                                               setState(() {
-                                                nextQuestion(_topic1);
+                                                assessment.nextQuestion(_topic1);
                                               });
                                             } else {
                                               setState(() {
-                                                nextQuestion(_topic2);
+                                                assessment.nextQuestion(_topic2);
                                               });
                                             }
                                           }
                                         } else {
                                           setState(() {
-                                            _complete = true;
+                                            assessment.setCompleteStatus(true);
                                           });
                                         }
                                       },
@@ -394,6 +375,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                         color: Theme.of(context).colorScheme.primary,
                                       ),
                                       iconSize: 70,
+                                      tooltip: 'Skip',
                                     ),
                                   ],
                                 ),
@@ -506,6 +488,7 @@ _showDialog(BuildContext context) {
               ),
             ),
             onPressed: () {
+              context.read(assessmentProvider).reset();
               selectPage(context, 'Home Page');
               Navigator.pop(context);
             },
