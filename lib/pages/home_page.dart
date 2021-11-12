@@ -167,8 +167,11 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               Expanded(
-                                child: Padding(
+                                child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 100,
+                                  ),
                                   child: Consumer(builder: (context, watch, child) {
                                     var level = context.read(qualificationProvider).getLevel();
                                     return FormBuilderDropdown(
