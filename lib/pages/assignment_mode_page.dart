@@ -277,6 +277,97 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          const Text(
+                                            "Here's how you did:",
+                                            style: TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          // TODO -- set numbers to be purple
+                                          Text(
+                                            'You have skipped ${assessment.getSkipped().length} questions.',
+                                            style: const TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          const Text(
+                                            'You have played each question on average:',
+                                            style: TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            'in Topic 1: ${(assessment.getUsedQuestions().values.toList()[0].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[0].length).toStringAsFixed(2)} times',
+                                            style: const TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            assessment.getUsedQuestions().values.length == 2
+                                                ? 'in Topic 2: ${(assessment.getUsedQuestions().values.toList()[1].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[1].length).toStringAsFixed(2)} times'
+                                                : '',
+                                            style: const TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          const Text(
+                                            'You have played:',
+                                            style: TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: assessment.getSortedPlayed().length,
+                                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(top: 5),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: MediaQuery.of(context).size.width * 0.6,
+                                                      child: Text(
+                                                        assessment.getSortedPlayed()[index].question.trim(),
+                                                        style: TextStyle(
+                                                          color: Theme.of(context).colorScheme.primary,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text('${assessment.getSortedPlayed()[index].played} times'),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -285,6 +376,8 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                               ),
                             ),
                           ),
+                          Text(
+                              '${assessment.getQuestion()?.question ?? 'N/A'}, ${assessment.getQuestion()?.played ?? 'N/A'}'),
                           ValueListenableBuilder(
                             valueListenable: _playing,
                             builder: (BuildContext context, bool value, Widget? child) {
@@ -314,7 +407,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                     onPressed: () async {
                                       if (!_playing.value) {
                                         assessment.setPlayed();
-                                        await _flutterTts.speak(assessment.getQuestion());
+                                        await _flutterTts.speak(assessment.getQuestion()?.question ?? '');
                                       } else {
                                         await _flutterTts.stop();
                                       }
@@ -331,6 +424,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                     onPressed: () async {
                                       if (!_playing.value) {
                                         await _flutterTts.stop();
+                                        assessment.setPlayed();
                                         assessment.nextQuestion(assessment.getTopic(), false);
                                       }
                                     },
@@ -344,6 +438,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                   IconButton(
                                     onPressed: () async {
                                       await _flutterTts.stop();
+                                      assessment.setSkipped();
                                       assessment.nextQuestion(assessment.getTopic(), false);
                                     },
                                     icon: Icon(

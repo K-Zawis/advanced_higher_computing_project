@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                                   fontSize: 20,
                                 ),
                               ),
-                              Expanded(
+                              Flexible(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                   constraints: const BoxConstraints(

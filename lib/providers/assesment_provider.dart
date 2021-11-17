@@ -7,15 +7,14 @@ import '../models/question_model.dart';
 class AssessmentProvider extends ChangeNotifier {
   bool _complete = false;
   bool _shuffled = false;
-  final Map<dynamic, List<dynamic>> _usedQuestions = {};
+  final Map<dynamic, List<Question>> _usedQuestions = {};
   int _index = Random().nextInt(1);
   final Map<String, List<Question>>? _topicMap;
   List<Question> _topic1 = [];
   List<Question> _topic2 = [];
-  String _question = '';
+  Question? _question;
   String _id = '';
   // statistics
-  final Map<dynamic, dynamic> _skipped = {};
   final Map<dynamic, dynamic> _played = {};
 
   AssessmentProvider(this._topicMap) {
@@ -66,11 +65,11 @@ class AssessmentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Map<dynamic, List<dynamic>> getUsedQuestions() {
+  Map<dynamic, List<Question>> getUsedQuestions() {
     return _usedQuestions;
   }
 
-  void setUsedQuestions(key, val) {
+  void setUsedQuestions(key, Question val) {
     _usedQuestions.update(
       key,
       (list) => list..add(val),
@@ -78,43 +77,70 @@ class AssessmentProvider extends ChangeNotifier {
     );
   }
 
-  Map getPlayed() {
-    return _played;
-  }
-
   void setPlayed() {
-    _played.update(_id, (value) => value + 1, ifAbsent: () => 1);
+    _question!.increasePlayed();
     notifyListeners();
   }
 
-  Map getSkipped() {
-    return _skipped;
+  List<Question> getSortedPlayed() {
+    // initially
+    List<Question> sorted = [];
+    for (var value in _usedQuestions.values) {
+      for (var element in value) {
+        sorted.add(element);
+      }
+    }
+    var value;
+    var index = 0;
+    for (var i = 1; i <= sorted.length - 1; i++) {
+      value = sorted[i];
+      index = i;
+      while (index > 0 && value.played > sorted[index - 1].played) {
+        sorted[index] = sorted[index - 1];
+        index = index - 1;
+      }
+      sorted[index] = value;
+    }
+
+    return sorted;
+  }
+
+  List getSkipped() {
+    List out = [];
+    for (var element in _topicMap!.values) {
+      for (var question in element) {
+        if (question.skipped) {
+          out.add(question);
+        }
+      }
+    }
+    return out;
   }
 
   void setSkipped() {
-    _skipped.putIfAbsent(_id, () => _question);
+    _question!.setSkipped(true);
   }
 
-  String getQuestion() {
+  Question? getQuestion() {
     return _question;
   }
 
   void nextQuestion(List<Question> topic, bool initial) {
     Random rnd = Random();
-    _question = '';
+    _question = null;
     int? index;
     if (topic.isNotEmpty) {
-      while (_question == '') {
+      while (_question == null) {
         index = rnd.nextInt(topic.length);
         if (_usedQuestions[topic[index].topic] != null) {
-          if (!_usedQuestions[topic[index].topic]!.contains(topic[index].question)) {
-            _question = topic[index].question;
+          if (!_usedQuestions[topic[index].topic]!.contains(topic[index])) {
+            _question = topic[index];
           }
         } else {
-          _question = topic[index].question;
+          _question = topic[index];
         }
       }
-      setUsedQuestions(topic[index!].topic, topic[index].question);
+      setUsedQuestions(topic[index!].topic, topic[index]);
       _id = topic[index].id;
       if (!initial) {
         notifyListeners();
@@ -137,7 +163,7 @@ class AssessmentProvider extends ChangeNotifier {
     _topicMap?.clear();
     _complete = false;
     _shuffled = false;
-    _question = '';
+    _question = null;
     _topic2.shuffle();
     _topic1.shuffle();
   }

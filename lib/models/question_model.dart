@@ -4,8 +4,13 @@ class Question {
   final String question;
   final String topic;
   final String id;
+  bool skipped;
+  int played;
 
-  const Question({
+
+  Question({
+    this.played = 0,
+    this.skipped = false,
     required this.question,
     required this.topic,
     required this.id,
@@ -18,5 +23,18 @@ class Question {
       topic: data['topic'] ?? '',
       id: doc.id,
     );
+  }
+
+  void increasePlayed() {
+    played += 1;
+  }
+
+  void setSkipped(bool value) {
+    skipped = value;
+  }
+
+  void reset() {
+    played = 0;
+    skipped = false;
   }
 }
