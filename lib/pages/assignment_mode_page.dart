@@ -79,6 +79,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    // * watches providers and rebuilds all of it's children when it registers a change
     return Consumer(builder: (context, watch, child) {
       var assessment = watch(assessmentProvider);
       return Scaffold(
@@ -239,6 +240,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                   constraints: const BoxConstraints(
                                     maxWidth: 850,
                                   ),
+                                  // * complete message
                                   child: Visibility(
                                     visible: assessment.getCompleteStatus(),
                                     child: SingleChildScrollView(
@@ -457,8 +459,6 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                               ),
                             ),
                           ),
-                          Text(
-                              '${assessment.getQuestion()?.question ?? 'N/A'}, ${assessment.getQuestion()?.played ?? 'N/A'}'),
                           ValueListenableBuilder(
                             valueListenable: _playing,
                             builder: (BuildContext context, bool value, Widget? child) {

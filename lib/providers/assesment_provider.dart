@@ -13,9 +13,6 @@ class AssessmentProvider extends ChangeNotifier {
   List<Question> _topic1 = [];
   List<Question> _topic2 = [];
   Question? _question;
-  String _id = '';
-  // statistics
-  final Map<dynamic, dynamic> _played = {};
 
   AssessmentProvider(this._topicMap) {
     if (_topicMap?.isNotEmpty ?? false) {
@@ -82,6 +79,7 @@ class AssessmentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // * insert sort
   List<Question> getSortedPlayed() {
     // initially
     List<Question> sorted = [];
@@ -141,7 +139,6 @@ class AssessmentProvider extends ChangeNotifier {
         }
       }
       setUsedQuestions(topic[index!].topic, topic[index]);
-      _id = topic[index].id;
       if (!initial) {
         notifyListeners();
       }

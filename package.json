@@ -13,9 +13,9 @@
   "author": "Katarzyna Zawistowska",
   "license": "ISC",
   "dependencies": {
-    "firebase": "^9.1.1"
+    "firebase": "^9.1.1",
+    "firebase-functions": "^3.16.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://Kasia_Zawis@bitbucket.org/Kasia_Zawis/learn_languages.git"
