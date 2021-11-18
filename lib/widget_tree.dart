@@ -15,7 +15,6 @@ final _availablePages = <String, WidgetBuilder>{
   'Home Page' : (_) => const HomePage(),
   'Practice Mode' : (_) => const PracticeMode(),
   'Assignment Mode' : (_) {
-    // TODO -- shuffle the questions here
     return const AssignmentMode();
   },
 };
@@ -23,7 +22,6 @@ final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page' : (_) => const DesktopHomePage(),
   'Practice Mode' : (_) => const DesktopPracticeMode(),
   'Assignment Mode' : (_) {
-    // TODO -- shuffle the questions here
     return const DesktopAssignmentMode();
   },
 };

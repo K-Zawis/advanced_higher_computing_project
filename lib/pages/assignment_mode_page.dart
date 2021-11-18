@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:learn_languages/constants.dart';
-import 'package:learn_languages/models/question_model.dart';
 import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
 import '../widget_tree.dart';
@@ -22,7 +19,6 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
   late AnimationController _animationController;
   late FlutterTts _flutterTts;
   final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
-  Map<String, List<Question>>? _topicMap;
 
   @override
   void initState() {
@@ -85,7 +81,6 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, child) {
       var assessment = watch(assessmentProvider);
-      var _usedQuestions = assessment.getUsedQuestions();
       return Scaffold(
         body: Container(
           color: Colors.black,
@@ -126,7 +121,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.only(bottom: 10.0, left: 10.0),
                       child: Wrap(
                         spacing: 10,
                         runSpacing: 10,
@@ -265,6 +260,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                               fontSize: 25,
                                               fontWeight: FontWeight.bold,
                                             ),
+                                            textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(
                                             height: 10,
@@ -278,24 +274,49 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                             textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(
-                                            height: 30,
+                                            height: 25,
+                                          ),
+                                          Divider(
+                                            color: Theme.of(context).colorScheme.primary,
+                                            thickness: 2,
+                                            endIndent: 20,
+                                            indent: 20,
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
                                           ),
                                           const Text(
                                             "Here's how you did:",
                                             style: TextStyle(
                                               color: textColour,
-                                              fontSize: 16,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
                                             ),
+                                            textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(
                                             height: 15,
                                           ),
-                                          // TODO -- set numbers to be purple
-                                          Text(
-                                            'You have skipped ${assessment.getSkipped().length} questions.',
-                                            style: const TextStyle(
-                                              color: textColour,
-                                              fontSize: 16,
+                                          RichText(
+                                            text: TextSpan(
+                                              style: const TextStyle(
+                                                color: textColour,
+                                                fontSize: 16,
+                                              ),
+                                              text: 'You have skipped ',
+                                              children: [
+                                                TextSpan(
+                                                  text: '${assessment.getSkipped().length} ',
+                                                  style: TextStyle(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: 'questions.',
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           const SizedBox(
@@ -307,27 +328,59 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                               color: textColour,
                                               fontSize: 16,
                                             ),
+                                            textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(
                                             height: 5,
                                           ),
-                                          Text(
-                                            'in Topic 1: ${(assessment.getUsedQuestions().values.toList()[0].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[0].length).toStringAsFixed(2)} times',
-                                            style: const TextStyle(
-                                              color: textColour,
-                                              fontSize: 16,
+                                          RichText(
+                                            text: TextSpan(
+                                              style: const TextStyle(
+                                                color: textColour,
+                                                fontSize: 16,
+                                              ),
+                                              text: 'in Topic 1: ',
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      '${(assessment.getUsedQuestions().values.toList()[0].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[0].length).toStringAsFixed(2)} ',
+                                                  style: TextStyle(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: 'times.',
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           const SizedBox(
                                             height: 5,
                                           ),
-                                          Text(
-                                            assessment.getUsedQuestions().values.length == 2
-                                                ? 'in Topic 2: ${(assessment.getUsedQuestions().values.toList()[1].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[1].length).toStringAsFixed(2)} times'
-                                                : '',
-                                            style: const TextStyle(
-                                              color: textColour,
-                                              fontSize: 16,
+                                          RichText(
+                                            text: TextSpan(
+                                              style: const TextStyle(
+                                                color: textColour,
+                                                fontSize: 16,
+                                              ),
+                                              text: 'in Topic 2: ',
+                                              children: [
+                                                TextSpan(
+                                                  text: assessment.getUsedQuestions().values.length == 2
+                                                      ? '${(assessment.getUsedQuestions().values.toList()[1].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[1].length).toStringAsFixed(2)} '
+                                                      : '',
+                                                  style: TextStyle(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: 'times.',
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           const SizedBox(
@@ -339,34 +392,62 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                               color: textColour,
                                               fontSize: 16,
                                             ),
+                                            textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(
                                             height: 5,
                                           ),
                                           ListView.builder(
                                             shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
                                             itemCount: assessment.getSortedPlayed().length,
                                             padding: const EdgeInsets.symmetric(horizontal: 20),
                                             itemBuilder: (context, index) {
-                                              return Padding(
-                                                padding: const EdgeInsets.only(top: 5),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: MediaQuery.of(context).size.width * 0.6,
-                                                      child: Text(
-                                                        assessment.getSortedPlayed()[index].question.trim(),
-                                                        style: TextStyle(
-                                                          color: Theme.of(context).colorScheme.primary,
+                                              return Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Divider(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    thickness: 1,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: MediaQuery.of(context).size.width * 0.6,
+                                                        child: Text(
+                                                          assessment.getSortedPlayed()[index].question.trim(),
                                                         ),
                                                       ),
-                                                    ),
-                                                    Text('${assessment.getSortedPlayed()[index].played} times'),
-                                                  ],
-                                                ),
+                                                      RichText(
+                                                        text: TextSpan(
+                                                          text: '${assessment.getSortedPlayed()[index].played} ',
+                                                          style: TextStyle(
+                                                            color: Theme.of(context).colorScheme.primary,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                          children: const [
+                                                            TextSpan(
+                                                              text: 'times',
+                                                              style: TextStyle(
+                                                                color: textColour,
+                                                                fontWeight: FontWeight.normal,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               );
                                             },
+                                          ),
+                                          Divider(
+                                            color: Theme.of(context).colorScheme.primary,
+                                            thickness: 1,
+                                            indent: 20,
+                                            endIndent: 20,
                                           ),
                                         ],
                                       ),

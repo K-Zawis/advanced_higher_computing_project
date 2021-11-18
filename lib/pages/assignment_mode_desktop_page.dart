@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:learn_languages/constants.dart';
-import 'package:learn_languages/models/question_model.dart';
 import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
 import '../widget_tree.dart';
@@ -22,35 +19,6 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
   late AnimationController _animationController;
   late FlutterTts _flutterTts;
   final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
-  bool _shuffled = false;
-  List<Question> _topic1 = [];
-  List<Question> _topic2 = [];
-  final Map<dynamic, List<dynamic>> _usedQuestions = {};
-  final _index = Random().nextInt(1);
-  Map<String, List<Question>>? _topicMap;
-  String _question = '';
-  bool _complete = false;
-
-  void nextQuestion(List<Question> topic) {
-    Random rnd = Random();
-    _question = '';
-    int? index;
-    while (_question == '') {
-      index = rnd.nextInt(topic.length);
-      if (_usedQuestions[topic[index].topic] != null) {
-        if (!_usedQuestions[topic[index].topic]!.contains(topic[index].question)) {
-          _question = topic[index].question;
-        }
-      } else {
-        _question = topic[index].question;
-      }
-    }
-    _usedQuestions.update(
-      topic[index!].topic,
-          (list) => list..add(topic[index!].question),
-      ifAbsent: () => [topic[index!].question],
-    );
-  }
 
   @override
   void initState() {
@@ -111,315 +79,461 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.black,
-        child: Column(
-          children: [
-            // * image banner
-            SizedBox(
-              height: 250,
-              width: double.infinity,
-              child: Stack(
-                children: [
-                  SizedBox(
-                    height: 250,
-                    width: double.infinity,
-                    child: Image.network(
-                      'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/pexels-lilartsy-1925536.jpg?alt=media&token=df33a026-149b-46fb-b291-d57eb5e8c0d3',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0.0,
-                    left: 0.0,
-                    right: 0.0,
-                    child: Container(
-                      height: 80,
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 0, 0, 0),
-                            Color.fromARGB(150, 0, 0, 0),
-                            Color.fromARGB(0, 0, 0, 0)
-                          ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                        ),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Scaffold.of(context).openDrawer();
-                              },
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              icon: const Icon(
-                                Icons.menu,
-                                color: Colors.white,
-                                size: 35,
-                              ),
-                            ),
-                            IconButton(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              icon: const Icon(
-                                Icons.home_filled,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                              onPressed: () {
-                                if (_complete) {
-                                  selectPage(context, 'Home Page');
-                                } else {
-                                  _showDialog(context);
-                                }
-                              },
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                              ),
-                              child: SizedBox(
-                                height: 52,
-                                width: 100,
-                                child: Consumer(builder: (context, watch, child) {
-                                  var prov = watch(languageProvider);
-                                  var language = prov.items[prov.getLanguage()];
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0x451C1C1C),
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(4.0),
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                                        child: Text(
-                                          language!.ISOcode,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Text(
-                          'ASSIGNMENT MODE',
-                          style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // * body
-            Expanded(
-              child: Container(
+    return Consumer(builder: (context, watch, child) {
+      var assessment = watch(assessmentProvider);
+      return Scaffold(
+        body: Container(
+          color: Colors.black,
+          child: Column(
+            children: [
+              // * image banner
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.3,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-                child: Consumer(builder: (context, watch, child) {
-                  var prov = watch(questionProvider);
-                  var questions = prov.items;
-                  if (questions.isNotEmpty) {
-                    // * only happens once
-                    if (!_shuffled) {
-                      _topicMap = prov.getAssignmentLists();
-                      _topic1 = _topicMap!.values.toList()[0];
-                      _topic2 = _topicMap!.values.toList()[1];
-                      _topic1.shuffle();
-                      _topic2.shuffle();
-                      if (_index == 0) {
-                        nextQuestion(_topic1);
-                      } else {
-                        nextQuestion(_topic2);
-                      }
-                      _shuffled = true;
-                    }
-                    return Column(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration:
-                            const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
-                            padding: const EdgeInsets.only(top: 50),
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: Container(
-                                padding: const EdgeInsets.only(right: 20, left: 20),
-                                constraints: const BoxConstraints(
-                                  maxWidth: 850,
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      width: double.infinity,
+                      child: Image.network(
+                        'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/pexels-lilartsy-1925536.jpg?alt=media&token=df33a026-149b-46fb-b291-d57eb5e8c0d3',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0.0,
+                      left: 0.0,
+                      right: 0.0,
+                      child: Container(
+                        height: 80,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromARGB(255, 0, 0, 0),
+                              Color.fromARGB(150, 0, 0, 0),
+                              Color.fromARGB(0, 0, 0, 0)
+                            ],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0, left: 10.0),
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Scaffold.of(context).openDrawer();
+                                },
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                icon: const Icon(
+                                  Icons.menu,
+                                  color: Colors.white,
+                                  size: 35,
                                 ),
-                                child: Visibility(
-                                  visible: _complete,
-                                  child: SingleChildScrollView(
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    physics: const BouncingScrollPhysics(),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.network(
-                                          'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/medal_icon.png?alt=media&token=d981c36e-6b33-4d2a-8783-b564ab439b7e',
-                                          //color: textColour,
-                                          height: 200,
-                                          //colorBlendMode: BlendMode.srcIn,
+                                tooltip: 'Menu',
+                              ),
+                              IconButton(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                icon: const Icon(
+                                  Icons.home_filled,
+                                  color: Colors.white,
+                                  size: 25,
+                                ),
+                                onPressed: () {
+                                  if (assessment.getCompleteStatus()) {
+                                    assessment.reset();
+                                    selectPage(context, 'Home Page');
+                                  } else {
+                                    _showDialog(context);
+                                  }
+                                },
+                                tooltip: 'Home Page',
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                child: SizedBox(
+                                  height: 52,
+                                  width: 100,
+                                  child: Consumer(builder: (context, watch, child) {
+                                    var prov = watch(languageProvider);
+                                    var language = prov.items[prov.getLanguage()];
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color: const Color(0x451C1C1C),
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 2,
                                         ),
-                                        Text(
-                                          'CONGRATULATIONS!',
-                                          style: TextStyle(
+                                        borderRadius: BorderRadius.circular(4.0),
+                                      ),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          child: Text(
+                                            language!.ISOcode,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Text(
+                            'ASSIGNMENT MODE',
+                            style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // * body
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                  child: Consumer(builder: (context, watch, child) {
+                    var prov = watch(questionProvider);
+                    var questions = prov.items;
+                    if (questions.isNotEmpty) {
+                      // * only happens once
+                      if (!assessment.getShuffledStatus()) {
+                        assessment.nextQuestion(assessment.getTopic(), true);
+                        assessment.setShuffledStatus(true);
+                      }
+                      return Column(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration:
+                                  const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+                              padding: const EdgeInsets.only(top: 50),
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: Container(
+                                  padding: const EdgeInsets.only(right: 20, left: 20),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 850,
+                                  ),
+                                  child: Visibility(
+                                    visible: assessment.getCompleteStatus(),
+                                    child: SingleChildScrollView(
+                                      padding: const EdgeInsets.only(bottom: 20),
+                                      physics: const BouncingScrollPhysics(),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Image.network(
+                                            'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/medal_icon.png?alt=media&token=d981c36e-6b33-4d2a-8783-b564ab439b7e',
+                                            //color: textColour,
+                                            height: 200,
+                                            //colorBlendMode: BlendMode.srcIn,
+                                          ),
+                                          Text(
+                                            'CONGRATULATIONS!',
+                                            style: TextStyle(
+                                              color: Theme.of(context).colorScheme.primary,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          const Text(
+                                            'You have completed Assignment Mode!',
+                                            style: TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(
+                                            height: 25,
+                                          ),
+                                          Divider(
                                             color: Theme.of(context).colorScheme.primary,
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.bold,
+                                            thickness: 2,
+                                            endIndent: 20,
+                                            indent: 20,
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        const Text(
-                                          'You have completed Assignment Mode!',
-                                          style: TextStyle(
-                                            color: textColour,
-                                            fontSize: 16,
+                                          const SizedBox(
+                                            height: 5,
                                           ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        /*const SizedBox(
-                                          height: 30,
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            selectPage(context, 'Assignment Mode');
-                                          },
-                                          icon: const Icon(Icons.replay),
-                                          color: Theme.of(context).colorScheme.primary,
-                                          iconSize: 80,
-                                        ),
-                                        Text(
-                                          'Replay?',
-                                          style: TextStyle(
+                                          const Text(
+                                            "Here's how you did:",
+                                            style: TextStyle(
+                                              color: textColour,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          RichText(
+                                            text: TextSpan(
+                                              style: const TextStyle(
+                                                color: textColour,
+                                                fontSize: 16,
+                                              ),
+                                              text: 'You have skipped ',
+                                              children: [
+                                                TextSpan(
+                                                  text: '${assessment.getSkipped().length} ',
+                                                  style: TextStyle(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: 'questions.',
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          const Text(
+                                            'You have played each question on average:',
+                                            style: TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          RichText(
+                                            text: TextSpan(
+                                              style: const TextStyle(
+                                                color: textColour,
+                                                fontSize: 16,
+                                              ),
+                                              text: 'in Topic 1: ',
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      '${(assessment.getUsedQuestions().values.toList()[0].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[0].length).toStringAsFixed(2)} ',
+                                                  style: TextStyle(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: 'times.',
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          RichText(
+                                            text: TextSpan(
+                                              style: const TextStyle(
+                                                color: textColour,
+                                                fontSize: 16,
+                                              ),
+                                              text: 'in Topic 2: ',
+                                              children: [
+                                                TextSpan(
+                                                  text: assessment.getUsedQuestions().values.length == 2
+                                                      ? '${(assessment.getUsedQuestions().values.toList()[1].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[1].length).toStringAsFixed(2)} '
+                                                      : '',
+                                                  style: TextStyle(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: 'times.',
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          const Text(
+                                            'You have played:',
+                                            style: TextStyle(
+                                              color: textColour,
+                                              fontSize: 16,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          ListView.builder(
+                                            shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            itemCount: assessment.getSortedPlayed().length,
+                                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                                            itemBuilder: (context, index) {
+                                              return Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Divider(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    thickness: 1,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: MediaQuery.of(context).size.width * 0.4,
+                                                        child: Text(
+                                                          assessment.getSortedPlayed()[index].question.trim(),
+                                                        ),
+                                                      ),
+                                                      RichText(
+                                                        text: TextSpan(
+                                                          text: '${assessment.getSortedPlayed()[index].played} ',
+                                                          style: TextStyle(
+                                                            color: Theme.of(context).colorScheme.primary,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                          children: const [
+                                                            TextSpan(
+                                                              text: 'times',
+                                                              style: TextStyle(
+                                                                color: textColour,
+                                                                fontWeight: FontWeight.normal,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                          Divider(
                                             color: Theme.of(context).colorScheme.primary,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
+                                            thickness: 1,
+                                            indent: 20,
+                                            endIndent: 20,
                                           ),
-                                        ),*/
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: _playing,
-                          builder: (BuildContext context, bool value, Widget? child) {
-                            return Visibility(
-                              visible: value,
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 50),
-                                child: Container(
-                                  width: 80,
-                                  constraints: const BoxConstraints(
-                                    minHeight: 120,
+                          ValueListenableBuilder(
+                            valueListenable: _playing,
+                            builder: (BuildContext context, bool value, Widget? child) {
+                              return Visibility(
+                                visible: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 50),
+                                  child: Container(
+                                    width: 80,
+                                    constraints: const BoxConstraints(
+                                      minHeight: 120,
+                                    ),
+                                    child: SoundWave(),
                                   ),
-                                  child: SoundWave(),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                        Visibility(
-                          visible: !_complete,
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  onPressed: () async {
-                                    if (!_playing.value) {
-                                      await _flutterTts.speak(_question);
-                                    } else {
-                                      await _flutterTts.stop();
-                                    }
-                                  },
-                                  icon: AnimatedIcon(
-                                    progress: _animationController,
-                                    icon: AnimatedIcons.play_pause,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                                  iconSize: 70,
-                                ),
-                                IconButton(
-                                  onPressed: () async {
-                                    await _flutterTts.stop();
-                                    if (!(_usedQuestions[_topic1[0].topic]?.length == _topic1.length &&
-                                        _usedQuestions[_topic2[0].topic]?.length == _topic2.length)) {
-                                      if (_index == 0) {
-                                        if (_usedQuestions[_topic1[0].topic]?.length == _topic1.length) {
-                                          setState(() {
-                                            nextQuestion(_topic2);
-                                          });
-                                        } else {
-                                          setState(() {
-                                            nextQuestion(_topic1);
-                                          });
-                                        }
+                              );
+                            },
+                          ),
+                          Visibility(
+                            visible: !assessment.getCompleteStatus(),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () async {
+                                      if (!_playing.value) {
+                                        assessment.setPlayed();
+                                        await _flutterTts.speak(assessment.getQuestion()?.question ?? '');
                                       } else {
-                                        if (_usedQuestions[_topic2[0].topic]?.length == _topic2.length) {
-                                          setState(() {
-                                            nextQuestion(_topic1);
-                                          });
-                                        } else {
-                                          setState(() {
-                                            nextQuestion(_topic2);
-                                          });
-                                        }
+                                        await _flutterTts.stop();
                                       }
-                                    } else {
-                                      setState(() {
-                                        _complete = true;
-                                      });
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.skip_next,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    },
+                                    icon: AnimatedIcon(
+                                      progress: _animationController,
+                                      icon: AnimatedIcons.play_pause,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    iconSize: 70,
+                                    tooltip: _playing.value ? 'Stop' : 'Play',
                                   ),
-                                  iconSize: 70,
-                                ),
-                              ],
+                                  IconButton(
+                                    onPressed: () async {
+                                      if (!_playing.value) {
+                                        await _flutterTts.stop();
+                                        assessment.setPlayed();
+                                        assessment.nextQuestion(assessment.getTopic(), false);
+                                      }
+                                    },
+                                    iconSize: 70,
+                                    icon: Icon(
+                                      Icons.fast_forward,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    tooltip: 'Next',
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      await _flutterTts.stop();
+                                      assessment.setSkipped();
+                                      assessment.nextQuestion(assessment.getTopic(), false);
+                                    },
+                                    icon: Icon(
+                                      Icons.skip_next,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    iconSize: 70,
+                                    tooltip: 'Skip',
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return CountdownTimer(
+                        ],
+                      );
+                    } else {
+                      return CountdownTimer(
                         endTime: _endTime,
                         widgetBuilder: (context, time) {
                           if (time == null) {
@@ -470,15 +584,17 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
                               ),
                             );
                           }
-                        });
-                  }
-                }),
+                        },
+                      );
+                    }
+                  }),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 
@@ -491,7 +607,12 @@ _showDialog(BuildContext context) {
         content: const Text('Your progress will not be saved.\nAre you sure you want to continue?'),
         actions: <Widget>[
           ElevatedButton(
-            child: const Text('Cancel', style: TextStyle(color: Colors.red,),),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Theme.of(context).brightness == Brightness.light
                   ? Colors.transparent
