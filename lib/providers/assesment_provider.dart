@@ -15,6 +15,7 @@ class AssessmentProvider extends ChangeNotifier {
   Question? _question;
 
   AssessmentProvider(this._topicMap) {
+    print(_topicMap);
     if (_topicMap?.isNotEmpty ?? false) {
       _topic1 = _topicMap?.values.toList()[0] ?? [];
       _topic2 = _topicMap?.values.toList()[1] ?? [];
@@ -105,18 +106,23 @@ class AssessmentProvider extends ChangeNotifier {
 
   List getSkipped() {
     List out = [];
+    print(_topicMap!.values);
     for (var element in _topicMap!.values) {
       for (var question in element) {
+        print('value: ${question.skipped}');
         if (question.skipped) {
           out.add(question);
         }
       }
+      print(out);
     }
     return out;
   }
 
   void setSkipped() {
     _question!.setSkipped(true);
+    print('set: ${_question!.skipped}');
+    notifyListeners();
   }
 
   Question? getQuestion() {
@@ -155,9 +161,14 @@ class AssessmentProvider extends ChangeNotifier {
 
   void reset() {
     print('resetting');
+    for (var topic in _topicMap!.values) {
+      topic.forEach((element) {
+        element.played = 0;
+        element.skipped = false;
+      });
+    }
     _index = Random().nextInt(1);
     _usedQuestions.clear();
-    _topicMap?.clear();
     _complete = false;
     _shuffled = false;
     _question = null;

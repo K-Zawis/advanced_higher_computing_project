@@ -16,17 +16,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
-  var _selectedTopics = [];
+  List? _selectedTopics = [];
   bool _assignment = false;
 
   @override
   void initState() {
+    _selectedTopics = context.read(topicProvider).getTopics();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _selectedTopics = context.read(topicProvider).getTopics();
     return Container(
       color: Colors.black,
       child: FormBuilder(
@@ -180,21 +180,20 @@ class _HomePageState extends State<HomePage> {
                                       decoration: InputDecoration(
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                          borderSide: BorderSide(
-                                              width: 3, color: Theme.of(context).colorScheme.secondary),
+                                          borderSide:
+                                              BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
                                         ),
                                         border: OutlineInputBorder(
                                           borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                          borderSide: BorderSide(
-                                              width: 3, color: Theme.of(context).colorScheme.secondary),
+                                          borderSide:
+                                              BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
                                         ),
                                       ),
                                       name: 'level',
                                       validator: FormBuilderValidators.compose([
                                         FormBuilderValidators.required(context),
                                       ]),
-                                      items:
-                                          context.read(qualificationProvider.notifier).getDropdownItems(context),
+                                      items: context.read(qualificationProvider.notifier).getDropdownItems(context),
                                       onChanged: (value) {
                                         _multiKey.currentState?.save();
                                         _multiKey.currentState?.didChange(null);
@@ -223,13 +222,13 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             padding: const EdgeInsets.only(top: 20, right: 10),
                             child: MultiSelectChipDisplay(
-                              items: context
-                                  .read(topicProvider)
-                                  .getTopics()
-                                  .map(
-                                    (e) => (MultiSelectItem(e, e)),
-                                  )
-                                  .toList(),
+                              items: _selectedTopics != null
+                                  ? _selectedTopics!
+                                      .map(
+                                        (e) => (MultiSelectItem(e, e)),
+                                      )
+                                      .toList()
+                                  : [],
                               chipWidth: double.infinity,
                               chipColor: Colors.transparent,
                               textStyle: TextStyle(
@@ -246,7 +245,11 @@ class _HomePageState extends State<HomePage> {
                               ),
                               onTap: (value) {
                                 setState(() {
-                                  _selectedTopics.remove(value);
+                                  _selectedTopics?.remove(value);
+                                  if (_selectedTopics?.isEmpty ?? true) {
+                                    _selectedTopics = null;
+                                    _multiKey.currentState!.didChange(null);
+                                  }
                                 });
                                 context.read(topicProvider).setTopics(_selectedTopics);
                               },
@@ -254,14 +257,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Center(
                             child: Visibility(
-                              visible: !(_selectedTopics.length == 2),
+                              visible: !(_selectedTopics?.length == 2),
                               child: FittedBox(
                                 child: Consumer(builder: (context, watch, child) {
                                   var topics = watch(topicProvider);
                                   if (topics.items.isNotEmpty) {
+                                    print(topics.getTopics());
                                     return MultiSelectBottomSheetField(
                                       key: _multiKey,
-                                      initialValue: topics.getTopics().isEmpty? null : topics.getTopics(),
+                                      initialValue: _selectedTopics,
                                       title: const Text(
                                         'Topics:',
                                         style: TextStyle(
@@ -304,7 +308,7 @@ class _HomePageState extends State<HomePage> {
                                         if (values == null || values.isEmpty) {
                                           return 'Field cannot be empty';
                                         } else if (_assignment) {
-                                          if (values.length != 2){
+                                          if (values.length != 2) {
                                             return '2 topics required for Assignment Mode';
                                           }
                                         }
@@ -355,7 +359,7 @@ class _HomePageState extends State<HomePage> {
                             }
                           },
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15.0, /*horizontal: 10*/),
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
                             child: Text(
                               'PRACTICE MODE',
                               softWrap: false,
@@ -385,13 +389,15 @@ class _HomePageState extends State<HomePage> {
                             _formKey.currentState?.save();
                             _multiKey.currentState?.save();
                             if (_formKey.currentState!.validate()) {
-                              if (_selectedTopics.length == 2) {
+                              if (_selectedTopics?.length == 2) {
                                 selectPage(context, 'Assignment Mode');
                               }
                             }
                           },
                           child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 15.0,),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 15.0,
+                            ),
                             child: Text(
                               'ASSIGNMENT MODE',
                               softWrap: false,

@@ -642,6 +642,7 @@ _showDialog(BuildContext context) {
               ),
             ),
             onPressed: () {
+              context.read(assessmentProvider).reset();
               selectPage(context, 'Home Page');
               Navigator.pop(context);
             },

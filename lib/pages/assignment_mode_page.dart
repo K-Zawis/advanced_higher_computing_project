@@ -241,220 +241,222 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                     maxWidth: 850,
                                   ),
                                   // * complete message
-                                  child: Visibility(
-                                    visible: assessment.getCompleteStatus(),
-                                    child: SingleChildScrollView(
-                                      padding: const EdgeInsets.only(bottom: 20),
-                                      physics: const BouncingScrollPhysics(),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Image.network(
-                                            'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/medal_icon.png?alt=media&token=d981c36e-6b33-4d2a-8783-b564ab439b7e',
-                                            //color: textColour,
-                                            height: 200,
-                                            //colorBlendMode: BlendMode.srcIn,
-                                          ),
-                                          Text(
-                                            'CONGRATULATIONS!',
-                                            style: TextStyle(
-                                              color: Theme.of(context).colorScheme.primary,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const Text(
-                                            'You have completed Assignment Mode!',
-                                            style: TextStyle(
-                                              color: textColour,
-                                              fontSize: 16,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(
-                                            height: 25,
-                                          ),
-                                          Divider(
-                                            color: Theme.of(context).colorScheme.primary,
-                                            thickness: 2,
-                                            endIndent: 20,
-                                            indent: 20,
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          const Text(
-                                            "Here's how you did:",
-                                            style: TextStyle(
-                                              color: textColour,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(
-                                            height: 15,
-                                          ),
-                                          RichText(
-                                            text: TextSpan(
-                                              style: const TextStyle(
-                                                color: textColour,
-                                                fontSize: 16,
+                                  // do this instead of visibility widget
+                                  // as this will prevent unnecessary code from running
+                                  // speeding up the wave animation
+                                  child: assessment.getCompleteStatus()
+                                      ? SingleChildScrollView(
+                                          padding: const EdgeInsets.only(bottom: 20),
+                                          physics: const BouncingScrollPhysics(),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Image.network(
+                                                'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/medal_icon.png?alt=media&token=d981c36e-6b33-4d2a-8783-b564ab439b7e',
+                                                //color: textColour,
+                                                height: 200,
+                                                //colorBlendMode: BlendMode.srcIn,
                                               ),
-                                              text: 'You have skipped ',
-                                              children: [
-                                                TextSpan(
-                                                  text: '${assessment.getSkipped().length} ',
-                                                  style: TextStyle(
-                                                    color: Theme.of(context).colorScheme.primary,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                              Text(
+                                                'CONGRATULATIONS!',
+                                                style: TextStyle(
+                                                  color: Theme.of(context).colorScheme.primary,
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                                const TextSpan(
-                                                  text: 'questions.',
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const Text(
-                                            'You have played each question on average:',
-                                            style: TextStyle(
-                                              color: textColour,
-                                              fontSize: 16,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          RichText(
-                                            text: TextSpan(
-                                              style: const TextStyle(
-                                                color: textColour,
-                                                fontSize: 16,
+                                                textAlign: TextAlign.center,
                                               ),
-                                              text: 'in Topic 1: ',
-                                              children: [
-                                                TextSpan(
-                                                  text:
-                                                      '${(assessment.getUsedQuestions().values.toList()[0].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[0].length).toStringAsFixed(2)} ',
-                                                  style: TextStyle(
-                                                    color: Theme.of(context).colorScheme.primary,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const TextSpan(
-                                                  text: 'times.',
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          RichText(
-                                            text: TextSpan(
-                                              style: const TextStyle(
-                                                color: textColour,
-                                                fontSize: 16,
+                                              const SizedBox(
+                                                height: 10,
                                               ),
-                                              text: 'in Topic 2: ',
-                                              children: [
-                                                TextSpan(
-                                                  text: assessment.getUsedQuestions().values.length == 2
-                                                      ? '${(assessment.getUsedQuestions().values.toList()[1].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[1].length).toStringAsFixed(2)} '
-                                                      : '',
-                                                  style: TextStyle(
-                                                    color: Theme.of(context).colorScheme.primary,
+                                              const Text(
+                                                'You have completed Assignment Mode!',
+                                                style: TextStyle(
+                                                  color: textColour,
+                                                  fontSize: 16,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(
+                                                height: 25,
+                                              ),
+                                              Divider(
+                                                color: Theme.of(context).colorScheme.primary,
+                                                thickness: 2,
+                                                endIndent: 20,
+                                                indent: 20,
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              const Text(
+                                                "Here's how you did:",
+                                                style: TextStyle(
+                                                  color: textColour,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(
+                                                height: 15,
+                                              ),
+                                              RichText(
+                                                text: TextSpan(
+                                                  style: const TextStyle(
+                                                    color: textColour,
                                                     fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                ),
-                                                const TextSpan(
-                                                  text: 'times.',
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const Text(
-                                            'You have played:',
-                                            style: TextStyle(
-                                              color: textColour,
-                                              fontSize: 16,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          ListView.builder(
-                                            shrinkWrap: true,
-                                            physics: const NeverScrollableScrollPhysics(),
-                                            itemCount: assessment.getSortedPlayed().length,
-                                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                                            itemBuilder: (context, index) {
-                                              return Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Divider(
-                                                    color: Theme.of(context).colorScheme.primary,
-                                                    thickness: 1,
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: MediaQuery.of(context).size.width * 0.6,
-                                                        child: Text(
-                                                          assessment.getSortedPlayed()[index].question.trim(),
-                                                        ),
+                                                  text: 'You have skipped ',
+                                                  children: [
+                                                    TextSpan(
+                                                      text: '${assessment.getSkipped().length} ',
+                                                      style: TextStyle(
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.bold,
                                                       ),
-                                                      RichText(
-                                                        text: TextSpan(
-                                                          text: '${assessment.getSortedPlayed()[index].played} ',
-                                                          style: TextStyle(
-                                                            color: Theme.of(context).colorScheme.primary,
-                                                            fontWeight: FontWeight.bold,
-                                                          ),
-                                                          children: const [
-                                                            TextSpan(
-                                                              text: 'times',
-                                                              style: TextStyle(
-                                                                color: textColour,
-                                                                fontWeight: FontWeight.normal,
-                                                              ),
+                                                    ),
+                                                    const TextSpan(
+                                                      text: 'questions.',
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              const Text(
+                                                'You have played each question on average:',
+                                                style: TextStyle(
+                                                  color: textColour,
+                                                  fontSize: 16,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              RichText(
+                                                text: TextSpan(
+                                                  style: const TextStyle(
+                                                    color: textColour,
+                                                    fontSize: 16,
+                                                  ),
+                                                  text: 'in Topic 1: ',
+                                                  children: [
+                                                    TextSpan(
+                                                      text:
+                                                          '${(assessment.getUsedQuestions().values.toList()[0].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[0].length).toStringAsFixed(2)} ',
+                                                      style: TextStyle(
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const TextSpan(
+                                                      text: 'times.',
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              RichText(
+                                                text: TextSpan(
+                                                  style: const TextStyle(
+                                                    color: textColour,
+                                                    fontSize: 16,
+                                                  ),
+                                                  text: 'in Topic 2: ',
+                                                  children: [
+                                                    TextSpan(
+                                                      text: assessment.getUsedQuestions().values.length == 2
+                                                          ? '${(assessment.getUsedQuestions().values.toList()[1].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[1].length).toStringAsFixed(2)} '
+                                                          : '',
+                                                      style: TextStyle(
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const TextSpan(
+                                                      text: 'times.',
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              const Text(
+                                                'You have played:',
+                                                style: TextStyle(
+                                                  color: textColour,
+                                                  fontSize: 16,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: const NeverScrollableScrollPhysics(),
+                                                itemCount: assessment.getSortedPlayed().length,
+                                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                itemBuilder: (context, index) {
+                                                  return Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Divider(
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                        thickness: 1,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: MediaQuery.of(context).size.width * 0.6,
+                                                            child: Text(
+                                                              assessment.getSortedPlayed()[index].question.trim(),
                                                             ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                          RichText(
+                                                            text: TextSpan(
+                                                              text: '${assessment.getSortedPlayed()[index].played} ',
+                                                              style: TextStyle(
+                                                                color: Theme.of(context).colorScheme.primary,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                              children: const [
+                                                                TextSpan(
+                                                                  text: 'times',
+                                                                  style: TextStyle(
+                                                                    color: textColour,
+                                                                    fontWeight: FontWeight.normal,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
-                                                  ),
-                                                ],
-                                              );
-                                            },
+                                                  );
+                                                },
+                                              ),
+                                              Divider(
+                                                color: Theme.of(context).colorScheme.primary,
+                                                thickness: 1,
+                                                indent: 20,
+                                                endIndent: 20,
+                                              ),
+                                            ],
                                           ),
-                                          Divider(
-                                            color: Theme.of(context).colorScheme.primary,
-                                            thickness: 1,
-                                            indent: 20,
-                                            endIndent: 20,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                        )
+                                      : null,
                                 ),
                               ),
                             ),

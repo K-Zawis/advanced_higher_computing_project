@@ -7,7 +7,7 @@ class Topics extends ChangeNotifier {
   final _topics = FirebaseFirestore.instance.collection("topic");
 
   final Map<String, Topic> items = {};
-  var _selectedTopics = [];
+  List? _selectedTopics = [];
   Map<String, String> _topicIds = {};
 
   Topics(lan, level) {
@@ -58,7 +58,7 @@ class Topics extends ChangeNotifier {
     return _topics.doc(id).update(data as Map<String, dynamic>);
   }
 
-  List<dynamic> getTopics() {
+  List<dynamic>? getTopics() {
     return _selectedTopics;
   }
 

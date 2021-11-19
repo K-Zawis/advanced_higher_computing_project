@@ -16,17 +16,17 @@ class DesktopHomePage extends StatefulWidget {
 class _DesktopHomePageState extends State<DesktopHomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
-  var _selectedTopics = [];
+  List? _selectedTopics = [];
   bool _assignment = false;
 
   @override
   void initState() {
+    _selectedTopics = context.read(topicProvider).getTopics();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _selectedTopics = context.read(topicProvider).getTopics();
     return Container(
       color: Colors.black,
       child: FormBuilder(
@@ -54,7 +54,11 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                       height: 80,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color.fromARGB(255, 0, 0, 0), Color.fromARGB(150, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                          colors: [
+                            Color.fromARGB(255, 0, 0, 0),
+                            Color.fromARGB(150, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
+                          ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                         ),
@@ -81,7 +85,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                 var language = context.read(languageProvider).getLanguage();
                                 return FormBuilderDropdown(
                                   name: 'language',
-                                  initialValue: language == ''? null : language,
+                                  initialValue: language == '' ? null : language,
                                   items: context.read(languageProvider.notifier).getDropdownItems(context),
                                   iconEnabledColor: Colors.white,
                                   decoration: const InputDecoration(
@@ -162,23 +166,26 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                           watch(qualificationProvider);
                                           var level = context.read(qualificationProvider).getLevel();
                                           return FormBuilderDropdown(
-                                            initialValue: level == ''? null : level,
+                                            initialValue: level == '' ? null : level,
                                             iconEnabledColor: Theme.of(context).colorScheme.secondary,
                                             decoration: InputDecoration(
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
+                                                borderSide: BorderSide(
+                                                    width: 3, color: Theme.of(context).colorScheme.secondary),
                                               ),
                                               border: OutlineInputBorder(
                                                 borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.secondary),
+                                                borderSide: BorderSide(
+                                                    width: 3, color: Theme.of(context).colorScheme.secondary),
                                               ),
                                             ),
                                             name: 'level',
                                             validator: FormBuilderValidators.compose([
                                               FormBuilderValidators.required(context),
                                             ]),
-                                            items: context.read(qualificationProvider.notifier).getDropdownItems(context),
+                                            items:
+                                                context.read(qualificationProvider.notifier).getDropdownItems(context),
                                             onChanged: (value) {
                                               _multiKey.currentState?.save();
                                               _multiKey.currentState?.didChange(null);
@@ -207,11 +214,13 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 20, right: 10),
                                   child: MultiSelectChipDisplay(
-                                    items: context.read(topicProvider).getTopics()
-                                        .map(
-                                          (e) => (MultiSelectItem(e, e)),
-                                        )
-                                        .toList(),
+                                    items: _selectedTopics != null
+                                        ? _selectedTopics!
+                                            .map(
+                                              (e) => (MultiSelectItem(e, e)),
+                                            )
+                                            .toList()
+                                        : [],
                                     chipWidth: double.infinity,
                                     chipColor: Colors.transparent,
                                     textStyle: TextStyle(
@@ -228,7 +237,10 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                     ),
                                     onTap: (value) {
                                       setState(() {
-                                        _selectedTopics.remove(value);
+                                        _selectedTopics?.remove(value);
+                                        if (_selectedTopics?.isEmpty ?? true) {
+                                          _selectedTopics = null;
+                                        }
                                       });
                                       context.read(topicProvider).setTopics(_selectedTopics);
                                     },
@@ -236,14 +248,14 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                 ),
                                 Center(
                                   child: Visibility(
-                                    visible: !(context.read(topicProvider).getTopics().length == 2),
+                                    visible: !(context.read(topicProvider).getTopics()?.length == 2),
                                     child: FittedBox(
                                       child: Consumer(builder: (context, watch, child) {
                                         var topics = watch(topicProvider);
                                         if (topics.items.isNotEmpty) {
                                           return MultiSelectBottomSheetField(
                                             key: _multiKey,
-                                            initialValue: topics.getTopics().isEmpty? null : topics.getTopics(),
+                                            initialValue: _selectedTopics,
                                             title: const Text(
                                               'Topics:',
                                               style: TextStyle(
@@ -259,8 +271,9 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                             ),
                                             buttonText: Text(
                                               'ADD TOPIC ',
-                                              style:
-                                                  TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  color: Theme.of(context).colorScheme.secondary,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             decoration: const BoxDecoration(
                                               borderRadius: BorderRadius.all(Radius.circular(2)),
@@ -279,7 +292,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                               setState(() {
                                                 _selectedTopics = values;
                                               });
-                                              if (values.isEmpty){
+                                              if (values.isEmpty) {
                                                 _multiKey.currentState!.reset();
                                               }
                                             },
@@ -287,7 +300,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                               if (values == null || values.isEmpty) {
                                                 return 'Field cannot be empty';
                                               } else if (_assignment) {
-                                                if (values.length != 2){
+                                                if (values.length != 2) {
                                                   return '2 topics required for Assignment Mode';
                                                 }
                                               }
@@ -364,7 +377,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                   _formKey.currentState?.save();
                                   _multiKey.currentState?.save();
                                   if (_formKey.currentState!.validate()) {
-                                    if (_selectedTopics.length == 2) {
+                                    if (_selectedTopics?.length == 2) {
                                       selectPage(context, 'Assignment Mode');
                                     }
                                   }
