@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/pages/login_page.dart';
 
 import '../pages/practice_mode_page_desktop.dart';
 import '../pages/home_page.dart';
@@ -14,16 +15,14 @@ import 'pages/assignment_mode_page.dart';
 final _availablePages = <String, WidgetBuilder>{
   'Home Page' : (_) => const HomePage(),
   'Practice Mode' : (_) => const PracticeMode(),
-  'Assignment Mode' : (_) {
-    return const AssignmentMode();
-  },
+  'Assignment Mode' : (_) => const AssignmentMode(),
+  'LogIn Page' : (_) => const LogInPage(),
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page' : (_) => const DesktopHomePage(),
   'Practice Mode' : (_) => const DesktopPracticeMode(),
-  'Assignment Mode' : (_) {
-    return const DesktopAssignmentMode();
-  },
+  'Assignment Mode' : (_) => const DesktopAssignmentMode(),
+  'LogIn Page' : (_) => const LogInPage(),
 };
 
 // this is a `StateProvider` so we can change its value
@@ -69,6 +68,7 @@ class _WidgetTreeState extends State<WidgetTree> {
     return Consumer(builder: (context, watch, child) {
       final selectedPageBuilder = watch(selectedPageBuilderProvider);
       final selectedDesktopPageBuilder = watch(selectedDesktopPageBuilderProvider);
+      var isLogIn = watch(selectedPageNameProvider).state == 'LogIn Page';
       return Scaffold(
         drawer: const MenuDrawer(
           elevation: 10.0,
@@ -82,9 +82,9 @@ class _WidgetTreeState extends State<WidgetTree> {
           largeTablet: selectedPageBuilder(context),
           computer: Row(
             children: [
-              const MenuDrawer(
+              !isLogIn ? const MenuDrawer(
                 elevation: 0.0,
-              ),
+              ) : Container(),
               Expanded(
                 child: selectedDesktopPageBuilder(context),
               ),
