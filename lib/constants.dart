@@ -11,6 +11,9 @@ import 'package:learn_languages/providers/qualification_provider.dart';
 import 'package:learn_languages/providers/question_provider.dart';
 import 'package:learn_languages/providers/topic_provider.dart';
 
+import 'providers/auth_providers/auth_service.dart';
+import 'providers/auth_providers/user_state_notifier.dart';
+
 // * colours
 Map<int, Color> color =
 {
@@ -38,6 +41,8 @@ const hintColour = Color(0xFF494B50);
 
 // * providers
 final firebaseAuthProvider = Provider((_) => FirebaseAuth.instance);
+final authRepositoryProvider = Provider<AuthService>((_) => AuthService(_.read));
+final userStateProvider = StateNotifierProvider((_) => UserStateNotifier(_.read)..appInit());
 final languageProvider = ChangeNotifierProvider((ref) => Languages());
 final qualificationProvider = ChangeNotifierProvider((ref) => Qualifications());
 final topicProvider = ChangeNotifierProvider((ref) {

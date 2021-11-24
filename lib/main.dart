@@ -20,7 +20,7 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, watch) {
-    watch(firebaseAuthProvider).signInAnonymously();
+    watch(userStateProvider);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
