@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/pages/login_page.dart';
+import 'package:learn_languages/pages/login_page_mobile.dart';
 
 import '../pages/practice_mode_page_desktop.dart';
 import '../pages/home_page.dart';
@@ -18,6 +19,12 @@ final _availablePages = <String, WidgetBuilder>{
   'Assignment Mode' : (_) => const AssignmentMode(),
   'LogIn Page' : (_) => const LogInPage(),
 };
+final _availableMobilePages = <String, WidgetBuilder>{
+  'Home Page' : (_) => const HomePage(),
+  'Practice Mode' : (_) => const PracticeMode(),
+  'Assignment Mode' : (_) => const AssignmentMode(),
+  'LogIn Page' : (_) => const MobileLogInPage(),
+};
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page' : (_) => const DesktopHomePage(),
   'Practice Mode' : (_) => const DesktopPracticeMode(),
@@ -30,16 +37,10 @@ final selectedPageNameProvider = StateProvider<String>((ref) {
   // default value
     return _availablePages.keys.first;
 });
-final selectedDesktopPageNameProvider = StateProvider((ref){
-  return _availableDesktopPages.keys.first;
-});
 void selectPage(BuildContext context, String pageName) {
   // only change the state if we have selected a different page
   if (context.read(selectedPageNameProvider).state != pageName) {
     context.read(selectedPageNameProvider).state = pageName;
-  }
-  if (context.read(selectedDesktopPageNameProvider).state != pageName) {
-    context.read(selectedDesktopPageNameProvider).state = pageName;
   }
 }
 final selectedPageBuilderProvider = Provider<WidgetBuilder>((ref) {
@@ -48,9 +49,15 @@ final selectedPageBuilderProvider = Provider<WidgetBuilder>((ref) {
   // return the WidgetBuilder using the key as index
   return _availablePages[selectedPageKey]!;
 });
+final selectedMobilePageBuilderProvider = Provider<WidgetBuilder>((ref) {
+  // watch for state changes inside selectedPageNameProvider
+  final selectedPageKey = ref.watch(selectedPageNameProvider).state;
+  // return the WidgetBuilder using the key as index
+  return _availableMobilePages[selectedPageKey]!;
+});
 final selectedDesktopPageBuilderProvider = Provider<WidgetBuilder>((ref) {
   // watch for state changes inside selectedPageNameProvider
-  final selectedPageKey = ref.watch(selectedDesktopPageNameProvider).state;
+  final selectedPageKey = ref.watch(selectedPageNameProvider).state;
   // return the WidgetBuilder using the key as index
   return _availableDesktopPages[selectedPageKey]!;
 });
@@ -68,6 +75,7 @@ class _WidgetTreeState extends State<WidgetTree> {
     return Consumer(builder: (context, watch, child) {
       final selectedPageBuilder = watch(selectedPageBuilderProvider);
       final selectedDesktopPageBuilder = watch(selectedDesktopPageBuilderProvider);
+      final selectedMobilePageBuilder = watch (selectedMobilePageBuilderProvider);
       var isLogIn = watch(selectedPageNameProvider).state == 'LogIn Page';
       return Scaffold(
         drawer: const MenuDrawer(
@@ -77,7 +85,7 @@ class _WidgetTreeState extends State<WidgetTree> {
           tiny: const Text(
             '',
           ),
-          phone: selectedPageBuilder(context),
+          phone: selectedMobilePageBuilder(context),
           tablet: selectedPageBuilder(context),
           largeTablet: selectedPageBuilder(context),
           computer: Row(

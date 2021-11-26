@@ -1,11 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class LoginProvider extends ChangeNotifier {
   bool _isPasswordVisible = false;
   bool _isPasswordConfirmVisible = false;
   bool _login = true;
   String _errorMsg = '';
+  bool error = false;
+  bool error2 = false;
+
+  bool isPasswordValid() {
+    return !error;
+  }
+
+  void setPasswordValid(bool valid) {
+    error = !valid;
+    notifyListeners();
+  }
+
+  bool isConfirmValid() {
+    return !error2;
+  }
+
+  void setConfirmValid(bool valid) {
+    error2 = !valid;
+    notifyListeners();
+  }
 
   bool isPasswordVisible() {
     return _isPasswordVisible;

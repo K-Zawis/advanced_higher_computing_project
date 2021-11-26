@@ -41,13 +41,21 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor2() {
-    return _focusNode2.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
+  Color getPrefixIconColor2(bool error) {
+    if (error) {
+      return _focusNode2.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
+    } else {
+      return Theme.of(context).errorColor;
+    }
   }
 
   //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor() {
-    return _focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
+  Color getPrefixIconColor(bool error) {
+    if (error) {
+      return _focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
+    } else {
+      return Theme.of(context).errorColor;
+    }
   }
 
   @override
@@ -140,7 +148,7 @@ class _LogInPageState extends State<LogInPage> {
                                       },
                                       icon: Icon(
                                         !state.isPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                        color: getPrefixIconColor(),
+                                        color: getPrefixIconColor(state.isPasswordValid()),
                                       ),
                                     ),
                                   ),
@@ -149,6 +157,10 @@ class _LogInPageState extends State<LogInPage> {
                                   ]),
                                   keyboardType: TextInputType.emailAddress,
                                 ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(state.errorMessage(), style: TextStyle( color: Theme.of(context).errorColor,),),
                                 const SizedBox(
                                   height: 15,
                                 ),
@@ -179,7 +191,7 @@ class _LogInPageState extends State<LogInPage> {
                                             },
                                             icon: Icon(
                                               !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                              color: getPrefixIconColor2(),
+                                              color: getPrefixIconColor2(state.isConfirmValid()),
                                             ),
                                           ),
                                         ),
@@ -197,6 +209,8 @@ class _LogInPageState extends State<LogInPage> {
                                 ElevatedButton(
                                   onPressed: () async {
                                     if (_formKey.currentState!.saveAndValidate()) {
+                                      state.setPasswordValid(true);
+                                      state.setConfirmValid(true);
                                       AuthResultStatus status = await auth.signIn(
                                         _formKey.currentState!.value['email'],
                                         _formKey.currentState!.value['password'],
@@ -230,6 +244,17 @@ class _LogInPageState extends State<LogInPage> {
                                             state.setErrorMessage(temp);
                                           }
                                         });
+                                      }
+                                    } else {
+                                      if (!_formKey.currentState!.fields['password']!.isValid){
+                                        state.setPasswordValid(false);
+                                      } else {
+                                        state.setPasswordValid(true);
+                                      }
+                                      if (!_formKey.currentState!.fields['confirm_password']!.isValid){
+                                        state.setConfirmValid(false);
+                                      } else {
+                                        state.setConfirmValid(true);
                                       }
                                     }
                                   },
@@ -285,7 +310,7 @@ class _LogInPageState extends State<LogInPage> {
                                                 ),
                                                 style: TextButton.styleFrom(
                                                   padding: EdgeInsets.zero,
-                                                  alignment: Alignment.centerLeft,
+                                                  //alignment: Alignment.centerLeft,
                                                   minimumSize: Size.zero,
                                                 ),
                                               ),
