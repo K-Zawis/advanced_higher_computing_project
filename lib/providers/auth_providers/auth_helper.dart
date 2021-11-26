@@ -55,6 +55,7 @@ class AuthExceptionHandler {
   ///
   static generateExceptionMessage(exceptionCode) {
     String errorMessage;
+    print(exceptionCode);
     switch (exceptionCode) {
       case AuthResultStatus.invalidEmail:
         errorMessage = "Invalid e-mail address.";

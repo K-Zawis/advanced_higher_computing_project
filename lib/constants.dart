@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/providers/assesment_provider.dart';
 import 'package:learn_languages/providers/language_provider.dart';
+import 'package:learn_languages/providers/login_provider.dart';
 import 'package:learn_languages/providers/qualification_provider.dart';
 import 'package:learn_languages/providers/question_provider.dart';
 import 'package:learn_languages/providers/topic_provider.dart';
@@ -43,6 +44,7 @@ const hintColour = Color(0xFF494B50);
 final firebaseAuthProvider = Provider((_) => FirebaseAuth.instance);
 final authRepositoryProvider = Provider<AuthService>((_) => AuthService(_.read));
 final userStateProvider = StateNotifierProvider((_) => UserStateNotifier(_.read)..appInit());
+final loginProvider = ChangeNotifierProvider((_ref) => LoginProvider());
 final languageProvider = ChangeNotifierProvider((ref) => Languages());
 final qualificationProvider = ChangeNotifierProvider((ref) => Qualifications());
 final topicProvider = ChangeNotifierProvider((ref) {

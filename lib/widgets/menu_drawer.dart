@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/constants.dart';
-import 'package:learn_languages/providers/auth_providers/user_state_notifier.dart';
 import 'package:learn_languages/widget_tree.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -32,6 +31,7 @@ class MenuDrawer extends StatelessWidget {
                                 width: 100,
                                 child: ElevatedButton(
                                   onPressed: () {
+                                    Navigator.of(context).pop();
                                     selectPage(context, 'LogIn Page');
                                   },
                                   style: ButtonStyle(
