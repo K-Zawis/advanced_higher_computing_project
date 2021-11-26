@@ -46,8 +46,8 @@ class UserStateNotifier extends StateNotifier</*MyUserData*/User?> {
     return status;
   }
 
-  Future<User?> createUserWithEmailAndPassword(email, password, data) async {
-    var user = await _read(authRepositoryProvider).createUserWithEmailAndPassword(email.trim(), password, data);
+  Future<User?> createUserWithEmailAndPassword(email, password) async {
+    var user = await _read(authRepositoryProvider).createUserWithEmailAndPassword(email.trim(), password);
     return user;
   }
 

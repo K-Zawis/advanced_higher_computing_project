@@ -144,7 +144,7 @@ class _LogInPageState extends State<LogInPage> {
                                     ),
                                     suffixIcon: IconButton(
                                       onPressed: () {
-                                          state.setPasswordVisible();
+                                        state.setPasswordVisible();
                                       },
                                       icon: Icon(
                                         !state.isPasswordVisible() ? Icons.visibility : Icons.visibility_off,
@@ -160,7 +160,12 @@ class _LogInPageState extends State<LogInPage> {
                                 const SizedBox(
                                   height: 15,
                                 ),
-                                Text(state.errorMessage(), style: TextStyle( color: Theme.of(context).errorColor,),),
+                                Text(
+                                  state.errorMessage(),
+                                  style: TextStyle(
+                                    color: Theme.of(context).errorColor,
+                                  ),
+                                ),
                                 const SizedBox(
                                   height: 15,
                                 ),
@@ -190,14 +195,17 @@ class _LogInPageState extends State<LogInPage> {
                                               state.setConfirmPasswordVisible();
                                             },
                                             icon: Icon(
-                                              !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
+                                              !state.isConfirmPasswordVisible()
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
                                               color: getPrefixIconColor2(state.isConfirmValid()),
                                             ),
                                           ),
                                         ),
                                         validator: FormBuilderValidators.compose([
                                           FormBuilderValidators.required(context),
-                                          FormBuilderValidators.match(context, _formKey.currentState?.value['password'] ?? ''),
+                                          FormBuilderValidators.match(
+                                              context, _formKey.currentState?.value['password'] ?? ''),
                                         ]),
                                         keyboardType: TextInputType.emailAddress,
                                       )
@@ -205,57 +213,59 @@ class _LogInPageState extends State<LogInPage> {
                                 const SizedBox(
                                   height: 50,
                                 ),
-                                // TODO -- fix error messages
                                 ElevatedButton(
                                   onPressed: () async {
                                     if (_formKey.currentState!.saveAndValidate()) {
                                       state.setPasswordValid(true);
                                       state.setConfirmValid(true);
-                                      AuthResultStatus status = await auth.signIn(
-                                        _formKey.currentState!.value['email'],
-                                        _formKey.currentState!.value['password'],
-                                      );
-                                      if (status == AuthResultStatus.successful) {
-                                        var verified = context.read(firebaseAuthProvider).currentUser!.emailVerified;
-                                        if (verified) {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            PageRouteBuilder(
-                                              pageBuilder: (context, _, __) => const MyHomePage(),
-                                              transitionDuration: Duration.zero,
-                                            ),
-                                          );
+                                      if (state.isLogin()) {
+                                        AuthResultStatus status = await auth.signIn(
+                                          _formKey.currentState!.value['email'],
+                                          _formKey.currentState!.value['password'],
+                                        );
+                                        if (status == AuthResultStatus.successful) {
+                                          var verified = context.read(firebaseAuthProvider).currentUser!.emailVerified;
+                                          if (verified) {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              PageRouteBuilder(
+                                                pageBuilder: (context, _, __) => const MyHomePage(),
+                                                transitionDuration: Duration.zero,
+                                              ),
+                                            );
+                                          } else {
+                                            state.setErrorMessage('Please verify your Email!');
+                                            context.read(userStateProvider.notifier).signOut();
+                                          }
                                         } else {
-                                          state.setErrorMessage('Please verify your Email!');
-                                          context.read(userStateProvider.notifier).signOut();
+                                          setState(() {
+                                            var temp = AuthExceptionHandler.generateExceptionMessage(status);
+                                            if (status == AuthResultStatus.invalidEmail ||
+                                                status == AuthResultStatus.userDisabled) {
+                                              _formKey.currentState!.invalidateField(name: 'email', errorText: temp);
+                                            } else if (status == AuthResultStatus.wrongPassword) {
+                                              _formKey.currentState!.invalidateField(name: 'password', errorText: temp);
+                                            } else if (status == AuthResultStatus.userNotFound) {
+                                              state.setIsLogin();
+                                            } else {
+                                              state.setErrorMessage(temp);
+                                            }
+                                          });
                                         }
                                       } else {
-                                        setState(() {
-                                          var temp = AuthExceptionHandler.generateExceptionMessage(status);
-                                          print(temp);
-                                          if (status == AuthResultStatus.invalidEmail ||
-                                              status == AuthResultStatus.userDisabled) {
-                                            _formKey.currentState!.invalidateField(name: 'email', errorText: temp);
-                                          } else if (status == AuthResultStatus.wrongPassword) {
-                                            _formKey.currentState!.invalidateField(name: 'password', errorText: temp);
-                                          } else if (status == AuthResultStatus.userNotFound) {
-                                              state.setIsLogin();
-                                          } else {
-                                            state.setErrorMessage(temp);
-                                          }
-                                        });
+                                        await auth.createUserWithEmailAndPassword(_formKey.currentState!.value['email'],
+                                            _formKey.currentState!.value['password']);
                                       }
+                                    }
+                                    if (!_formKey.currentState!.fields['password']!.isValid) {
+                                      state.setPasswordValid(false);
                                     } else {
-                                      if (!_formKey.currentState!.fields['password']!.isValid){
-                                        state.setPasswordValid(false);
-                                      } else {
-                                        state.setPasswordValid(true);
-                                      }
-                                      if (!_formKey.currentState!.fields['confirm_password']!.isValid){
-                                        state.setConfirmValid(false);
-                                      } else {
-                                        state.setConfirmValid(true);
-                                      }
+                                      state.setPasswordValid(true);
+                                    }
+                                    if (!_formKey.currentState!.fields['confirm_password']!.isValid) {
+                                      state.setConfirmValid(false);
+                                    } else {
+                                      state.setConfirmValid(true);
                                     }
                                   },
                                   child: Text(state.isLogin() ? 'LOG IN' : 'SIGN UP'),
@@ -276,7 +286,7 @@ class _LogInPageState extends State<LogInPage> {
                                             WidgetSpan(
                                               child: TextButton(
                                                 onPressed: () {
-                                                    state.setIsLogin();
+                                                  state.setIsLogin();
                                                 },
                                                 child: const Text(
                                                   'Log In',

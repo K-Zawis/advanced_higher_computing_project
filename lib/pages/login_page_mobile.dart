@@ -41,13 +41,21 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
   }
 
   //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor2() {
-    return _focusNode2.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
+  Color getPrefixIconColor2(bool error) {
+    if (error) {
+      return _focusNode2.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
+    } else {
+      return Theme.of(context).errorColor;
+    }
   }
 
   //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor() {
-    return _focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
+  Color getPrefixIconColor(bool error) {
+    if (error) {
+      return _focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
+    } else {
+      return Theme.of(context).errorColor;
+    }
   }
 
   @override
@@ -134,7 +142,7 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                     },
                                     icon: Icon(
                                       !state.isPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                      color: getPrefixIconColor(),
+                                      color: getPrefixIconColor(state.isPasswordValid()),
                                     ),
                                   ),
                                 ),
@@ -148,83 +156,107 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                               ),
                               !state.isLogin()
                                   ? FormBuilderTextField(
-                                name: 'confirm_password',
-                                obscureText: !state.isConfirmPasswordVisible(),
-                                focusNode: _focusNode2,
-                                style: const TextStyle(
-                                  color: textColour,
-                                ),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  hintText: 'Password',
-                                  enabledBorder: const OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                                    borderSide: BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      state.setConfirmPasswordVisible();
-                                    },
-                                    icon: Icon(
-                                      !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                      color: getPrefixIconColor2(),
-                                    ),
-                                  ),
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.match(context, _formKey.currentState?.value['password'] ?? ''),
-                                ]),
-                                keyboardType: TextInputType.emailAddress,
-                              )
+                                      name: 'confirm_password',
+                                      obscureText: !state.isConfirmPasswordVisible(),
+                                      focusNode: _focusNode2,
+                                      style: const TextStyle(
+                                        color: textColour,
+                                      ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(15.0),
+                                        ),
+                                        hintText: 'Password',
+                                        enabledBorder: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                                          borderSide: BorderSide(
+                                            color: Colors.white,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        suffixIcon: IconButton(
+                                          onPressed: () {
+                                            state.setConfirmPasswordVisible();
+                                          },
+                                          icon: Icon(
+                                            !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
+                                            color: getPrefixIconColor2(state.isConfirmValid()),
+                                          ),
+                                        ),
+                                      ),
+                                      validator: FormBuilderValidators.compose([
+                                        FormBuilderValidators.required(context),
+                                        FormBuilderValidators.match(
+                                            context, _formKey.currentState?.value['password'] ?? ''),
+                                      ]),
+                                      keyboardType: TextInputType.emailAddress,
+                                    )
                                   : Container(),
                               const SizedBox(
-                                height: 50,
+                                height: 15,
                               ),
-                              // TODO -- fix error messages
+                              Text(
+                                state.errorMessage(),
+                                style: TextStyle(
+                                  color: Theme.of(context).errorColor,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 35,
+                              ),
                               ElevatedButton(
                                 onPressed: () async {
                                   if (_formKey.currentState!.saveAndValidate()) {
-                                    AuthResultStatus status = await auth.signIn(
-                                      _formKey.currentState!.value['email'],
-                                      _formKey.currentState!.value['password'],
-                                    );
-                                    if (status == AuthResultStatus.successful) {
-                                      var verified = context.read(firebaseAuthProvider).currentUser!.emailVerified;
-                                      if (verified) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          PageRouteBuilder(
-                                            pageBuilder: (context, _, __) => const MyHomePage(),
-                                            transitionDuration: Duration.zero,
-                                          ),
-                                        );
+                                    state.setPasswordValid(true);
+                                    state.setConfirmValid(true);
+                                    if (state.isLogin()) {
+                                      AuthResultStatus status = await auth.signIn(
+                                        _formKey.currentState!.value['email'],
+                                        _formKey.currentState!.value['password'],
+                                      );
+                                      if (status == AuthResultStatus.successful) {
+                                        var verified = context.read(firebaseAuthProvider).currentUser!.emailVerified;
+                                        if (verified) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            PageRouteBuilder(
+                                              pageBuilder: (context, _, __) => const MyHomePage(),
+                                              transitionDuration: Duration.zero,
+                                            ),
+                                          );
+                                        } else {
+                                          state.setErrorMessage('Please verify your Email!');
+                                          context.read(userStateProvider.notifier).signOut();
+                                        }
                                       } else {
-                                        state.setErrorMessage('Please verify your Email!');
-                                        context.read(userStateProvider.notifier).signOut();
+                                        setState(() {
+                                          var temp = AuthExceptionHandler.generateExceptionMessage(status);
+                                          if (status == AuthResultStatus.invalidEmail ||
+                                              status == AuthResultStatus.userDisabled) {
+                                            _formKey.currentState!.invalidateField(name: 'email', errorText: temp);
+                                          } else if (status == AuthResultStatus.wrongPassword) {
+                                            _formKey.currentState!.invalidateField(name: 'password', errorText: temp);
+                                          } else if (status == AuthResultStatus.userNotFound) {
+                                            state.setIsLogin();
+                                          } else {
+                                            state.setErrorMessage(temp);
+                                          }
+                                        });
                                       }
                                     } else {
-                                      setState(() {
-                                        var temp = AuthExceptionHandler.generateExceptionMessage(status);
-                                        print(temp);
-                                        if (status == AuthResultStatus.invalidEmail ||
-                                            status == AuthResultStatus.userDisabled) {
-                                          _formKey.currentState!.invalidateField(name: 'email', errorText: temp);
-                                        } else if (status == AuthResultStatus.wrongPassword) {
-                                          _formKey.currentState!.invalidateField(name: 'password', errorText: temp);
-                                        } else if (status == AuthResultStatus.userNotFound) {
-                                          state.setIsLogin();
-                                        } else {
-                                          state.setErrorMessage(temp);
-                                        }
-                                      });
+                                      await auth.createUserWithEmailAndPassword(_formKey.currentState!.value['email'], _formKey.currentState!.value['password']);
                                     }
+                                  }
+                                  if (!_formKey.currentState!.fields['password']!.isValid) {
+                                    state.setPasswordValid(false);
+                                  } else {
+                                    state.setPasswordValid(true);
+                                  }
+                                  if (!_formKey.currentState!.fields['confirm_password']!.isValid) {
+                                    state.setConfirmValid(false);
+                                  } else {
+                                    state.setConfirmValid(true);
                                   }
                                 },
                                 child: Text(state.isLogin() ? 'LOG IN' : 'SIGN UP'),
@@ -235,57 +267,57 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                               RichText(
                                 text: !state.isLogin()
                                     ? TextSpan(
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Already have an account? ',
-                                      style: TextStyle(
-                                        color: textColour,
-                                      ),
-                                    ),
-                                    WidgetSpan(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          state.setIsLogin();
-                                        },
-                                        child: const Text(
-                                          'Log In',
-                                          style: TextStyle(decoration: TextDecoration.underline),
-                                        ),
-                                        style: TextButton.styleFrom(
-                                          padding: EdgeInsets.zero,
-                                          alignment: Alignment.centerLeft,
-                                          minimumSize: Size.zero,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
+                                        children: [
+                                          const TextSpan(
+                                            text: 'Already have an account? ',
+                                            style: TextStyle(
+                                              color: textColour,
+                                            ),
+                                          ),
+                                          WidgetSpan(
+                                            child: TextButton(
+                                              onPressed: () {
+                                                state.setIsLogin();
+                                              },
+                                              child: const Text(
+                                                'Log In',
+                                                style: TextStyle(decoration: TextDecoration.underline),
+                                              ),
+                                              style: TextButton.styleFrom(
+                                                padding: EdgeInsets.zero,
+                                                alignment: Alignment.centerLeft,
+                                                minimumSize: Size.zero,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
                                     : TextSpan(
-                                  children: [
-                                    const TextSpan(
-                                      text: "Don't have an account? ",
-                                      style: TextStyle(
-                                        color: textColour,
+                                        children: [
+                                          const TextSpan(
+                                            text: "Don't have an account? ",
+                                            style: TextStyle(
+                                              color: textColour,
+                                            ),
+                                          ),
+                                          WidgetSpan(
+                                            child: TextButton(
+                                              onPressed: () {
+                                                state.setIsLogin();
+                                              },
+                                              child: const Text(
+                                                'Sign Up',
+                                                style: TextStyle(decoration: TextDecoration.underline),
+                                              ),
+                                              style: TextButton.styleFrom(
+                                                padding: EdgeInsets.zero,
+                                                //alignment: Alignment.centerLeft,
+                                                minimumSize: Size.zero,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    WidgetSpan(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          state.setIsLogin();
-                                        },
-                                        child: const Text(
-                                          'Sign Up',
-                                          style: TextStyle(decoration: TextDecoration.underline),
-                                        ),
-                                        style: TextButton.styleFrom(
-                                          padding: EdgeInsets.zero,
-                                          alignment: Alignment.centerLeft,
-                                          minimumSize: Size.zero,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ),
                             ],
                           ),

@@ -10,7 +10,7 @@ abstract class AuthRepository {
   User? getCurrentUser();
   Future<void> signOut();
   Future<void> forgotPassword(email);
-  Future<void> createUserWithEmailAndPassword(email, password, data);
+  Future<void> createUserWithEmailAndPassword(email, password);
   Future<void> deleteUser(email, password);
 }
 
@@ -53,11 +53,10 @@ class AuthService implements AuthRepository{
   }
 
   @override
-  Future<User?> createUserWithEmailAndPassword(email, password, data) async {
+  Future<User?> createUserWithEmailAndPassword(email, password) async {
     await _read(firebaseAuthProvider).createUserWithEmailAndPassword(email: email, password: password).then((result) {
       result.user?.sendEmailVerification();
-      result.user!.updateDisplayName(data['displayName']);
-      _read(userStateProvider.notifier).addDocument(result.user!.uid, data);
+      //_read(userStateProvider.notifier).addDocument(result.user!.uid);
       return result.user;
     });
   }
