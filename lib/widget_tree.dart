@@ -78,6 +78,7 @@ class _WidgetTreeState extends State<WidgetTree> {
       final selectedMobilePageBuilder = watch (selectedMobilePageBuilderProvider);
       var isLogIn = watch(selectedPageNameProvider).state == 'LogIn Page';
       return Scaffold(
+        resizeToAvoidBottomInset: false,
         drawer: const MenuDrawer(
           elevation: 10.0,
         ),

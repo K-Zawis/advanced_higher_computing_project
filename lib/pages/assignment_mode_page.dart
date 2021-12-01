@@ -82,8 +82,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
     // * watches providers and rebuilds all of it's children when it registers a change
     return Consumer(builder: (context, watch, child) {
       var assessment = watch(assessmentProvider);
-      return Scaffold(
-        body: Container(
+      return Container(
           color: Colors.black,
           child: Column(
             children: [
@@ -597,8 +596,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
               ),
             ],
           ),
-        ),
-      );
+        );
     });
   }
 }

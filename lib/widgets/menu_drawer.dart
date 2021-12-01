@@ -71,6 +71,7 @@ class MenuDrawer extends StatelessWidget {
                     : Stack(
                         alignment: Alignment.center,
                         children: [
+                          IconButton(onPressed: () {}, icon: Icon(Icons.account_circle, color: Theme.of(context).colorScheme.primary,), iconSize: 150,),
                           ElevatedButton(
                             onPressed: () {
                               auth.signOut();

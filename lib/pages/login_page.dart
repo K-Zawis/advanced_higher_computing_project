@@ -1,12 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_languages/constants.dart';
-import 'package:learn_languages/providers/auth_providers/auth_helper.dart';
 
-import '../main.dart';
+import '../constants.dart';
+import '../providers/auth_providers/auth_helper.dart';
 import '../widget_tree.dart';
 
 class LogInPage extends StatefulWidget {
@@ -18,8 +15,8 @@ class LogInPage extends StatefulWidget {
 
 class _LogInPageState extends State<LogInPage> {
   final _formKey = GlobalKey<FormBuilderState>();
-  late FocusNode _focusNode;
-  late FocusNode _focusNode2;
+  late final FocusNode _focusNode;
+  late final FocusNode _focusNode2;
 
   @override
   void dispose() {
@@ -61,11 +58,11 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Consumer(builder: (context, watch, child) {
       var auth = watch(userStateProvider.notifier);
       var state = watch(loginProvider);
-      return Scaffold(
-        body: Center(
+      return Center(
           child: Container(
             width: MediaQuery.of(context).size.width * 0.8,
             height: MediaQuery.of(context).size.height * 0.8,
@@ -91,7 +88,7 @@ class _LogInPageState extends State<LogInPage> {
                       Expanded(
                         child: Center(
                           child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -167,6 +164,49 @@ class _LogInPageState extends State<LogInPage> {
                                 const SizedBox(
                                   height: 15,
                                 ),
+                                !state.isLogin()
+                                    ? FormBuilderTextField(
+                                  name: 'confirm_password',
+                                  controller: state.confirmControllerS(),
+                                  obscureText: !state.isConfirmPasswordVisible(),
+                                  focusNode: _focusNode2,
+                                  style: const TextStyle(
+                                    color: textColour,
+                                  ),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    hintText: 'Password',
+                                    enabledBorder: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                                      borderSide: BorderSide(
+                                        color: Colors.white,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        state.setConfirmPasswordVisible();
+                                      },
+                                      icon: Icon(
+                                        !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
+                                        color: getPrefixIconColor2(state.isConfirmValid()),
+                                      ),
+                                    ),
+                                  ),
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.match(
+                                        context, _formKey.currentState?.value['password'] ?? ''),
+                                  ]),
+                                  keyboardType: TextInputType.emailAddress,
+                                )
+                                    : Container(),
+                                const SizedBox(
+                                  height: 15,
+                                ),
                                 Text(
                                   state.errorMessage(),
                                   style: TextStyle(
@@ -174,52 +214,7 @@ class _LogInPageState extends State<LogInPage> {
                                   ),
                                 ),
                                 const SizedBox(
-                                  height: 15,
-                                ),
-                                !state.isLogin()
-                                    ? FormBuilderTextField(
-                                        name: 'confirm_password',
-                                        controller: state.confirmControllerS(),
-                                        obscureText: !state.isConfirmPasswordVisible(),
-                                        focusNode: _focusNode2,
-                                        style: const TextStyle(
-                                          color: textColour,
-                                        ),
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(15.0),
-                                          ),
-                                          hintText: 'Password',
-                                          enabledBorder: const OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                                            borderSide: BorderSide(
-                                              color: Colors.white,
-                                              width: 1,
-                                            ),
-                                          ),
-                                          suffixIcon: IconButton(
-                                            onPressed: () {
-                                              state.setConfirmPasswordVisible();
-                                            },
-                                            icon: Icon(
-                                              !state.isConfirmPasswordVisible()
-                                                  ? Icons.visibility
-                                                  : Icons.visibility_off,
-                                              color: getPrefixIconColor2(state.isConfirmValid()),
-                                            ),
-                                          ),
-                                        ),
-                                        validator: FormBuilderValidators.compose([
-                                          FormBuilderValidators.required(context),
-                                          FormBuilderValidators.match(
-                                              context, _formKey.currentState?.value['password'] ?? ''),
-                                        ]),
-                                        keyboardType: TextInputType.emailAddress,
-                                      )
-                                    : Container(),
-                                const SizedBox(
-                                  height: 50,
+                                  height: 35,
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
@@ -280,59 +275,59 @@ class _LogInPageState extends State<LogInPage> {
                                 RichText(
                                   text: !state.isLogin()
                                       ? TextSpan(
-                                          children: [
-                                            const TextSpan(
-                                              text: 'Already have an account? ',
-                                              style: TextStyle(
-                                                color: textColour,
-                                              ),
-                                            ),
-                                            WidgetSpan(
-                                              child: TextButton(
-                                                onPressed: () {
-                                                  state.resetControllers();
-                                                  state.setIsLogin();
-                                                },
-                                                child: const Text(
-                                                  'Log In',
-                                                  style: TextStyle(decoration: TextDecoration.underline),
-                                                ),
-                                                style: TextButton.styleFrom(
-                                                  padding: EdgeInsets.zero,
-                                                  alignment: Alignment.centerLeft,
-                                                  minimumSize: Size.zero,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : TextSpan(
-                                          children: [
-                                            const TextSpan(
-                                              text: "Don't have an account? ",
-                                              style: TextStyle(
-                                                color: textColour,
-                                              ),
-                                            ),
-                                            WidgetSpan(
-                                              child: TextButton(
-                                                onPressed: () {
-                                                  state.resetControllers();
-                                                  state.setIsLogin();
-                                                },
-                                                child: const Text(
-                                                  'Sign Up',
-                                                  style: TextStyle(decoration: TextDecoration.underline),
-                                                ),
-                                                style: TextButton.styleFrom(
-                                                  padding: EdgeInsets.zero,
-                                                  //alignment: Alignment.centerLeft,
-                                                  minimumSize: Size.zero,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Already have an account? ',
+                                        style: TextStyle(
+                                          color: textColour,
                                         ),
+                                      ),
+                                      WidgetSpan(
+                                        child: TextButton(
+                                          onPressed: () {
+                                            state.resetControllers();
+                                            state.setIsLogin();
+                                          },
+                                          child: const Text(
+                                            'Log In',
+                                            style: TextStyle(decoration: TextDecoration.underline),
+                                          ),
+                                          style: TextButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            alignment: Alignment.centerLeft,
+                                            minimumSize: Size.zero,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                      : TextSpan(
+                                    children: [
+                                      const TextSpan(
+                                        text: "Don't have an account? ",
+                                        style: TextStyle(
+                                          color: textColour,
+                                        ),
+                                      ),
+                                      WidgetSpan(
+                                        child: TextButton(
+                                          onPressed: () {
+                                            state.resetControllers();
+                                            state.setIsLogin();
+                                          },
+                                          child: const Text(
+                                            'Sign Up',
+                                            style: TextStyle(decoration: TextDecoration.underline),
+                                          ),
+                                          style: TextButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            alignment: Alignment.centerLeft,
+                                            minimumSize: Size.zero,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -345,8 +340,7 @@ class _LogInPageState extends State<LogInPage> {
               ),
             ),
           ),
-        ),
-      );
+        );
     });
   }
 }

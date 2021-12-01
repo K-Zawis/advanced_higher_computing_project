@@ -85,8 +85,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
+    return Container(
         color: Colors.black,
         child: Column(
           children: [
@@ -381,7 +380,6 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

@@ -81,8 +81,7 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, child) {
       var assessment = watch(assessmentProvider);
-      return Scaffold(
-        body: Container(
+      return Container(
           color: Colors.black,
           child: Column(
             children: [
@@ -592,8 +591,7 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
               ),
             ],
           ),
-        ),
-      );
+        );
     });
   }
 }
