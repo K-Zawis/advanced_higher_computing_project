@@ -91,6 +91,9 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                             children: [
                               FormBuilderTextField(
                                 name: 'email',
+                                controller: state.isLogin()
+                                    ? state.emailControllerL()
+                                    : state.emailControllerS(),
                                 style: const TextStyle(
                                   color: textColour,
                                 ),
@@ -119,6 +122,9 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                               ),
                               FormBuilderTextField(
                                 name: 'password',
+                                controller: state.isLogin()
+                                    ? state.passwordControllerL()
+                                    : state.passwordControllerS(),
                                 obscureText: !state.isPasswordVisible(),
                                 focusNode: _focusNode,
                                 style: const TextStyle(
@@ -158,6 +164,7 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                               !state.isLogin()
                                   ? FormBuilderTextField(
                                       name: 'confirm_password',
+                                      controller: state.confirmControllerS(),
                                       obscureText: !state.isConfirmPasswordVisible(),
                                       focusNode: _focusNode2,
                                       style: const TextStyle(
@@ -216,10 +223,10 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                         _formKey.currentState!.value['email'],
                                         _formKey.currentState!.value['password'],
                                       );
-                                      print(status);
                                       if (status == AuthResultStatus.successful) {
                                         var verified = context.read(firebaseAuthProvider).currentUser!.emailVerified;
                                         if (verified) {
+                                          state.resetControllers();
                                           selectPage(context, 'Home Page');
                                         } else {
                                           state.setErrorMessage('Please verify your Email!');
@@ -241,7 +248,8 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                         });
                                       }
                                     } else {
-                                      await auth.createUserWithEmailAndPassword(_formKey.currentState!.value['email'], _formKey.currentState!.value['password']);
+                                      await auth.createUserWithEmailAndPassword(_formKey.currentState!.value['email'],
+                                          _formKey.currentState!.value['password']);
                                       state.setIsLogin();
                                     }
                                   }
@@ -274,6 +282,7 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                           WidgetSpan(
                                             child: TextButton(
                                               onPressed: () {
+                                                state.resetControllers();
                                                 state.setIsLogin();
                                               },
                                               child: const Text(
@@ -300,6 +309,7 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                           WidgetSpan(
                                             child: TextButton(
                                               onPressed: () {
+                                                state.resetControllers();
                                                 state.setIsLogin();
                                               },
                                               child: const Text(

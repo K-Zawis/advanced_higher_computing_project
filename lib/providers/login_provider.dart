@@ -1,12 +1,40 @@
 import 'package:flutter/material.dart';
 
 class LoginProvider extends ChangeNotifier {
+  final _emailControllerLogin = TextEditingController();
+  final _emailControllerSignUp = TextEditingController();
+  final _passwordControllerLogin = TextEditingController();
+  final _passwordControllerSignUp = TextEditingController();
+  final _confirmControllerSignUp = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isPasswordConfirmVisible = false;
   bool _login = true;
   String _errorMsg = '';
   bool error = false;
   bool error2 = false;
+
+  TextEditingController emailControllerL() {
+    return _emailControllerLogin;
+  }
+  TextEditingController emailControllerS() {
+    return _emailControllerSignUp;
+  }
+  TextEditingController passwordControllerL() {
+    return _passwordControllerLogin;
+  }
+  TextEditingController passwordControllerS() {
+    return _passwordControllerSignUp;
+  }
+  TextEditingController confirmControllerS() {
+    return _confirmControllerSignUp;
+  }
+  void resetControllers() {
+    _emailControllerLogin.clear();
+    _emailControllerSignUp.clear();
+    _passwordControllerLogin.clear();
+    _passwordControllerSignUp.clear();
+    _confirmControllerSignUp.clear();
+  }
 
   bool isPasswordValid() {
     return !error;

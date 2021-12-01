@@ -7,6 +7,7 @@ import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/providers/auth_providers/auth_helper.dart';
 
 import '../main.dart';
+import '../widget_tree.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({Key? key}) : super(key: key);
@@ -96,6 +97,9 @@ class _LogInPageState extends State<LogInPage> {
                               children: [
                                 FormBuilderTextField(
                                   name: 'email',
+                                  controller: state.isLogin()
+                                      ? state.emailControllerL()
+                                      : state.emailControllerS(),
                                   style: const TextStyle(
                                     color: textColour,
                                   ),
@@ -124,6 +128,9 @@ class _LogInPageState extends State<LogInPage> {
                                 ),
                                 FormBuilderTextField(
                                   name: 'password',
+                                  controller: state.isLogin()
+                                      ? state.passwordControllerL()
+                                      : state.passwordControllerS(),
                                   obscureText: !state.isPasswordVisible(),
                                   focusNode: _focusNode,
                                   style: const TextStyle(
@@ -172,6 +179,7 @@ class _LogInPageState extends State<LogInPage> {
                                 !state.isLogin()
                                     ? FormBuilderTextField(
                                         name: 'confirm_password',
+                                        controller: state.confirmControllerS(),
                                         obscureText: !state.isConfirmPasswordVisible(),
                                         focusNode: _focusNode2,
                                         style: const TextStyle(
@@ -226,13 +234,8 @@ class _LogInPageState extends State<LogInPage> {
                                         if (status == AuthResultStatus.successful) {
                                           var verified = context.read(firebaseAuthProvider).currentUser!.emailVerified;
                                           if (verified) {
-                                            Navigator.pushReplacement(
-                                              context,
-                                              PageRouteBuilder(
-                                                pageBuilder: (context, _, __) => const MyHomePage(),
-                                                transitionDuration: Duration.zero,
-                                              ),
-                                            );
+                                            state.resetControllers();
+                                            selectPage(context, 'Home Page');
                                           } else {
                                             state.setErrorMessage('Please verify your Email!');
                                             context.read(userStateProvider.notifier).signOut();
@@ -255,6 +258,7 @@ class _LogInPageState extends State<LogInPage> {
                                       } else {
                                         await auth.createUserWithEmailAndPassword(_formKey.currentState!.value['email'],
                                             _formKey.currentState!.value['password']);
+                                        state.setIsLogin();
                                       }
                                     }
                                     if (!_formKey.currentState!.fields['password']!.isValid) {
@@ -286,6 +290,7 @@ class _LogInPageState extends State<LogInPage> {
                                             WidgetSpan(
                                               child: TextButton(
                                                 onPressed: () {
+                                                  state.resetControllers();
                                                   state.setIsLogin();
                                                 },
                                                 child: const Text(
@@ -312,6 +317,7 @@ class _LogInPageState extends State<LogInPage> {
                                             WidgetSpan(
                                               child: TextButton(
                                                 onPressed: () {
+                                                  state.resetControllers();
                                                   state.setIsLogin();
                                                 },
                                                 child: const Text(
