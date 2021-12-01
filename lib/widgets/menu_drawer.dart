@@ -16,6 +16,7 @@ class MenuDrawer extends StatelessWidget {
         children: [
           Consumer(builder: (context, watch, child) {
             var user = watch(userStateProvider);
+            var auth = watch(userStateProvider.notifier);
             if (user != null) {
               return SizedBox(
                 height: 250,
@@ -69,8 +70,34 @@ class MenuDrawer extends StatelessWidget {
                       )
                     : Stack(
                         alignment: Alignment.center,
-                        children: const [
-                          Text('logged in '),
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              auth.signOut();
+                            },
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                              elevation: MaterialStateProperty.all(0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 15.0,
+                              ),
+                              child: Text(
+                                'SIGN OUT',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
               );
@@ -89,7 +116,7 @@ class MenuDrawer extends StatelessWidget {
             }
           }),
           Expanded(
-            child: Container(
+            child: SizedBox(
               width: double.infinity,
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),

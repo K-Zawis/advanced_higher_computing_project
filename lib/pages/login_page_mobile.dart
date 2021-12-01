@@ -5,6 +5,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/providers/auth_providers/auth_helper.dart';
+import 'package:learn_languages/widget_tree.dart';
 
 import '../main.dart';
 
@@ -215,16 +216,11 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                         _formKey.currentState!.value['email'],
                                         _formKey.currentState!.value['password'],
                                       );
+                                      print(status);
                                       if (status == AuthResultStatus.successful) {
                                         var verified = context.read(firebaseAuthProvider).currentUser!.emailVerified;
                                         if (verified) {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            PageRouteBuilder(
-                                              pageBuilder: (context, _, __) => const MyHomePage(),
-                                              transitionDuration: Duration.zero,
-                                            ),
-                                          );
+                                          selectPage(context, 'Home Page');
                                         } else {
                                           state.setErrorMessage('Please verify your Email!');
                                           context.read(userStateProvider.notifier).signOut();
@@ -246,6 +242,7 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                       }
                                     } else {
                                       await auth.createUserWithEmailAndPassword(_formKey.currentState!.value['email'], _formKey.currentState!.value['password']);
+                                      state.setIsLogin();
                                     }
                                   }
                                   if (!_formKey.currentState!.fields['password']!.isValid) {
