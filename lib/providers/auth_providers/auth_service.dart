@@ -29,7 +29,7 @@ class AuthService implements AuthRepository{
   @override
   Future<AuthResultStatus> signInWithEmailAndPassword(email, password) async {
     try {
-      final authResult = await _read(firebaseAuthProvider).signInWithEmailAndPassword(email: email, password: password);
+      final authResult = await _read(firebaseAuthProvider).signInWithEmailAndPassword(email: email.trim(), password: password);
       if (authResult.user != null) {
         _status = AuthResultStatus.successful;
       } else {

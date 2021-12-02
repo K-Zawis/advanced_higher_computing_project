@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/constants.dart';
@@ -32,7 +33,9 @@ class MenuDrawer extends StatelessWidget {
                                 width: 100,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop();
+                                    if (Scaffold.of(context).isDrawerOpen) {
+                                      Navigator.pop(context);
+                                    }
                                     selectPage(context, 'LogIn Page');
                                   },
                                   style: ButtonStyle(
@@ -71,32 +74,35 @@ class MenuDrawer extends StatelessWidget {
                     : Stack(
                         alignment: Alignment.center,
                         children: [
-                          IconButton(onPressed: () {}, icon: Icon(Icons.account_circle, color: Theme.of(context).colorScheme.primary,), iconSize: 150,),
-                          ElevatedButton(
-                            onPressed: () {
-                              auth.signOut();
-                            },
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
-                                ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                              elevation: MaterialStateProperty.all(0),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.account_circle,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 15.0,
+                            iconSize: 150,
+                          ),
+                          Positioned(
+                            top: 200,
+                            child: Text(
+                              user.email.substring(0, user.email.indexOf('@')),
+                              style: const TextStyle(
+                                fontSize: 20,
                               ),
-                              child: Text(
-                                'SIGN OUT',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: IconButton(
+                              onPressed: () {
+                                auth.signOut();
+                              },
+                              icon: const Icon(
+                                Icons.logout,
+                                color: iconColour,
                               ),
+                              iconSize: 30,
                             ),
                           ),
                         ],
@@ -116,6 +122,10 @@ class MenuDrawer extends StatelessWidget {
               );
             }
           }),
+          Divider(
+            height: 2,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           Expanded(
             child: SizedBox(
               width: double.infinity,
