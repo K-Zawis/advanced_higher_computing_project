@@ -10,8 +10,8 @@ class LoginProvider extends ChangeNotifier {
   bool _isPasswordConfirmVisible = false;
   bool _login = true;
   String _errorMsg = '';
-  bool error = false;
-  bool error2 = false;
+  bool valid = true;
+  bool valid2 = true;
 
   TextEditingController emailControllerL() {
     return _emailControllerLogin;
@@ -37,20 +37,20 @@ class LoginProvider extends ChangeNotifier {
   }
 
   bool isPasswordValid() {
-    return !error;
+    return valid;
   }
 
-  void setPasswordValid(bool valid) {
-    error = !valid;
+  void setPasswordValid(bool _valid) {
+    valid = _valid;
     notifyListeners();
   }
 
   bool isConfirmValid() {
-    return !error2;
+    return valid2;
   }
 
-  void setConfirmValid(bool valid) {
-    error2 = !valid;
+  void setConfirmValid(bool _valid) {
+    valid2 = _valid;
     notifyListeners();
   }
 

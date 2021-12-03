@@ -121,6 +121,36 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                               }),
                             ),
                           ),
+                          const Spacer(),
+                          Consumer(
+                            builder: (context, watch, child) {
+                              var user = watch(userStateProvider);
+                              if (user != null) {
+                                if (!user?.isAnonymous) {
+                                  return IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        context.read(userStateProvider.notifier).signOut();
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.logout,
+                                      color: Colors.white,
+                                    ),
+                                    iconSize: 30,
+                                  );
+                                } else {
+                                  return const SizedBox(
+                                    height: double.minPositive,
+                                  );
+                                }
+                              } else {
+                                return const SizedBox(
+                                  height: double.minPositive,
+                                );
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),

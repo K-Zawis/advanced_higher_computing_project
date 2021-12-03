@@ -17,7 +17,6 @@ class MenuDrawer extends StatelessWidget {
         children: [
           Consumer(builder: (context, watch, child) {
             var user = watch(userStateProvider);
-            var auth = watch(userStateProvider.notifier);
             if (user != null) {
               return SizedBox(
                 height: 250,
@@ -64,18 +63,18 @@ class MenuDrawer extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const Spacer(),
-                          const Divider(
-                            height: 1,
-                            thickness: 2,
-                          ),
                         ],
                       )
                     : Stack(
                         alignment: Alignment.center,
                         children: [
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              if (Scaffold.of(context).isDrawerOpen) {
+                                Navigator.pop(context);
+                              }
+                              selectPage(context, 'LogIn Page');
+                            },
                             icon: Icon(
                               Icons.account_circle,
                               color: Theme.of(context).colorScheme.primary,
@@ -89,20 +88,6 @@ class MenuDrawer extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 20,
                               ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: IconButton(
-                              onPressed: () {
-                                auth.signOut();
-                              },
-                              icon: const Icon(
-                                Icons.logout,
-                                color: iconColour,
-                              ),
-                              iconSize: 30,
                             ),
                           ),
                         ],

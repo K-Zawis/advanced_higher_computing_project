@@ -7,7 +7,6 @@ import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/providers/auth_providers/auth_helper.dart';
 import 'package:learn_languages/widget_tree.dart';
 
-import '../main.dart';
 
 class MobileLogInPage extends StatefulWidget {
   const MobileLogInPage({Key? key}) : super(key: key);
@@ -42,8 +41,8 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
   }
 
   //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor2(bool error) {
-    if (error) {
+  Color getPrefixIconColor2(bool valid) {
+    if (valid) {
       return _focusNode2.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
     } else {
       return Theme.of(context).errorColor;
@@ -51,8 +50,8 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
   }
 
   //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor(bool error) {
-    if (error) {
+  Color getPrefixIconColor(bool valid) {
+    if (valid) {
       return _focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
     } else {
       return Theme.of(context).errorColor;
@@ -251,14 +250,14 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                 }
                               }
                               if (!_formKey.currentState!.fields['password']!.isValid) {
-                                state.setPasswordValid(false);
-                              } else {
                                 state.setPasswordValid(true);
+                              } else {
+                                state.setPasswordValid(false);
                               }
                               if (!_formKey.currentState!.fields['confirm_password']!.isValid) {
-                                state.setConfirmValid(false);
-                              } else {
                                 state.setConfirmValid(true);
+                              } else {
+                                state.setConfirmValid(false);
                               }
                             },
                             child: Text(state.isLogin() ? 'LOG IN' : 'SIGN UP'),

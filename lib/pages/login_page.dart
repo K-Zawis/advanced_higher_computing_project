@@ -15,8 +15,9 @@ class LogInPage extends StatefulWidget {
 
 class _LogInPageState extends State<LogInPage> {
   final _formKey = GlobalKey<FormBuilderState>();
-  late final FocusNode _focusNode;
-  late final FocusNode _focusNode2;
+  // TODO -- Fix focus nodes switching to red when re enteing site after logout
+  late FocusNode _focusNode;
+  late FocusNode _focusNode2;
 
   @override
   void dispose() {
@@ -39,8 +40,8 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor2(bool error) {
-    if (error) {
+  Color getPrefixIconColor2(bool valid) {
+    if (valid) {
       return _focusNode2.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
     } else {
       return Theme.of(context).errorColor;
@@ -48,8 +49,8 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor(bool error) {
-    if (error) {
+  Color getPrefixIconColor(bool valid) {
+    if (valid) {
       return _focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
     } else {
       return Theme.of(context).errorColor;
@@ -257,14 +258,14 @@ class _LogInPageState extends State<LogInPage> {
                                       }
                                     }
                                     if (!_formKey.currentState!.fields['password']!.isValid) {
-                                      state.setPasswordValid(false);
-                                    } else {
                                       state.setPasswordValid(true);
+                                    } else {
+                                      state.setPasswordValid(false);
                                     }
                                     if (!_formKey.currentState!.fields['confirm_password']!.isValid) {
-                                      state.setConfirmValid(false);
-                                    } else {
                                       state.setConfirmValid(true);
+                                    } else {
+                                      state.setConfirmValid(false);
                                     }
                                   },
                                   child: Text(state.isLogin() ? 'LOG IN' : 'SIGN UP'),

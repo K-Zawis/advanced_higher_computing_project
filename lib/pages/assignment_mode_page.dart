@@ -122,87 +122,130 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10.0, left: 10.0),
-                      child: Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  Scaffold.of(context).openDrawer();
-                                },
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                icon: const Icon(
-                                  Icons.menu,
-                                  color: Colors.white,
-                                  size: 35,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Stack(
+                          children: [
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Scaffold.of(context).openDrawer();
+                                      },
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      icon: const Icon(
+                                        Icons.menu,
+                                        color: Colors.white,
+                                        size: 35,
+                                      ),
+                                      tooltip: 'Menu',
+                                    ),
+                                    IconButton(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      icon: const Icon(
+                                        Icons.home_filled,
+                                        color: Colors.white,
+                                        size: 25,
+                                      ),
+                                      onPressed: () {
+                                        if (assessment.getCompleteStatus()) {
+                                          assessment.reset();
+                                          selectPage(context, 'Home Page');
+                                        } else {
+                                          _showDialog(context);
+                                        }
+                                      },
+                                      tooltip: 'Home Page',
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      child: SizedBox(
+                                        height: 52,
+                                        width: 100,
+                                        child: Consumer(builder: (context, watch, child) {
+                                          var prov = watch(languageProvider);
+                                          var language = prov.items[prov.getLanguage()];
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(0x451C1C1C),
+                                              border: Border.all(
+                                                color: Colors.white,
+                                                width: 2,
+                                              ),
+                                              borderRadius: BorderRadius.circular(4.0),
+                                            ),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                                child: Text(
+                                                  language!.ISOcode,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                tooltip: 'Menu',
-                              ),
-                              IconButton(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                icon: const Icon(
-                                  Icons.home_filled,
-                                  color: Colors.white,
-                                  size: 25,
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 60),
+                                  child: Text(
+                                    'ASSIGNMENT MODE',
+                                    style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                                onPressed: () {
-                                  if (assessment.getCompleteStatus()) {
-                                    assessment.reset();
-                                    selectPage(context, 'Home Page');
+                              ],
+                            ),
+                            Positioned(
+                              top: 5,
+                              right: 10,
+                              child: Consumer(
+                                builder: (context, watch, child) {
+                                  var user = watch(userStateProvider);
+                                  if (user != null) {
+                                    if (!user?.isAnonymous) {
+                                      return IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            context.read(userStateProvider.notifier).signOut();
+                                          });
+                                        },
+                                        icon: const Icon(
+                                          Icons.logout,
+                                          color: Colors.white,
+                                        ),
+                                        iconSize: 30,
+                                      );
+                                    } else {
+                                      return const SizedBox(
+                                        height: double.minPositive,
+                                      );
+                                    }
                                   } else {
-                                    _showDialog(context);
+                                    return const SizedBox(
+                                      height: double.minPositive,
+                                    );
                                   }
                                 },
-                                tooltip: 'Home Page',
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-                                child: SizedBox(
-                                  height: 52,
-                                  width: 100,
-                                  child: Consumer(builder: (context, watch, child) {
-                                    var prov = watch(languageProvider);
-                                    var language = prov.items[prov.getLanguage()];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: const Color(0x451C1C1C),
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(4.0),
-                                      ),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                                          child: Text(
-                                            language!.ISOcode,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Text(
-                            'ASSIGNMENT MODE',
-                            style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

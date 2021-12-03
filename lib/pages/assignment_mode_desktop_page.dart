@@ -87,12 +87,12 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
             children: [
               // * image banner
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
+                height: 250,
                 width: double.infinity,
                 child: Stack(
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.3,
+                      height: 250,
                       width: double.infinity,
                       child: Image.network(
                         'https://firebasestorage.googleapis.com/v0/b/learn-languages-71bed.appspot.com/o/pexels-lilartsy-1925536.jpg?alt=media&token=df33a026-149b-46fb-b291-d57eb5e8c0d3',
@@ -120,86 +120,120 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, left: 10.0),
-                      child: Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        crossAxisAlignment: WrapCrossAlignment.center,
+                      padding: const EdgeInsets.only(bottom: 10.0, left: 10.0, top: 10,),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              IconButton(
-                                onPressed: () {
-                                  Scaffold.of(context).openDrawer();
-                                },
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                icon: const Icon(
-                                  Icons.menu,
-                                  color: Colors.white,
-                                  size: 35,
-                                ),
-                                tooltip: 'Menu',
-                              ),
-                              IconButton(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                icon: const Icon(
-                                  Icons.home_filled,
-                                  color: Colors.white,
-                                  size: 25,
-                                ),
-                                onPressed: () {
-                                  if (assessment.getCompleteStatus()) {
-                                    assessment.reset();
-                                    selectPage(context, 'Home Page');
-                                  } else {
-                                    _showDialog(context);
-                                  }
-                                },
-                                tooltip: 'Home Page',
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-                                child: SizedBox(
-                                  height: 52,
-                                  width: 100,
-                                  child: Consumer(builder: (context, watch, child) {
-                                    var prov = watch(languageProvider);
-                                    var language = prov.items[prov.getLanguage()];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: const Color(0x451C1C1C),
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(4.0),
-                                      ),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                                          child: Text(
-                                            language!.ISOcode,
-                                            style: const TextStyle(
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      Scaffold.of(context).openDrawer();
+                                    },
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    icon: const Icon(
+                                      Icons.menu,
+                                      color: Colors.white,
+                                      size: 35,
+                                    ),
+                                    tooltip: 'Menu',
+                                  ),
+                                  IconButton(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    icon: const Icon(
+                                      Icons.home_filled,
+                                      color: Colors.white,
+                                      size: 25,
+                                    ),
+                                    onPressed: () {
+                                      if (assessment.getCompleteStatus()) {
+                                        assessment.reset();
+                                        selectPage(context, 'Home Page');
+                                      } else {
+                                        _showDialog(context);
+                                      }
+                                    },
+                                    tooltip: 'Home Page',
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    child: SizedBox(
+                                      height: 52,
+                                      width: 100,
+                                      child: Consumer(builder: (context, watch, child) {
+                                        var prov = watch(languageProvider);
+                                        var language = prov.items[prov.getLanguage()];
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: const Color(0x451C1C1C),
+                                            border: Border.all(
                                               color: Colors.white,
-                                              fontSize: 18,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(4.0),
+                                          ),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                              child: Text(
+                                                language!.ISOcode,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
+                                        );
+                                      }),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Text(
+                                'ASSIGNMENT MODE',
+                                style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
-                          const Text(
-                            'ASSIGNMENT MODE',
-                            style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold),
+                          Consumer(
+                            builder: (context, watch, child) {
+                              var user = watch(userStateProvider);
+                              if (user != null) {
+                                if (!user?.isAnonymous) {
+                                  return IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        context.read(userStateProvider.notifier).signOut();
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.logout,
+                                      color: Colors.white,
+                                    ),
+                                    iconSize: 30,
+                                  );
+                                } else {
+                                  return const SizedBox(
+                                    height: double.minPositive,
+                                  );
+                                }
+                              } else {
+                                return const SizedBox(
+                                  height: double.minPositive,
+                                );
+                              }
+                            },
                           ),
                         ],
                       ),
