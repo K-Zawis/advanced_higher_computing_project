@@ -73,7 +73,6 @@ class MenuDrawer extends StatelessWidget {
                               if (Scaffold.of(context).isDrawerOpen) {
                                 Navigator.pop(context);
                               }
-                              selectPage(context, 'LogIn Page');
                             },
                             icon: Icon(
                               Icons.account_circle,

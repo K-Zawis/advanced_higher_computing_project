@@ -120,7 +120,7 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, left: 10.0, top: 10,),
+                      padding: const EdgeInsets.all(10.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

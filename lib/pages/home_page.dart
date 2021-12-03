@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   icon: const Icon(
                                     Icons.logout,
-                                    color: iconColour,
+                                    color: Colors.white,
                                   ),
                                   iconSize: 30,
                                 );

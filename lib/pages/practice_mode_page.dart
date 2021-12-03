@@ -208,8 +208,8 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                             ],
                           ),
                           Positioned(
-                            top: 5,
-                            right: 10,
+                            top: 3,
+                            right: 0,
                             child: Consumer(
                               builder: (context, watch, child) {
                                 var user = watch(userStateProvider);

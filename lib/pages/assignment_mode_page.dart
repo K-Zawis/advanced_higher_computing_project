@@ -121,7 +121,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, left: 10.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: SizedBox(
                         width: double.infinity,
                         child: Stack(
@@ -212,8 +212,8 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                               ],
                             ),
                             Positioned(
-                              top: 5,
-                              right: 10,
+                              top: 3,
+                              right: 0,
                               child: Consumer(
                                 builder: (context, watch, child) {
                                   var user = watch(userStateProvider);
