@@ -169,7 +169,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                         horizontal: 4,
                                       ),
                                       child: SizedBox(
-                                        height: 52,
+                                        height: 48,
                                         width: 100,
                                         child: Consumer(builder: (context, watch, child) {
                                           var prov = watch(languageProvider);
