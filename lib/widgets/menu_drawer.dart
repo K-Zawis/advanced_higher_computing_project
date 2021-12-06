@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_languages/constants.dart';
-import 'package:learn_languages/widget_tree.dart';
+
+import '/constants.dart';
 
 class MenuDrawer extends StatelessWidget {
   final double elevation;
@@ -26,7 +25,7 @@ class MenuDrawer extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: 249,
+                            //height: 249,
                             child: Center(
                               child: SizedBox(
                                 width: 100,
@@ -63,6 +62,15 @@ class MenuDrawer extends StatelessWidget {
                               ),
                             ),
                           ),
+                          TextButton(
+                            onPressed: () {
+                              if (Scaffold.of(context).isDrawerOpen) {
+                                Navigator.pop(context);
+                              }
+                              selectPage(context, 'Profile Page');
+                            },
+                            child: Text('profilePge'),
+                          ),
                         ],
                       )
                     : Stack(
@@ -73,6 +81,7 @@ class MenuDrawer extends StatelessWidget {
                               if (Scaffold.of(context).isDrawerOpen) {
                                 Navigator.pop(context);
                               }
+                              selectPage(context, 'Profile Page');
                             },
                             icon: Icon(
                               Icons.account_circle,
@@ -110,12 +119,31 @@ class MenuDrawer extends StatelessWidget {
             height: 2,
             color: Theme.of(context).colorScheme.primary,
           ),
+          // TODO -- make this dependant on the page (different page, different buttons)
           Expanded(
             child: SizedBox(
               width: double.infinity,
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
+                  physics: const BouncingScrollPhysics(),
+                  child: Consumer(
+                    builder: (context, watch, child ) {
+                      var page = watch(selectedPageNameProvider).state;
+                      switch (page) {
+                        case 'Home Page':
+                          break;
+                        case 'Practice Mode':
+                          break;
+                        case 'Assessment Mode':
+                          break;
+                        case 'LogIn Page':
+                          break;
+                        case 'Profile Page':
+                          break;
+                      }
+                      return Container();
+                    },
+                  ),
+                  /*Column(
                   children: const [
                     SizedBox(
                       height: 50,
@@ -128,8 +156,8 @@ class MenuDrawer extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              ),
+                ),*/
+                  ),
             ),
           ),
         ],

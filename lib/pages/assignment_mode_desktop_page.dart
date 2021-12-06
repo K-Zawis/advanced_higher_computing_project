@@ -5,8 +5,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
-import '../widget_tree.dart';
-
 class DesktopAssignmentMode extends StatefulWidget {
   const DesktopAssignmentMode({Key? key}) : super(key: key);
 
@@ -134,18 +132,6 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    onPressed: () {
-                                      Scaffold.of(context).openDrawer();
-                                    },
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                    icon: const Icon(
-                                      Icons.menu,
-                                      color: Colors.white,
-                                      size: 35,
-                                    ),
-                                    tooltip: 'Menu',
-                                  ),
-                                  IconButton(
                                     padding: const EdgeInsets.symmetric(horizontal: 8),
                                     icon: const Icon(
                                       Icons.home_filled,
@@ -160,7 +146,7 @@ class _DesktopAssignmentModeState extends State<DesktopAssignmentMode> with Tick
                                         _showDialog(context);
                                       }
                                     },
-                                    tooltip: 'Home Page',
+                                    tooltip: 'Home',
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(

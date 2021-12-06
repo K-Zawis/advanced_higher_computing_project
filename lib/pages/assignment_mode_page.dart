@@ -5,8 +5,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
-import '../widget_tree.dart';
-
 class AssignmentMode extends StatefulWidget {
   const AssignmentMode({Key? key}) : super(key: key);
 
@@ -162,7 +160,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                           _showDialog(context);
                                         }
                                       },
-                                      tooltip: 'Home Page',
+                                      tooltip: 'Home',
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(

@@ -6,7 +6,6 @@ import 'package:riverpod/riverpod.dart';
 
 import '../../constants.dart';
 import 'auth_helper.dart';
-import '/models/user_model.dart';
 
 // class MyUserData {
 //   User authData;

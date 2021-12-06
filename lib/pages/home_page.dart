@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../constants.dart';
-import '../widget_tree.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -75,6 +74,7 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () {
                             Scaffold.of(context).openDrawer();
                           },
+                          tooltip: 'Menu',
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           icon: const Icon(
                             Icons.menu,

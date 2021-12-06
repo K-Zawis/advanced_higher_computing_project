@@ -5,10 +5,9 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:learn_languages/constants.dart';
-import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
-import '../widget_tree.dart';
+import '/constants.dart';
+import '/widgets/sound_wave_widget.dart';
 
 class PracticeMode extends StatefulWidget {
   const PracticeMode({Key? key}) : super(key: key);
@@ -156,6 +155,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                                       color: Colors.white,
                                       size: 25,
                                     ),
+                                    tooltip: 'Home',
                                     onPressed: () {
                                       selectPage(context, 'Home Page');
                                     },

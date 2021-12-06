@@ -1,11 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_languages/constants.dart';
-import 'package:learn_languages/providers/auth_providers/auth_helper.dart';
-import 'package:learn_languages/widget_tree.dart';
+
+import '/constants.dart';
+import '../providers/auth_providers/auth_helper.dart';
 
 
 class MobileLogInPage extends StatefulWidget {
