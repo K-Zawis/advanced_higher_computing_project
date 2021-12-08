@@ -1,7 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '/constants.dart';
 
+enum Page { screenQuestions, screenAnalytics }
+
+extension on Page {
+  String get route => describeEnum(this);
+}
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -11,77 +17,100 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          color: Theme.of(context).canvasColor,
-          width: 70,
-          height: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.account_circle_outlined,
-                    color: iconColour,
-                    size: 40,
+    return WillPopScope(
+      onWillPop: () async {
+        if (navigatorKey.currentState!.canPop()) {
+          navigatorKey.currentState?.pop();
+          return false;
+        }
+
+        return true;
+      },
+      child: Row(
+        children: [
+          Container(
+            color: Theme.of(context).canvasColor,
+            width: 70,
+            height: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.account_circle_outlined,
+                      color: iconColour,
+                      size: 40,
+                    ),
+                    tooltip: 'Profile',
                   ),
-                  tooltip: 'Profile',
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.chat_outlined,
-                    color: iconColour,
-                    size: 40,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenQuestions.route),
+                    icon: const Icon(
+                      Icons.chat_outlined,
+                      color: iconColour,
+                      size: 40,
+                    ),
+                    tooltip: 'Questions',
                   ),
-                  tooltip: 'Questions',
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.analytics_outlined,
-                    color: iconColour,
-                    size: 40,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenAnalytics.route),
+                    icon: const Icon(
+                      Icons.analytics_outlined,
+                      color: iconColour,
+                      size: 40,
+                    ),
+                    tooltip: 'Analytics',
                   ),
-                  tooltip: 'Analytics',
                 ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  icon: const Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                    size: 40,
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(
+                      Icons.home_filled,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    tooltip: 'Home',
+                    onPressed: () {
+                      selectPage(context, 'Home Page');
+                    },
                   ),
-                  tooltip: 'Home',
-                  onPressed: () {
-                    selectPage(context, 'Home Page');
-                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(child: Container()),
-      ],
+          Expanded(
+            child: Navigator(
+              key: navigatorKey,
+              initialRoute: Page.screenQuestions.route,
+              onGenerateRoute: (settings) {
+                final pageName = settings.name;
+
+                final page = fragments.keys.firstWhere((element) => describeEnum(element) == pageName);
+
+                return MaterialPageRoute(settings: settings, builder: (context) => fragments[page]!);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

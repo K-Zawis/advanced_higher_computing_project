@@ -1,8 +1,11 @@
 library my_prj.constants;
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/pages/profile_page_sub_pages/me_analytics_page.dart';
+import 'package:learn_languages/pages/profile_page_sub_pages/my_questions_page.dart';
 
 import 'providers/assesment_provider.dart';
 import 'providers/language_provider.dart';
@@ -70,6 +73,19 @@ final _availableDesktopPages = <String, WidgetBuilder>{
   'Assignment Mode': (_) => const DesktopAssignmentMode(),
   'LogIn Page': (_) => const LogInPage(),
   'Profile Page': (_) => const ProfilePageDesktop(),
+};
+// Profile
+final navigatorKey = GlobalKey<NavigatorState>();
+
+enum Page { screenQuestions, screenAnalytics }
+
+extension on Page {
+  String get route => describeEnum(this);
+}
+
+final Map<Page, Widget> fragments = {
+  Page.screenQuestions: const MyQuestionsPage(),
+  Page.screenAnalytics: const MyAnalyticsPage(),
 };
 
 // this is a `StateProvider` so we can change its value
