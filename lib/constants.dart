@@ -93,49 +93,49 @@ final selectedPageNameProvider = StateProvider<String>((ref) {
   // default value
   return _availablePages.keys.first;
 });
-void selectPage(BuildContext context, String pageName) {
+void selectPage(WidgetRef ref, BuildContext context, String pageName) {
   // only change the state if we have selected a different page
-  if (context.read(selectedPageNameProvider).state != pageName) {
-    context.read(selectedPageNameProvider).state = pageName;
+  if (ref.read(selectedPageNameProvider.state).state != pageName) {
+    ref.read(selectedPageNameProvider.state).state = pageName;
   }
 }
 
 final selectedPageBuilderProvider = Provider<WidgetBuilder>((ref) {
   // watch for state changes inside selectedPageNameProvider
-  final selectedPageKey = ref.watch(selectedPageNameProvider).state;
+  final selectedPageKey = ref.watch(selectedPageNameProvider.state).state;
   // return the WidgetBuilder using the key as index
   return _availablePages[selectedPageKey]!;
 });
 final selectedMobilePageBuilderProvider = Provider<WidgetBuilder>((ref) {
   // watch for state changes inside selectedPageNameProvider
-  final selectedPageKey = ref.watch(selectedPageNameProvider).state;
+  final selectedPageKey = ref.watch(selectedPageNameProvider.state).state;
   // return the WidgetBuilder using the key as index
   return _availableMobilePages[selectedPageKey]!;
 });
 final selectedDesktopPageBuilderProvider = Provider<WidgetBuilder>((ref) {
   // watch for state changes inside selectedPageNameProvider
-  final selectedPageKey = ref.watch(selectedPageNameProvider).state;
+  final selectedPageKey = ref.watch(selectedPageNameProvider.state).state;
   // return the WidgetBuilder using the key as index
   return _availableDesktopPages[selectedPageKey]!;
 });
 
 // * providers
-final firebaseAuthProvider = Provider((_) => FirebaseAuth.instance);
+final firebaseAuthProvider = Provider<FirebaseAuth>((_) => FirebaseAuth.instance);
 final authRepositoryProvider = Provider<AuthService>((_) => AuthService(_.read));
-final userStateProvider = StateNotifierProvider((_) => UserStateNotifier(_.read)..appInit());
-final loginProvider = ChangeNotifierProvider((_ref) => LoginProvider());
-final languageProvider = ChangeNotifierProvider((ref) => Languages());
-final qualificationProvider = ChangeNotifierProvider((ref) => Qualifications());
-final topicProvider = ChangeNotifierProvider((ref) {
+final userStateProvider = StateNotifierProvider<UserStateNotifier, dynamic>((_) => UserStateNotifier(_.read)..appInit());
+final loginProvider = ChangeNotifierProvider<LoginProvider>((_ref) => LoginProvider());
+final languageProvider = ChangeNotifierProvider<Languages>((ref) => Languages());
+final qualificationProvider = ChangeNotifierProvider<Qualifications>((ref) => Qualifications());
+final topicProvider = ChangeNotifierProvider<Topics>((ref) {
   var lan = ref.watch(languageProvider).getLanguage();
   var level = ref.watch(qualificationProvider).getLevel();
   return Topics(lan, level);
 });
-final questionProvider = ChangeNotifierProvider((ref) {
+final questionProvider = ChangeNotifierProvider<Questions>((ref) {
   var topic = ref.watch(topicProvider).getTopicIds();
   return Questions(topic);
 });
-final assessmentProvider = ChangeNotifierProvider((ref) {
+final assessmentProvider = ChangeNotifierProvider<AssessmentProvider>((ref) {
   var questions = ref.watch(questionProvider);
   if (questions.items.isNotEmpty) {
     return AssessmentProvider(questions.getAssignmentLists());

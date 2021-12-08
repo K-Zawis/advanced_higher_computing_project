@@ -15,11 +15,11 @@ class WidgetTree extends StatefulWidget {
 class _WidgetTreeState extends State<WidgetTree> {
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, watch, child) {
-      final selectedPageBuilder = watch(selectedPageBuilderProvider);
-      final selectedDesktopPageBuilder = watch(selectedDesktopPageBuilderProvider);
-      final selectedMobilePageBuilder = watch (selectedMobilePageBuilderProvider);
-      var isLogIn = watch(selectedPageNameProvider).state == 'LogIn Page';
+    return Consumer(builder: (context, ref, child) {
+      final selectedPageBuilder = ref.watch(selectedPageBuilderProvider);
+      final selectedDesktopPageBuilder = ref.watch(selectedDesktopPageBuilderProvider);
+      final selectedMobilePageBuilder = ref.watch (selectedMobilePageBuilderProvider);
+      var isLogIn = ref.watch(selectedPageNameProvider.state).state == 'LogIn Page';
       return Scaffold(
         resizeToAvoidBottomInset: false,
         drawer: const MenuDrawer(

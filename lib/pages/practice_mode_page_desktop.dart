@@ -9,14 +9,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '/constants.dart';
 import '/widgets/sound_wave_widget.dart';
 
-class DesktopPracticeMode extends StatefulWidget {
+class DesktopPracticeMode extends ConsumerStatefulWidget {
   const DesktopPracticeMode({Key? key}) : super(key: key);
 
   @override
   _DesktopPracticeModeState createState() => _DesktopPracticeModeState();
 }
 
-class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerProviderStateMixin {
+class _DesktopPracticeModeState extends ConsumerState<DesktopPracticeMode> with TickerProviderStateMixin {
   final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 4;
   late AnimationController _animationController;
   late FlutterTts flutterTts;
@@ -35,12 +35,12 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
         milliseconds: 450,
       ),
     );
-    initTts();
+    initTts(ref);
   }
 
-  initTts() {
+  initTts(WidgetRef ref) {
     flutterTts = FlutterTts();
-    flutterTts.setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
+    flutterTts.setLanguage(ref.read(languageProvider).items[ref.read(languageProvider).getLanguage()]!.ISOcode);
 
     flutterTts.setCancelHandler(() {
       _animationController.reverse();
@@ -132,7 +132,7 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                                   ),
                                   tooltip: 'Home',
                                   onPressed: () {
-                                    selectPage(context, 'Home Page');
+                                    selectPage(ref, context, 'Home Page');
                                   },
                                 ),
                                 Padding(
@@ -142,8 +142,8 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                                   child: SizedBox(
                                     height: 48,
                                     width: 100,
-                                    child: Consumer(builder: (context, watch, child) {
-                                      var prov = watch(languageProvider);
+                                    child: Consumer(builder: (context, ref, child) {
+                                      var prov = ref.watch(languageProvider);
                                       var language = prov.items[prov.getLanguage()];
                                       return Container(
                                         decoration: BoxDecoration(
@@ -184,14 +184,14 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                           ],
                         ),
                         Consumer(
-                          builder: (context, watch, child) {
-                            var user = watch(userStateProvider);
+                          builder: (context, ref, child) {
+                            var user = ref.watch(userStateProvider);
                             if (user != null) {
                               if (!user?.isAnonymous) {
                                 return IconButton(
                                   onPressed: () {
                                     setState(() {
-                                      context.read(userStateProvider.notifier).signOut();
+                                      ref.read(userStateProvider.notifier).signOut();
                                     });
                                   },
                                   icon: const Icon(
@@ -232,7 +232,7 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: FormBuilderCheckbox(
                       name: 'visible',
-                      initialValue: context.read(questionProvider.notifier).getVisible(),
+                      initialValue: ref.read(questionProvider.notifier).getVisible(),
                       activeColor: Theme.of(context).colorScheme.primary,
                       title: const Text(
                         'Show Question?',
@@ -242,7 +242,7 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                         ),
                       ),
                       onChanged: (val) {
-                        context.read(questionProvider.notifier).setVisible(val as bool);
+                        ref.read(questionProvider.notifier).setVisible(val as bool);
                       },
                     ),
                   ),
@@ -257,8 +257,8 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                           constraints: const BoxConstraints(
                             maxWidth: 850,
                           ),
-                          child: Consumer(builder: (context, watch, child) {
-                            var prov = watch(questionProvider);
+                          child: Consumer(builder: (context, ref, child) {
+                            var prov = ref.watch(questionProvider);
                             var questions = prov.items;
                             if (questions.isNotEmpty) {
                               if (question == ''){
@@ -375,7 +375,7 @@ class _DesktopPracticeModeState extends State<DesktopPracticeMode> with TickerPr
                           onPressed: () async {
                             await flutterTts.stop();
                             setState(() {
-                              question = randomListItem(context.read(questionProvider).items.values.toList()).question;
+                              question = randomListItem(ref.read(questionProvider).items.values.toList()).question;
                             });
                           },
                           icon: Icon(

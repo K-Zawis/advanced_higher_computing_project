@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/constants.dart';
 
@@ -9,14 +10,14 @@ extension on Page {
   String get route => describeEnum(this);
 }
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,6 @@ class _ProfilePageState extends State<ProfilePage> {
           navigatorKey.currentState?.pop();
           return false;
         }
-
         return true;
       },
       child: Row(
@@ -89,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     tooltip: 'Home',
                     onPressed: () {
-                      selectPage(context, 'Home Page');
+                      selectPage(ref, context, 'Home Page');
                     },
                   ),
                 ),

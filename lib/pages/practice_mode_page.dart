@@ -9,14 +9,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '/constants.dart';
 import '/widgets/sound_wave_widget.dart';
 
-class PracticeMode extends StatefulWidget {
+class PracticeMode extends ConsumerStatefulWidget {
   const PracticeMode({Key? key}) : super(key: key);
 
   @override
   _PracticeModeState createState() => _PracticeModeState();
 }
 
-class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMixin {
+class _PracticeModeState extends ConsumerState<PracticeMode> with TickerProviderStateMixin {
   final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 4;
   late AnimationController _animationController;
   late FlutterTts flutterTts;
@@ -34,13 +34,13 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
         milliseconds: 450,
       ),
     );
-    initTts();
+    initTts(ref);
     super.initState();
   }
 
-  initTts() {
+  initTts(WidgetRef ref) {
     flutterTts = FlutterTts();
-    flutterTts.setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
+    flutterTts.setLanguage(ref.read(languageProvider).items[ref.read(languageProvider).getLanguage()]!.ISOcode);
 
     // TODO -- find out why stop() doesn't work in safari and how to fix it
     flutterTts.setCancelHandler(() {
@@ -157,7 +157,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                                     ),
                                     tooltip: 'Home',
                                     onPressed: () {
-                                      selectPage(context, 'Home Page');
+                                      selectPage(ref, context, 'Home Page');
                                     },
                                   ),
                                   Padding(
@@ -167,8 +167,8 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                                     child: SizedBox(
                                       height: 48,
                                       width: 100,
-                                      child: Consumer(builder: (context, watch, child) {
-                                        var prov = watch(languageProvider);
+                                      child: Consumer(builder: (context, ref, child) {
+                                        var prov = ref.watch(languageProvider);
                                         var language = prov.items[prov.getLanguage()];
                                         return Container(
                                           decoration: BoxDecoration(
@@ -211,14 +211,14 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                             top: 3,
                             right: 0,
                             child: Consumer(
-                              builder: (context, watch, child) {
-                                var user = watch(userStateProvider);
+                              builder: (context, ref, child) {
+                                var user = ref.watch(userStateProvider);
                                 if (user != null) {
                                   if (!user?.isAnonymous) {
                                     return IconButton(
                                       onPressed: () {
                                         setState(() {
-                                          context.read(userStateProvider.notifier).signOut();
+                                          ref.read(userStateProvider.notifier).signOut();
                                         });
                                       },
                                       icon: const Icon(
@@ -261,7 +261,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: FormBuilderCheckbox(
                         name: 'visible',
-                        initialValue: context.read(questionProvider.notifier).getVisible(),
+                        initialValue: ref.read(questionProvider.notifier).getVisible(),
                         activeColor: Theme.of(context).colorScheme.primary,
                         title: const Text(
                           'Show Question?',
@@ -271,7 +271,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                           ),
                         ),
                         onChanged: (val) {
-                          context.read(questionProvider.notifier).setVisible(val as bool);
+                          ref.read(questionProvider.notifier).setVisible(val as bool);
                         },
                       ),
                     ),
@@ -286,8 +286,8 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                             constraints: const BoxConstraints(
                               maxWidth: 850,
                             ),
-                            child: Consumer(builder: (context, watch, child) {
-                              var prov = watch(questionProvider);
+                            child: Consumer(builder: (context, ref, child) {
+                              var prov = ref.watch(questionProvider);
                               var questions = prov.items;
                               if (questions.isNotEmpty) {
                                 if (question == '') {
@@ -405,7 +405,7 @@ class _PracticeModeState extends State<PracticeMode> with TickerProviderStateMix
                               await flutterTts.stop();
                               setState(() {
                                 question =
-                                    randomListItem(context.read(questionProvider).items.values.toList()).question;
+                                    randomListItem(ref.read(questionProvider).items.values.toList()).question;
                               });
                             },
                             icon: Icon(

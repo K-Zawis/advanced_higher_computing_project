@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '/constants.dart';
 import '../providers/auth_providers/auth_helper.dart';
 
 
-class MobileLogInPage extends StatefulWidget {
+class MobileLogInPage extends ConsumerStatefulWidget {
   const MobileLogInPage({Key? key}) : super(key: key);
 
   @override
   _MobileLogInPageState createState() => _MobileLogInPageState();
 }
 
-class _MobileLogInPageState extends State<MobileLogInPage> {
+class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   late final FocusNode _focusNode;
   late final FocusNode _focusNode2;
@@ -60,9 +61,9 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
 
-    return Consumer(builder: (context, watch, child) {
-      var auth = watch(userStateProvider.notifier);
-      var state = watch(loginProvider);
+    return Consumer(builder: (context, ref, child) {
+      var auth = ref.watch(userStateProvider.notifier);
+      var state = ref.watch(loginProvider);
       return Padding(
         padding: EdgeInsets.only(
           bottom: bottom,
@@ -218,13 +219,13 @@ class _MobileLogInPageState extends State<MobileLogInPage> {
                                     _formKey.currentState!.value['password'],
                                   );
                                   if (status == AuthResultStatus.successful) {
-                                    var verified = context.read(firebaseAuthProvider).currentUser!.emailVerified;
+                                    var verified = ref.read(firebaseAuthProvider).currentUser!.emailVerified;
                                     if (verified) {
                                       state.resetControllers();
-                                      selectPage(context, 'Home Page');
+                                      selectPage(ref, context, 'Home Page');
                                     } else {
                                       state.setErrorMessage('Please verify your Email!');
-                                      context.read(userStateProvider.notifier).signOut();
+                                      ref.read(userStateProvider.notifier).signOut();
                                     }
                                   } else {
                                     setState(() {

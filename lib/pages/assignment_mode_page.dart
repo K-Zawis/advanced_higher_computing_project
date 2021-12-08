@@ -5,14 +5,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/widgets/sound_wave_widget.dart';
 
-class AssignmentMode extends StatefulWidget {
+class AssignmentMode extends ConsumerStatefulWidget {
   const AssignmentMode({Key? key}) : super(key: key);
 
   @override
   _AssignmentModeState createState() => _AssignmentModeState();
 }
 
-class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStateMixin {
+class _AssignmentModeState extends ConsumerState<AssignmentMode> with TickerProviderStateMixin {
   final int _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 2;
   late AnimationController _animationController;
   late FlutterTts _flutterTts;
@@ -26,14 +26,14 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
         milliseconds: 450,
       ),
     );
-    initTts();
+    initTts(ref);
     super.initState();
   }
 
-  initTts() {
+  initTts(WidgetRef ref) {
     _flutterTts = FlutterTts();
     _flutterTts
-        .setLanguage(context.read(languageProvider).items[context.read(languageProvider).getLanguage()]!.ISOcode);
+        .setLanguage(ref.read(languageProvider).items[ref.read(languageProvider).getLanguage()]!.ISOcode);
 
     // TODO -- find out why stop() doesn't work in safari and how to fix it
     _flutterTts.setCancelHandler(() {
@@ -78,8 +78,8 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     // * watches providers and rebuilds all of it's children when it registers a change
-    return Consumer(builder: (context, watch, child) {
-      var assessment = watch(assessmentProvider);
+    return Consumer(builder: (context, ref, child) {
+      var assessment = ref.watch(assessmentProvider);
       return Container(
           color: Colors.black,
           child: Column(
@@ -155,9 +155,9 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                       onPressed: () {
                                         if (assessment.getCompleteStatus()) {
                                           assessment.reset();
-                                          selectPage(context, 'Home Page');
+                                          selectPage(ref, context, 'Home Page');
                                         } else {
-                                          _showDialog(context);
+                                          _showDialog(ref, context);
                                         }
                                       },
                                       tooltip: 'Home',
@@ -169,8 +169,8 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                                       child: SizedBox(
                                         height: 48,
                                         width: 100,
-                                        child: Consumer(builder: (context, watch, child) {
-                                          var prov = watch(languageProvider);
+                                        child: Consumer(builder: (context, ref, child) {
+                                          var prov = ref.watch(languageProvider);
                                           var language = prov.items[prov.getLanguage()];
                                           return Container(
                                             decoration: BoxDecoration(
@@ -213,14 +213,14 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                               top: 3,
                               right: 0,
                               child: Consumer(
-                                builder: (context, watch, child) {
-                                  var user = watch(userStateProvider);
+                                builder: (context, ref, child) {
+                                  var user = ref.watch(userStateProvider);
                                   if (user != null) {
                                     if (!user?.isAnonymous) {
                                       return IconButton(
                                         onPressed: () {
                                           setState(() {
-                                            context.read(userStateProvider.notifier).signOut();
+                                            ref.read(userStateProvider.notifier).signOut();
                                           });
                                         },
                                         icon: const Icon(
@@ -257,8 +257,8 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                     color: Theme.of(context).scaffoldBackgroundColor,
                   ),
-                  child: Consumer(builder: (context, watch, child) {
-                    var prov = watch(questionProvider);
+                  child: Consumer(builder: (context, ref, child) {
+                    var prov = ref.watch(questionProvider);
                     var questions = prov.items;
                     if (questions.isNotEmpty) {
                       // * only happens once
@@ -642,7 +642,7 @@ class _AssignmentModeState extends State<AssignmentMode> with TickerProviderStat
   }
 }
 
-_showDialog(BuildContext context) {
+_showDialog(WidgetRef ref, BuildContext context) {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -686,8 +686,8 @@ _showDialog(BuildContext context) {
               ),
             ),
             onPressed: () {
-              context.read(assessmentProvider).reset();
-              selectPage(context, 'Home Page');
+              ref.read(assessmentProvider).reset();
+              selectPage(ref, context, 'Home Page');
               Navigator.pop(context);
             },
           ),

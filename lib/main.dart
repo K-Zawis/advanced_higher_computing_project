@@ -19,8 +19,8 @@ class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context, watch) {
-    watch(userStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(userStateProvider);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

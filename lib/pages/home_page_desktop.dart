@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../constants.dart';
 
-class DesktopHomePage extends StatefulWidget {
+class DesktopHomePage extends ConsumerStatefulWidget {
   const DesktopHomePage({Key? key}) : super(key: key);
 
   @override
   _DesktopHomePageState createState() => _DesktopHomePageState();
 }
 
-class _DesktopHomePageState extends State<DesktopHomePage> {
+class _DesktopHomePageState extends ConsumerState<DesktopHomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
   List? _selectedTopics = [];
@@ -20,7 +21,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
 
   @override
   void initState() {
-    _selectedTopics = context.read(topicProvider).getTopics();
+    _selectedTopics = ref.read(topicProvider).getTopics();
     super.initState();
   }
 
@@ -79,13 +80,13 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                             child: SizedBox(
                               height: 52,
                               width: 100,
-                              child: Consumer(builder: (context, watch, child) {
-                                watch(languageProvider);
-                                var language = context.read(languageProvider).getLanguage();
+                              child: Consumer(builder: (context, ref, child) {
+                                ref.watch(languageProvider);
+                                var language = ref.read(languageProvider).getLanguage();
                                 return FormBuilderDropdown(
                                   name: 'language',
                                   initialValue: language == '' ? null : language,
-                                  items: context.read(languageProvider.notifier).getDropdownItems(context),
+                                  items: ref.read(languageProvider.notifier).getDropdownItems(context),
                                   iconEnabledColor: Colors.white,
                                   decoration: const InputDecoration(
                                     fillColor: Color(0x451C1C1C),
@@ -113,8 +114,8 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                     setState(() {
                                       _selectedTopics = [];
                                     });
-                                    context.read(topicProvider).setTopics([]);
-                                    context.read(languageProvider.notifier).setLanguage(val.toString());
+                                    ref.read(topicProvider).setTopics([]);
+                                    ref.read(languageProvider.notifier).setLanguage(val.toString());
                                   },
                                 );
                               }),
@@ -122,14 +123,14 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                           ),
                           const Spacer(),
                           Consumer(
-                            builder: (context, watch, child) {
-                              var user = watch(userStateProvider);
+                            builder: (context, ref, child) {
+                              var user = ref.watch(userStateProvider);
                               if (user != null) {
                                 if (!user?.isAnonymous) {
                                   return IconButton(
                                     onPressed: () {
                                       setState(() {
-                                        context.read(userStateProvider.notifier).signOut();
+                                        ref.read(userStateProvider.notifier).signOut();
                                       });
                                     },
                                     icon: const Icon(
@@ -191,9 +192,9 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                     Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                        child: Consumer(builder: (context, watch, child) {
-                                          watch(qualificationProvider);
-                                          var level = context.read(qualificationProvider).getLevel();
+                                        child: Consumer(builder: (context, ref, child) {
+                                          ref.watch(qualificationProvider);
+                                          var level = ref.read(qualificationProvider).getLevel();
                                           return FormBuilderDropdown(
                                             initialValue: level == '' ? null : level,
                                             iconEnabledColor: Theme.of(context).colorScheme.secondary,
@@ -214,15 +215,15 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                               FormBuilderValidators.required(context),
                                             ]),
                                             items:
-                                                context.read(qualificationProvider.notifier).getDropdownItems(context),
+                                                ref.read(qualificationProvider.notifier).getDropdownItems(context),
                                             onChanged: (value) {
                                               _multiKey.currentState?.save();
                                               _multiKey.currentState?.didChange(null);
                                               setState(() {
                                                 _selectedTopics = [];
                                               });
-                                              context.read(topicProvider).setTopics([]);
-                                              context.read(qualificationProvider.notifier).setLevel(value.toString());
+                                              ref.read(topicProvider).setTopics([]);
+                                              ref.read(qualificationProvider.notifier).setLevel(value.toString());
                                             },
                                           );
                                         }),
@@ -271,16 +272,16 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                           _selectedTopics = null;
                                         }
                                       });
-                                      context.read(topicProvider).setTopics(_selectedTopics);
+                                      ref.read(topicProvider).setTopics(_selectedTopics);
                                     },
                                   ),
                                 ),
                                 Center(
                                   child: Visibility(
-                                    visible: !(context.read(topicProvider).getTopics()?.length == 2),
+                                    visible: !(ref.read(topicProvider).getTopics()?.length == 2),
                                     child: FittedBox(
-                                      child: Consumer(builder: (context, watch, child) {
-                                        var topics = watch(topicProvider);
+                                      child: Consumer(builder: (context, ref, child) {
+                                        var topics = ref.watch(topicProvider);
                                         if (topics.items.isNotEmpty) {
                                           return MultiSelectBottomSheetField(
                                             key: _multiKey,
@@ -335,7 +336,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                               }
                                               return null;
                                             },
-                                            items: context.read(topicProvider.notifier).getMultiSelectItems(),
+                                            items: ref.read(topicProvider.notifier).getMultiSelectItems(),
                                             chipDisplay: MultiSelectChipDisplay.none(),
                                           );
                                         } else {
@@ -373,7 +374,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                   _formKey.currentState?.save();
                                   _multiKey.currentState?.save();
                                   if (_formKey.currentState!.validate()) {
-                                    selectPage(context, 'Practice Mode');
+                                    selectPage(ref, context, 'Practice Mode');
                                   }
                                 },
                                 child: Padding(
@@ -407,7 +408,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                                   _multiKey.currentState?.save();
                                   if (_formKey.currentState!.validate()) {
                                     if (_selectedTopics?.length == 2) {
-                                      selectPage(context, 'Assignment Mode');
+                                      selectPage(ref, context, 'Assignment Mode');
                                     }
                                   }
                                 },

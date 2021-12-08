@@ -3,19 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/constants.dart';
 
-class MenuDrawer extends StatelessWidget {
+class MenuDrawer extends ConsumerWidget {
   final double elevation;
 
   const MenuDrawer({required this.elevation, Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Drawer(
       elevation: elevation,
       child: Column(
         children: [
-          Consumer(builder: (context, watch, child) {
-            var user = watch(userStateProvider);
+          Consumer(builder: (context, ref, child) {
+            var user = ref.watch(userStateProvider);
             if (user != null) {
               return SizedBox(
                 height: 250,
@@ -34,7 +34,7 @@ class MenuDrawer extends StatelessWidget {
                                     if (Scaffold.of(context).isDrawerOpen) {
                                       Navigator.pop(context);
                                     }
-                                    selectPage(context, 'LogIn Page');
+                                    selectPage(ref, context, 'LogIn Page');
                                   },
                                   style: ButtonStyle(
                                     shape: MaterialStateProperty.all(
@@ -67,7 +67,7 @@ class MenuDrawer extends StatelessWidget {
                               if (Scaffold.of(context).isDrawerOpen) {
                                 Navigator.pop(context);
                               }
-                              selectPage(context, 'Profile Page');
+                              selectPage(ref, context, 'Profile Page');
                             },
                             child: Text('profilePge'),
                           ),
@@ -81,7 +81,7 @@ class MenuDrawer extends StatelessWidget {
                               if (Scaffold.of(context).isDrawerOpen) {
                                 Navigator.pop(context);
                               }
-                              selectPage(context, 'Profile Page');
+                              selectPage(ref, context, 'Profile Page');
                             },
                             icon: Icon(
                               Icons.account_circle,
@@ -126,8 +126,8 @@ class MenuDrawer extends StatelessWidget {
               child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Consumer(
-                    builder: (context, watch, child ) {
-                      var page = watch(selectedPageNameProvider).state;
+                    builder: (context, ref, child ) {
+                      var page = ref.watch(selectedPageNameProvider.state).state;
                       switch (page) {
                         case 'Home Page':
                           break;
