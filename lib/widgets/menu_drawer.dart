@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/widgets/menu_drawer_widgets/profile_options.dart';
 
 import '/constants.dart';
 
@@ -121,44 +122,28 @@ class MenuDrawer extends ConsumerWidget {
           ),
           // TODO -- make this dependant on the page (different page, different buttons)
           Expanded(
-            child: SizedBox(
-              width: double.infinity,
-              child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Consumer(
-                    builder: (context, ref, child ) {
-                      var page = ref.watch(selectedPageNameProvider.state).state;
-                      switch (page) {
-                        case 'Home Page':
-                          break;
-                        case 'Practice Mode':
-                          break;
-                        case 'Assessment Mode':
-                          break;
-                        case 'LogIn Page':
-                          break;
-                        case 'Profile Page':
-                          break;
-                      }
-                      return Container();
-                    },
-                  ),
-                  /*Column(
-                  children: const [
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Text(
-                      'Assignment Data:',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
-                ),*/
-                  ),
-            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+                physics: const BouncingScrollPhysics(),
+                child: Consumer(
+                  builder: (context, ref, child ) {
+                    var page = ref.watch(selectedPageNameProvider.state).state;
+                    switch (page) {
+                      case 'Home Page':
+                        break;
+                      case 'Practice Mode':
+                        break;
+                      case 'Assessment Mode':
+                        break;
+                      case 'LogIn Page':
+                        break;
+                      case 'Profile Page':
+                        return const ProfileOptions();
+                    }
+                    return Container();
+                  },
+                ),
+                ),
           ),
         ],
       ),
