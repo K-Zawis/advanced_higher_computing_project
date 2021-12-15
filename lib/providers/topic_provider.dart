@@ -5,6 +5,8 @@ import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class Topics extends ChangeNotifier {
   final _topics = FirebaseFirestore.instance.collection("topic");
+  // https://stackoverflow.com/questions/63884633/unhandled-exception-a-changenotifier-was-used-after-being-disposed
+  bool _disposed = false;
 
   final Map<String, Topic> items = {};
   List? _selectedTopics = [];
@@ -69,6 +71,9 @@ class Topics extends ChangeNotifier {
   
   Future<Map<String, String>> getTopicIds() async {
     _topicIds = {};
+    if (items.isEmpty || _selectedTopics!.isEmpty) {
+      return _topicIds;
+    }
     var ids = await _topics.where('topic', whereIn: _selectedTopics).get();
     ids.docs.forEach((element) {
       _topicIds.putIfAbsent(element.id, () => element.id);
@@ -81,5 +86,18 @@ class Topics extends ChangeNotifier {
           (e) => MultiSelectItem(e.name, e.name),
     )
         .toList();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
   }
 }

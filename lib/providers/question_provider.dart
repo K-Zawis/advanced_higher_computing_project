@@ -5,6 +5,8 @@ import '../models/question_model.dart';
 
 class Questions extends ChangeNotifier {
   final _questions = FirebaseFirestore.instance.collection("questions");
+  // https://stackoverflow.com/questions/63884633/unhandled-exception-a-changenotifier-was-used-after-being-disposed
+  bool _disposed = false;
 
   final Map<String, Question> items = {};
   bool _visible = false;
@@ -14,34 +16,39 @@ class Questions extends ChangeNotifier {
   }
 
   _listenToData(topics) async {
-    var topicIds = await topics;
-    _questions.where('topic', whereIn: topicIds.values.toList()).snapshots().listen((snap) {
-      {
-        snap.docChanges.forEach((change) {
-          switch (change.type) {
-            case (DocumentChangeType.added):
-              {
-                print("added: " + change.doc.data().toString());
-                items.putIfAbsent(change.doc.id, () => Question.fromFirestore(change.doc));
-                break;
+    var temp = await topics;
+    var topicIds = temp.values.toList();
+    if (topicIds.isNotEmpty) {
+      try {
+        _questions.where('topic', whereIn: topicIds.isEmpty ? ['null'] : topicIds).snapshots().listen((snap) {
+          {
+            snap.docChanges.forEach((change) {
+              switch (change.type) {
+                case (DocumentChangeType.added):
+                  {
+                    print("added: " + change.doc.data().toString());
+                    items.putIfAbsent(change.doc.id, () => Question.fromFirestore(change.doc));
+                    break;
+                  }
+                case (DocumentChangeType.removed):
+                  {
+                    print("removed: " + change.doc.data().toString());
+                    items.remove(change.doc.id);
+                    break;
+                  }
+                case (DocumentChangeType.modified):
+                  {
+                    print("modified: " + change.doc.data().toString());
+                    items.update(change.doc.id, (value) => Question.fromFirestore(change.doc));
+                    break;
+                  }
               }
-            case (DocumentChangeType.removed):
-              {
-                print("removed: " + change.doc.data().toString());
-                items.remove(change.doc.id);
-                break;
-              }
-            case (DocumentChangeType.modified):
-              {
-                print("modified: " + change.doc.data().toString());
-                items.update(change.doc.id, (value) => Question.fromFirestore(change.doc));
-                break;
-              }
+            });
+            notifyListeners();
           }
         });
-        notifyListeners();
-      }
-    });
+      } catch (e) {}
+    }
   }
 
   Map<String, List<Question>> getAssignmentLists() {
@@ -49,6 +56,10 @@ class Questions extends ChangeNotifier {
     List<Question> topic1 = [];
     List<Question> topic2 = [];
     Question? _question;
+
+    if (items.isEmpty) {
+      return {};
+    }
 
     items.values.forEach((question) {
       // print(question.topic);
@@ -63,9 +74,13 @@ class Questions extends ChangeNotifier {
         }
       }
     });
-    out.putIfAbsent(topic1[0].topic, () => topic1);
-    out.putIfAbsent(topic2[0].topic, () => topic2);
-
+    print(topic2);
+    if (topic1.isNotEmpty) {
+      out.putIfAbsent(topic1[0].topic, () => topic1);
+    }
+    if (topic2.isNotEmpty) {
+      out.putIfAbsent(topic2[0].topic, () => topic2);
+    }
     return out;
   }
 
@@ -88,5 +103,18 @@ class Questions extends ChangeNotifier {
 
   Future<void> updateDocument(Map data, String id) {
     return _questions.doc(id).update(data as Map<String, dynamic>);
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
   }
 }

@@ -105,7 +105,22 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
                 final page = fragments.keys.firstWhere((element) => describeEnum(element) == pageName);
 
-                return MaterialPageRoute(settings: settings, builder: (context) => fragments[page]!);
+                return PageRouteBuilder(
+                  settings: settings,
+                  pageBuilder: (context, _, __) => fragments[page]!,
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(0.0, 1.0);
+                    const end = Offset.zero;
+                    const curve = Curves.fastLinearToSlowEaseIn;
+
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                );
               },
             ),
           ),
