@@ -1,7 +1,6 @@
 library my_prj.constants;
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/me_analytics_page.dart';
@@ -78,10 +77,6 @@ final _availableDesktopPages = <String, WidgetBuilder>{
 final navigatorKey = GlobalKey<NavigatorState>();
 
 enum Page { screenQuestions, screenAnalytics }
-
-extension on Page {
-  String get route => describeEnum(this);
-}
 
 final Map<Page, Widget> fragments = {
   Page.screenQuestions: const MyQuestionsPage(),

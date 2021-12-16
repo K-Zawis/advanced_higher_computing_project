@@ -10,8 +10,6 @@ class MyAnalyticsPage extends StatefulWidget {
 class _MyAnalyticsPageState extends State<MyAnalyticsPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('Analytics'),
-    );
+    return const Text('Analytics');
   }
 }
