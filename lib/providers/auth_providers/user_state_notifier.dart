@@ -34,6 +34,8 @@ class UserStateNotifier extends StateNotifier</*MyUserData*/User?> {
 
   Future<void> appInit() async {
     print('init');
+    // TODO -- remove when done testing
+    await _read(firebaseAuthProvider).signInWithEmailAndPassword(email: 'zawistowska.kasia@outlook.com', password: '!@#Kasia123');
     var user = _read(authRepositoryProvider).getCurrentUser();
     if (user == null) {
       await _read(firebaseAuthProvider).signInAnonymously();

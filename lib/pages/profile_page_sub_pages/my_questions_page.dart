@@ -59,10 +59,12 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
     return Consumer(builder: (context, ref, child) {
       ref.watch(languageProvider);
       ref.watch(questionProvider);
+      var user = ref.watch(userStateProvider);
       var topics = ref.watch(topicProvider).items;
       var language = ref.watch(languageProvider).getLanguage();
       var level = ref.watch(qualificationProvider).getLevel();
       var questions = ref.watch(questionProvider).getAssignmentLists();
+      var answers = ref.watch(answerProvider);
       return Stack(
         children: [
           Align(
@@ -350,8 +352,14 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
                                   padding: const EdgeInsets.only(bottom: 20),
                                   itemCount: questions[topicId]?.length ?? 0,
                                   itemBuilder: (context, i) {
+                                    String initialValue = '';
                                     if (questions.isNotEmpty) {
                                       Question question = questions[topicId]![i];
+                                      for (var element in answers.items.values.toList()) {
+                                        if (element.questionId == question.id) {
+                                          initialValue = element.text;
+                                        }
+                                      }
                                       return Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -372,6 +380,7 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
                                           ),
                                           FormBuilderTextField(
                                             name: question.id,
+                                            initialValue: initialValue,
                                             decoration: InputDecoration(
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -418,7 +427,21 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
                 if (_formKey.currentState!.validate()) {
                   questions.forEach((key, value) {
                     for (var question in value) {
-                      print(_formKey.currentState!.value[question.id]);
+                      if (_formKey.currentState!.value[question.id] != '') {
+                        var data = {
+                          'answer': _formKey.currentState!.value[question.id],
+                          'questionId': question.id,
+                        };
+                        var id;
+                        if (answers.items.values.any((element) {
+                          id = element.id;
+                          return element.questionId == question.id;
+                        })) {
+                          answers.updateDocument(data, id, user.uid);
+                        } else {
+                          answers.addDocument(data, user.uid);
+                        }
+                      }
                     }
                   });
                 }

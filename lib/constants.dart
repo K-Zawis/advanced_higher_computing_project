@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/me_analytics_page.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/my_questions_page.dart';
+import 'package:learn_languages/providers/answer_provider.dart';
 
 import 'providers/assesment_provider.dart';
 import 'providers/language_provider.dart';
@@ -137,4 +138,8 @@ final assessmentProvider = ChangeNotifierProvider<AssessmentProvider>((ref) {
   } else {
     return AssessmentProvider({});
   }
+});
+final answerProvider = ChangeNotifierProvider((ref) {
+  var uid = ref.watch(userStateProvider);
+  return Answers(uid.uid);
 });
