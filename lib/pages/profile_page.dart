@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/widgets/expanded_animation_widget.dart';
 
 import '/constants.dart';
 
@@ -18,6 +20,8 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
+  final layerLink = LayerLink();
+  bool expanded = true;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +46,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        expanded = !expanded;
+                      });
+                    },
                     icon: const Icon(
                       Icons.account_circle_outlined,
                       color: iconColour,
@@ -97,31 +105,111 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
           ),
           Expanded(
-            child: Navigator(
-              key: navigatorKey,
-              initialRoute: Page.screenQuestions.route,
-              onGenerateRoute: (settings) {
-                final pageName = settings.name;
+            child: Column(
+              children: [
+                Consumer(builder: (context, ref, child) {
+                  var user = ref.watch(userStateProvider);
+                  return Align(
+                    alignment: Alignment.topCenter,
+                    child: CompositedTransformTarget(
+                      link: layerLink,
+                      child: ExpandedSection(
+                        expand: expanded,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 500),
+                          height: expanded ? MediaQuery.of(context).size.height * 0.3 : 0,
+                          width: double.infinity,
+                          child: expanded
+                              ? CompositedTransformFollower(
+                                  link: layerLink,
+                                  child: Center(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(left: 20, right: 40),
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 850,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.account_circle,
+                                            color: Theme.of(context).colorScheme.primary,
+                                            size: 150,
+                                          ),
+                                          Flexible(
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  // TODO -- implement years
+                                                  // * maybe drop down?
+                                                  const Text(
+                                                    'S6',
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Text(
+                                                    user.email.substring(0, user.email.indexOf('@')),
+                                                    overflow: TextOverflow.ellipsis,
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+                Divider(
+                  color: Theme.of(context).colorScheme.primary,
+                  height: 2,
+                ),
+                Expanded(
+                  child: Navigator(
+                    key: navigatorKey,
+                    initialRoute: Page.screenQuestions.route,
+                    onGenerateRoute: (settings) {
+                      final pageName = settings.name;
 
-                final page = fragments.keys.firstWhere((element) => describeEnum(element) == pageName);
+                      final page = fragments.keys.firstWhere((element) => describeEnum(element) == pageName);
 
-                return PageRouteBuilder(
-                  settings: settings,
-                  pageBuilder: (context, _, __) => fragments[page]!,
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    const begin = Offset(0.0, 1.0);
-                    const end = Offset.zero;
-                    const curve = Curves.fastLinearToSlowEaseIn;
+                      return PageRouteBuilder(
+                        settings: settings,
+                        pageBuilder: (context, _, __) => fragments[page]!,
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          const begin = Offset(0.0, 1.0);
+                          const end = Offset.zero;
+                          const curve = Curves.fastLinearToSlowEaseIn;
 
-                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
-                    return SlideTransition(
-                      position: animation.drive(tween),
-                      child: child,
-                    );
-                  },
-                );
-              },
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ],
