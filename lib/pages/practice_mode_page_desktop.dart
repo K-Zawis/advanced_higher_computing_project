@@ -5,6 +5,7 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:learn_languages/models/answer_model.dart';
 
 import '/constants.dart';
 import '/widgets/sound_wave_widget.dart';
@@ -25,6 +26,8 @@ class _DesktopPracticeModeState extends ConsumerState<DesktopPracticeMode> with 
   Random rnd = Random();
   randomListItem(List lst) => lst[rnd.nextInt(lst.length)];
   String question = '';
+  String answer = 'N/A';
+  bool showingAnswer = false;
 
   @override
   void initState() {
@@ -259,22 +262,65 @@ class _DesktopPracticeModeState extends ConsumerState<DesktopPracticeMode> with 
                           ),
                           child: Consumer(builder: (context, ref, child) {
                             var prov = ref.watch(questionProvider);
+                            var _questionClass;
+                            List<Answer>? answers = ref.watch(answerProvider).items.values.toList();
                             var questions = prov.items;
                             if (questions.isNotEmpty) {
-                              if (question == ''){
-                                question = randomListItem(questions.values.toList()).question;
+                              if (question == '') {
+                                _questionClass = randomListItem(questions.values.toList());
+                                question = _questionClass.question;
+                              }
+                              if (_questionClass != null) {
+                                for (var element in answers) {
+                                  if (element.questionId == _questionClass.id){
+                                    answer = element.text;
+                                  }
+                                }
                               }
                               return Visibility(
                                 visible: prov.getVisible(),
-                                child: Center(
-                                  child: Text(
-                                    question,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      color: textColour,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        question,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          color: textColour,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Visibility(
+                                      visible: !showingAnswer && answer != 'N/A',
+                                      child: TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            showingAnswer = true;
+                                          });
+                                        },
+                                        child: Text(
+                                          'Show Answer',
+                                          style: TextStyle(
+                                              decoration: TextDecoration.underline,
+                                              color: Theme.of(context).colorScheme.primary),
+                                        ),
+                                      ),
+                                    ),
+                                    Visibility(
+                                      visible: showingAnswer,
+                                      child: Text(
+                                        answer,
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             } else {
@@ -375,7 +421,18 @@ class _DesktopPracticeModeState extends ConsumerState<DesktopPracticeMode> with 
                           onPressed: () async {
                             await flutterTts.stop();
                             setState(() {
-                              question = randomListItem(ref.read(questionProvider).items.values.toList()).question;
+                              showingAnswer = false;
+                              List<Answer>? answers = ref.read(answerProvider).items.values.toList();
+                              var _questionClass = randomListItem(ref.read(questionProvider).items.values.toList());
+                              question = _questionClass.question;
+                              if (_questionClass != null) {
+                                for (var element in answers) {
+                                  setState(() => answer = 'N/A');
+                                  if (element.questionId == _questionClass.id){
+                                    answer = element.text;
+                                  }
+                                }
+                              }
                             });
                           },
                           icon: Icon(
