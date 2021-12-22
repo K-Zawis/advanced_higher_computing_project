@@ -14,14 +14,14 @@ import 'auth_helper.dart';
 //   MyUserData({required this.authData, required this.userData});
 // }
 
-class UserStateNotifier extends StateNotifier</*MyUserData*/User?> {
+class UserStateNotifier extends StateNotifier< /*MyUserData*/ User?> {
   final Reader _read;
 
   StreamSubscription<User?>? _authStateChangeSubscription;
-  UserStateNotifier(this._read) : super(null){
+  UserStateNotifier(this._read) : super(null) {
     _authStateChangeSubscription?.cancel();
     _authStateChangeSubscription = _read(authRepositoryProvider).authStateChanges.listen((user) {
-      if (user!= null) {
+      if (user != null) {
         // FirebaseFirestore.instance.collection("users").doc(user.uid).snapshots().listen((userData) {
         //   state = MyUserData(authData: user, userData: MyUser.fromFirestore(userData, userData.id));
         // });
@@ -63,7 +63,6 @@ class UserStateNotifier extends StateNotifier</*MyUserData*/User?> {
     return complete;
   }
 
-
   // * Firebase management
   Future<void> updateDocument(String uid, Map data) {
     return FirebaseFirestore.instance.collection('users').doc(uid).update(data as Map<String, dynamic>);
@@ -88,5 +87,4 @@ class UserStateNotifier extends StateNotifier</*MyUserData*/User?> {
     _authStateChangeSubscription?.cancel();
     super.dispose();
   }
-
 }

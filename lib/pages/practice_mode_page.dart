@@ -1,14 +1,14 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:learn_languages/models/answer_model.dart';
 
+import '/models/question_model.dart';
+import '/models/answer_model.dart';
 import '/constants.dart';
 import '/widgets/sound_wave_widget.dart';
 
@@ -23,16 +23,18 @@ class _PracticeModeState extends ConsumerState<PracticeMode> with TickerProvider
   final int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 4;
   late AnimationController _animationController;
   late FlutterTts flutterTts;
+  late List<Answer> answers;
   final ValueNotifier<bool> _playing = ValueNotifier<bool>(false);
 
   Random rnd = Random();
   randomListItem(List lst) => lst[rnd.nextInt(lst.length)];
-  String question = '';
+  Question? question;
   String answer = 'N/A';
   bool showingAnswer = false;
 
   @override
   void initState() {
+    answers = ref.read(answerProvider).items.values.toList();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(
@@ -89,6 +91,7 @@ class _PracticeModeState extends ConsumerState<PracticeMode> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
+    answers = ref.watch(answerProvider).items.values.toList();
     return Container(
       color: Colors.black,
       child: Column(
@@ -293,20 +296,15 @@ class _PracticeModeState extends ConsumerState<PracticeMode> with TickerProvider
                           ),
                           child: Consumer(builder: (context, ref, child) {
                             var prov = ref.watch(questionProvider);
-                            var _questionClass;
-                            List<Answer>? answers = ref.watch(answerProvider).items.values.toList();
+                            // ! only shows answer to one question..?
                             var questions = prov.items;
                             if (questions.isNotEmpty) {
-                              if (question == '') {
-                                _questionClass = randomListItem(questions.values.toList());
-                                question = _questionClass.question;
-                              }
-                              if (_questionClass != null) {
-                                for (var element in answers) {
-                                  if (element.questionId == _questionClass.id){
-                                    answer = element.text;
-                                  }
-                                }
+                              question ??= randomListItem(questions.values.toList());
+                              var temp = answers.where((element) => element.questionId == question!.id);
+                              if (temp.isNotEmpty) {
+                                answer = temp.first.text;
+                              } else {
+                                answer = 'N/A';
                               }
                               return Visibility(
                                 visible: prov.getVisible(),
@@ -315,7 +313,7 @@ class _PracticeModeState extends ConsumerState<PracticeMode> with TickerProvider
                                   children: [
                                     Center(
                                       child: Text(
-                                        question,
+                                        question?.question ?? '',
                                         style: const TextStyle(
                                           fontSize: 20,
                                           color: textColour,
@@ -436,7 +434,7 @@ class _PracticeModeState extends ConsumerState<PracticeMode> with TickerProvider
                         IconButton(
                           onPressed: () async {
                             if (!_playing.value) {
-                              await flutterTts.speak(question);
+                              await flutterTts.speak(question!.question);
                             } else {
                               await flutterTts.stop();
                             }
@@ -453,16 +451,12 @@ class _PracticeModeState extends ConsumerState<PracticeMode> with TickerProvider
                             await flutterTts.stop();
                             setState(() {
                               showingAnswer = false;
-                              List<Answer>? answers = ref.read(answerProvider).items.values.toList();
-                              var _questionClass = randomListItem(ref.read(questionProvider).items.values.toList());
-                              question = _questionClass.question;
-                              if (_questionClass != null) {
-                                for (var element in answers) {
-                                  setState(() => answer = 'N/A');
-                                  if (element.questionId == _questionClass.id){
-                                    answer = element.text;
-                                  }
-                                }
+                              question = randomListItem(ref.read(questionProvider).items.values.toList());
+                              var temp = answers.where((element) => element.questionId == question!.id);
+                              if (temp.isNotEmpty) {
+                                answer = temp.first.text;
+                              } else {
+                                answer = 'N/A';
                               }
                             });
                           },
