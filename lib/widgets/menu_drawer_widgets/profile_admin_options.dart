@@ -19,33 +19,177 @@ class ProfileAdminOptions extends ConsumerWidget {
     return SizedBox(
       height: MediaQuery.of(context).size.height - 300,
       child: Column(
-        mainAxisSize: MainAxisSize.max,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: 250,
-            child: ElevatedButton(
-              onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenQuestions.route),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0),
-                child: Text(
-                  'Questions',
-                  softWrap: false,
-                  style: TextStyle(
-                    fontSize: 20,
+          Expanded(
+            child: CustomScrollView(
+              slivers: [
+                SliverList(delegate: SliverChildListDelegate(
+                  <Widget>[SizedBox(
+                    width: 250,
+                    child: ElevatedButton(
+                      onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15.0),
+                        child: Text(
+                          'Manage Users',
+                          softWrap: false,
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                        ),
+                        elevation: MaterialStateProperty.all(0),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                ),
-                elevation: MaterialStateProperty.all(0),
-              ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: SizedBox(
+                        width: 250,
+                        child: ExpansionTile(
+                          initiallyExpanded: true,
+                          collapsedBackgroundColor: Theme.of(context).colorScheme.primary,
+                          collapsedTextColor: textColour,
+                          collapsedIconColor: textColour,
+                          iconColor: Theme.of(context).colorScheme.primary,
+                          textColor: Theme.of(context).colorScheme.primary,
+                          title: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
+                            child: Text(
+                              'Data Admin',
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          children: [
+                            SizedBox(
+                              width: 250,
+                              child: ElevatedButton(
+                                onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                                  child: Text(
+                                    'Language',
+                                    softWrap: false,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                  ),
+                                  elevation: MaterialStateProperty.all(0),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: 250,
+                              child: ElevatedButton(
+                                onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                                  child: Text(
+                                    'Topic',
+                                    softWrap: false,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                  ),
+                                  elevation: MaterialStateProperty.all(0),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: 250,
+                              child: ElevatedButton(
+                                onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                                  child: Text(
+                                    'Question',
+                                    softWrap: false,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                  ),
+                                  elevation: MaterialStateProperty.all(0),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: 250,
+                              child: ElevatedButton(
+                                onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                                  child: Text(
+                                    'Level',
+                                    softWrap: false,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                  ),
+                                  elevation: MaterialStateProperty.all(0),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),],
+                ),),
+              ],
             ),
           ),
-          const Spacer(),
+          //const Spacer(),
           SizedBox(
             width: 250,
             child: ElevatedButton(

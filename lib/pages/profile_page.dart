@@ -59,32 +59,50 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     tooltip: 'Profile',
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenQuestions.route),
-                    icon: const Icon(
-                      Icons.chat_outlined,
-                      color: iconColour,
-                      size: 40,
+                if (ref.read(userStateProvider).userData.isAdmin)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                      icon: const Icon(
+                        Icons.manage_accounts_outlined,
+                        color: iconColour,
+                        size: 40,
+                      ),
+                      tooltip: 'Manage Users',
                     ),
-                    tooltip: 'Questions',
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenAnalytics.route),
-                    icon: const Icon(
-                      Icons.analytics_outlined,
-                      color: iconColour,
-                      size: 40,
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenQuestions.route),
+                      icon: const Icon(
+                        Icons.chat_outlined,
+                        color: iconColour,
+                        size: 40,
+                      ),
+                      tooltip: 'Questions',
                     ),
-                    tooltip: 'Analytics',
                   ),
-                ),
+                if (!ref.read(userStateProvider).userData.isAdmin)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenAnalytics.route),
+                      icon: const Icon(
+                        Icons.analytics_outlined,
+                        color: iconColour,
+                        size: 40,
+                      ),
+                      tooltip: 'Analytics',
+                    ),
+                  )
+                else
+                  SizedBox(),
                 const Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -141,11 +159,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                 mainAxisSize: MainAxisSize.min,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  // TODO -- implement years
-                                                  // * maybe drop down?
-                                                  const Text(
-                                                    'S6',
-                                                    style: TextStyle(
+                                                  Text(
+                                                    user.userData.isAdmin ? 'Admin' : 'Student',
+                                                    style: const TextStyle(
                                                       fontSize: 20,
                                                       fontWeight: FontWeight.bold,
                                                     ),
