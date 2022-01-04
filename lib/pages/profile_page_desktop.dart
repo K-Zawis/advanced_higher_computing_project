@@ -1,27 +1,30 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../constants.dart';
 
-enum Page { screenQuestions, screenAnalytics }
+enum Page { screenQuestions, screenAnalytics, manageUsers, language, topic, question, level }
 
 extension on Page {
   String get route => describeEnum(this);
 }
 
-class ProfilePageDesktop extends StatefulWidget {
+class ProfilePageDesktop extends ConsumerStatefulWidget {
   const ProfilePageDesktop({Key? key}) : super(key: key);
 
   @override
   _ProfilePageDesktopState createState() => _ProfilePageDesktopState();
 }
 
-class _ProfilePageDesktopState extends State<ProfilePageDesktop> {
+class _ProfilePageDesktopState extends ConsumerState<ProfilePageDesktop> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
       key: navigatorKey,
-      initialRoute: Page.screenQuestions.route,
+      initialRoute: ref.read(userStateProvider).userData.isAdmin
+          ? Page.manageUsers.route
+          : Page.screenQuestions.route,
       onGenerateRoute: (settings) {
         final pageName = settings.name;
 

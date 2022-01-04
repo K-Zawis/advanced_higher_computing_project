@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../constants.dart';
 
-enum Page { screenQuestions, screenAnalytics }
+enum Page { manageUsers, language, topic, question, level }
 
 extension on Page {
   String get route => describeEnum(this);
@@ -28,7 +28,7 @@ class ProfileAdminOptions extends ConsumerWidget {
                   <Widget>[SizedBox(
                     width: 250,
                     child: ElevatedButton(
-                      onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                      onPressed: () => navigatorKey.currentState!.pushNamed(Page.manageUsers.route),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),
                         child: Text(
@@ -76,7 +76,7 @@ class ProfileAdminOptions extends ConsumerWidget {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                                onPressed: () => navigatorKey.currentState!.pushNamed(Page.language.route),
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 15.0),
                                   child: Text(
@@ -103,7 +103,7 @@ class ProfileAdminOptions extends ConsumerWidget {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                                onPressed: () => navigatorKey.currentState!.pushNamed(Page.topic.route),
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 15.0),
                                   child: Text(
@@ -130,7 +130,7 @@ class ProfileAdminOptions extends ConsumerWidget {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                                onPressed: () => navigatorKey.currentState!.pushNamed(Page.question.route),
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 15.0),
                                   child: Text(
@@ -157,7 +157,7 @@ class ProfileAdminOptions extends ConsumerWidget {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                                onPressed: () => navigatorKey.currentState!.pushNamed(Page.level.route),
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 15.0),
                                   child: Text(
@@ -189,7 +189,9 @@ class ProfileAdminOptions extends ConsumerWidget {
               ],
             ),
           ),
-          //const Spacer(),
+          const SizedBox(
+            height: 15,
+          ),
           SizedBox(
             width: 250,
             child: ElevatedButton(

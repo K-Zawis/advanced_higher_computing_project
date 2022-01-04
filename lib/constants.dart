@@ -3,10 +3,15 @@ library my_prj.constants;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_languages/pages/profile_page_sub_pages/me_analytics_page.dart';
-import 'package:learn_languages/pages/profile_page_sub_pages/my_questions_page.dart';
-import 'package:learn_languages/providers/answer_provider.dart';
 
+import '/pages/profile_page_sub_pages/data_admin/level_edit_page.dart';
+import '/pages/profile_page_sub_pages/data_admin/question_edit_page.dart';
+import '/pages/profile_page_sub_pages/data_admin/topic_edit_page.dart';
+import '/pages/profile_page_sub_pages/data_admin/language_edit_page.dart';
+import '/pages/profile_page_sub_pages/manage_users_page.dart';
+import '/pages/profile_page_sub_pages/my_analytics_page.dart';
+import '/pages/profile_page_sub_pages/my_questions_page.dart';
+import '/providers/answer_provider.dart';
 import 'providers/assesment_provider.dart';
 import 'providers/language_provider.dart';
 import 'providers/login_provider.dart';
@@ -77,11 +82,16 @@ final _availableDesktopPages = <String, WidgetBuilder>{
 // Profile
 final navigatorKey = GlobalKey<NavigatorState>();
 
-enum Page { screenQuestions, screenAnalytics }
+enum Page { screenQuestions, screenAnalytics, manageUsers, language, topic, question, level }
 
 final Map<Page, Widget> fragments = {
   Page.screenQuestions: const MyQuestionsPage(),
   Page.screenAnalytics: const MyAnalyticsPage(),
+  Page.manageUsers: const ManageUserPage(),
+  Page.language: const LanguageEditPage(),
+  Page.topic: const TopicEditPage(),
+  Page.question: const QuestionEditPage(),
+  Page.level: const LevelEditPage(),
 };
 
 // this is a `StateProvider` so we can change its value

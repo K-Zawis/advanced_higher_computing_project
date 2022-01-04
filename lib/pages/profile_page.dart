@@ -6,7 +6,7 @@ import 'package:learn_languages/widgets/expanded_animation_widget.dart';
 
 import '/constants.dart';
 
-enum Page { screenQuestions, screenAnalytics }
+enum Page { screenQuestions, screenAnalytics, manageUsers, language, topic, question, level }
 
 extension on Page {
   String get route => describeEnum(this);
@@ -64,9 +64,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     padding: const EdgeInsets.all(8.0),
                     child: IconButton(
                       padding: EdgeInsets.zero,
-                      onPressed: () => /*navigatorKey.currentState!.pushNamed(Page.screenQuestions.route)*/ null,
+                      onPressed: () => Scaffold.of(context).openDrawer(),
                       icon: const Icon(
-                        Icons.manage_accounts_outlined,
+                        Icons.menu,
                         color: iconColour,
                         size: 40,
                       ),
@@ -200,7 +200,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 Expanded(
                   child: Navigator(
                     key: navigatorKey,
-                    initialRoute: Page.screenQuestions.route,
+                    initialRoute: ref.read(userStateProvider).userData.isAdmin
+                        ? Page.manageUsers.route
+                        : Page.screenQuestions.route,
                     onGenerateRoute: (settings) {
                       final pageName = settings.name;
 
