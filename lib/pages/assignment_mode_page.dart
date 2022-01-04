@@ -547,7 +547,7 @@ class _AssignmentModeState extends ConsumerState<AssignmentMode> with TickerProv
                                     onPressed: () async {
                                       if (!_playing.value) {
                                         await _flutterTts.stop();
-                                        assessment.setPlayed();
+                                        //assessment.setPlayed();
                                         assessment.nextQuestion(assessment.getTopic(), false);
                                       }
                                     },

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,8 +11,8 @@ extension on Page {
   String get route => describeEnum(this);
 }
 
-class ProfileOptions extends ConsumerWidget {
-  const ProfileOptions({Key? key}) : super(key: key);
+class ProfileAdminOptions extends ConsumerWidget {
+  const ProfileAdminOptions({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ref) {
@@ -28,33 +29,6 @@ class ProfileOptions extends ConsumerWidget {
                 padding: EdgeInsets.symmetric(vertical: 15.0),
                 child: Text(
                   'Questions',
-                  softWrap: false,
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                ),
-                elevation: MaterialStateProperty.all(0),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: 250,
-            child: ElevatedButton(
-              onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenAnalytics.route),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0),
-                child: Text(
-                  'Analytics',
                   softWrap: false,
                   style: TextStyle(
                     fontSize: 20,

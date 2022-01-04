@@ -5,16 +5,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../../constants.dart';
+import '../../models/user_model.dart';
 import 'auth_helper.dart';
 
-// class MyUserData {
-//   User authData;
-//   MyUser userData;
-//
-//   MyUserData({required this.authData, required this.userData});
-// }
+class MyUserData {
+  User authData;
+  MyUser userData;
 
-class UserStateNotifier extends StateNotifier< /*MyUserData*/ User?> {
+  MyUserData({required this.authData, required this.userData});
+}
+
+class UserStateNotifier extends StateNotifier< MyUserData? /*User?*/> {
   final Reader _read;
 
   StreamSubscription<User?>? _authStateChangeSubscription;
@@ -22,10 +23,9 @@ class UserStateNotifier extends StateNotifier< /*MyUserData*/ User?> {
     _authStateChangeSubscription?.cancel();
     _authStateChangeSubscription = _read(authRepositoryProvider).authStateChanges.listen((user) {
       if (user != null) {
-        // FirebaseFirestore.instance.collection("users").doc(user.uid).snapshots().listen((userData) {
-        //   state = MyUserData(authData: user, userData: MyUser.fromFirestore(userData, userData.id));
-        // });
-        state = user;
+        FirebaseFirestore.instance.collection("users").doc(user.uid).snapshots().listen((userData) {
+          state = MyUserData(authData: user, userData: MyUser.fromFirestore(userData, userData.id));
+        });
       } else {
         state = null;
       }
@@ -63,6 +63,8 @@ class UserStateNotifier extends StateNotifier< /*MyUserData*/ User?> {
     return complete;
   }
 
+
+  // TODO -- add proper document documentation
   // * Firebase management
   Future<void> updateDocument(String uid, Map data) {
     return FirebaseFirestore.instance.collection('users').doc(uid).update(data as Map<String, dynamic>);
@@ -74,11 +76,6 @@ class UserStateNotifier extends StateNotifier< /*MyUserData*/ User?> {
 
   Future<void> removeDocument(uid) {
     var dbRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    dbRef.collection('favourites').get().then((value) {
-      value.docs.forEach((doc) {
-        dbRef.collection('favourites').doc(doc.id).delete();
-      });
-    });
     return dbRef.delete();
   }
 

@@ -16,7 +16,7 @@ class AssessmentProvider extends ChangeNotifier {
 
   AssessmentProvider(this._topicMap) {
     print(_topicMap);
-    if (_topicMap?.isNotEmpty ?? false) {
+    if (_topicMap!.isNotEmpty) {
       _topic1 = _topicMap?.values.toList()[0] ?? [];
       _topic2 = _topicMap?.values.toList()[1] ?? [];
     }

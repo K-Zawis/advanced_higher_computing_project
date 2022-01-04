@@ -296,7 +296,6 @@ class _PracticeModeState extends ConsumerState<PracticeMode> with TickerProvider
                           ),
                           child: Consumer(builder: (context, ref, child) {
                             var prov = ref.watch(questionProvider);
-                            // ! only shows answer to one question..?
                             var questions = prov.items;
                             if (questions.isNotEmpty) {
                               question ??= randomListItem(questions.values.toList());

@@ -154,7 +154,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                     height: 20,
                                                   ),
                                                   Text(
-                                                    user.email.substring(0, user.email.indexOf('@')),
+                                                    user.authData.email.substring(0, user.authData.email.indexOf('@')),
                                                     overflow: TextOverflow.ellipsis,
                                                     softWrap: true,
                                                     style: const TextStyle(

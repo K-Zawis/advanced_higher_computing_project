@@ -16,6 +16,7 @@ class MyQuestionsPage extends ConsumerStatefulWidget {
 }
 
 class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerProviderStateMixin {
+  Map<String, FocusNode> focusNodes = {};
   final _formKey = GlobalKey<FormBuilderState>();
   final _multiKey = GlobalKey<FormFieldState>();
   List? _selectedTopics = [];
@@ -65,6 +66,12 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
       var level = ref.watch(qualificationProvider).getLevel();
       var questions = ref.watch(questionProvider).getAssignmentLists();
       var answers = ref.watch(answerProvider);
+      // create focus node for each text field
+      questions.forEach((key, list) {
+        for (var question in list) {
+          focusNodes.putIfAbsent(question.id, () => FocusNode());
+        }
+      });
       return Stack(
         children: [
           Align(
@@ -315,6 +322,7 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
                         const SizedBox(
                           height: 20,
                         ),
+                        // build questions for each topic
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -380,6 +388,7 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
                                           ),
                                           FormBuilderTextField(
                                             name: question.id,
+                                            focusNode: focusNodes[question.id],
                                             initialValue: initialValue,
                                             decoration: InputDecoration(
                                               enabledBorder: OutlineInputBorder(
@@ -437,9 +446,9 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
                           id = element.id;
                           return element.questionId == question.id;
                         })) {
-                          answers.updateDocument(data, id, user.uid);
+                          answers.updateDocument(data, id, user.authData.uid);
                         } else {
-                          answers.addDocument(data, user.uid);
+                          answers.addDocument(data, user.authData.uid);
                         }
                       }
                     }
@@ -454,5 +463,12 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
         ],
       );
     });
+  }
+  @override
+  void dispose() {
+    focusNodes.forEach((key, focusNode) {
+      focusNode.dispose();
+    });
+    super.dispose();
   }
 }

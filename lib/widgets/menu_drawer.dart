@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/widgets/menu_drawer_widgets/profile_admin_options.dart';
 import 'package:learn_languages/widgets/menu_drawer_widgets/profile_options.dart';
 
 import '/constants.dart';
@@ -21,7 +22,7 @@ class MenuDrawer extends ConsumerWidget {
               return SizedBox(
                 height: 250,
                 width: double.infinity,
-                child: user.isAnonymous
+                child: user.authData?.isAnonymous
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -93,7 +94,7 @@ class MenuDrawer extends ConsumerWidget {
                           Positioned(
                             top: 200,
                             child: Text(
-                              user.email.substring(0, user.email.indexOf('@')),
+                              user.authData.email.substring(0, user.authData.email.indexOf('@')),
                               style: const TextStyle(
                                 fontSize: 20,
                               ),
@@ -124,26 +125,30 @@ class MenuDrawer extends ConsumerWidget {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
-                physics: const BouncingScrollPhysics(),
-                child: Consumer(
-                  builder: (context, ref, child ) {
-                    var page = ref.watch(selectedPageNameProvider.state).state;
-                    switch (page) {
-                      case 'Home Page':
-                        break;
-                      case 'Practice Mode':
-                        break;
-                      case 'Assessment Mode':
-                        break;
-                      case 'LogIn Page':
-                        break;
-                      case 'Profile Page':
+              physics: const BouncingScrollPhysics(),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  var page = ref.watch(selectedPageNameProvider.state).state;
+                  switch (page) {
+                    case 'Home Page':
+                      break;
+                    case 'Practice Mode':
+                      break;
+                    case 'Assessment Mode':
+                      break;
+                    case 'LogIn Page':
+                      break;
+                    case 'Profile Page':
+                      if (ref.read(userStateProvider).userData.isAdmin) {
+                        return const ProfileAdminOptions();
+                      } else {
                         return const ProfileOptions();
-                    }
-                    return Container();
-                  },
-                ),
-                ),
+                      }
+                  }
+                  return Container();
+                },
+              ),
+            ),
           ),
         ],
       ),

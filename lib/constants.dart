@@ -141,5 +141,5 @@ final assessmentProvider = ChangeNotifierProvider<AssessmentProvider>((ref) {
 });
 final answerProvider = ChangeNotifierProvider((ref) {
   var uid = ref.watch(userStateProvider);
-  return Answers(uid.uid);
+  return Answers(uid.authData.uid);
 });
