@@ -7,6 +7,7 @@ class Users extends ChangeNotifier {
   final languages = FirebaseFirestore.instance.collection("users");
 
   final Map<String, MyUser> items = {};
+  MyUser? currentUser;
 
   Users() {
     _listenToData();

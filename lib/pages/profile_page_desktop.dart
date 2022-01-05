@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../constants.dart';
 
-enum Page { screenQuestions, screenAnalytics, manageUsers, language, topic, question, level }
+enum Page { screenQuestions, screenAnalytics, manageUsers, editUser, language, topic, question, level }
 
 extension on Page {
   String get route => describeEnum(this);

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/providers/users_provider.dart';
 
+import 'pages/profile_page_sub_pages/admin_forms/edit_user.dart';
+import 'pages/profile_page_sub_pages/admin_forms/edit_user_desktop.dart';
 import 'pages/profile_page_sub_pages/data_admin/level_edit_page.dart';
 import 'pages/profile_page_sub_pages/data_admin/question_edit_page.dart';
 import 'pages/profile_page_sub_pages/data_admin/topic_edit_page.dart';
@@ -65,6 +67,7 @@ final _availablePages = <String, WidgetBuilder>{
   'Assignment Mode': (_) => const AssignmentMode(),
   'LogIn Page': (_) => const LogInPage(),
   'Profile Page': (_) => const ProfilePage(),
+  'User Page': (_) => const EditUserPage(),
 };
 final _availableMobilePages = <String, WidgetBuilder>{
   'Home Page': (_) => const HomePage(),
@@ -72,6 +75,7 @@ final _availableMobilePages = <String, WidgetBuilder>{
   'Assignment Mode': (_) => const AssignmentMode(),
   'LogIn Page': (_) => const MobileLogInPage(),
   'Profile Page': (_) => const ProfilePage(),
+  'User Page': (_) => const EditUserPage(),
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page': (_) => const DesktopHomePage(),
@@ -79,6 +83,7 @@ final _availableDesktopPages = <String, WidgetBuilder>{
   'Assignment Mode': (_) => const DesktopAssignmentMode(),
   'LogIn Page': (_) => const LogInPage(),
   'Profile Page': (_) => const ProfilePageDesktop(),
+  'User Page': (_) => const EditUserDesktopPage(),
 };
 // Profile
 final navigatorKey = GlobalKey<NavigatorState>();

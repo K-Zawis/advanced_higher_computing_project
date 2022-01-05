@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/widgets/menu_drawer_widgets/form_options.dart';
 import 'package:learn_languages/widgets/menu_drawer_widgets/profile_admin_options.dart';
 import 'package:learn_languages/widgets/menu_drawer_widgets/profile_options.dart';
 
@@ -144,6 +145,8 @@ class MenuDrawer extends ConsumerWidget {
                       } else {
                         return const ProfileOptions();
                       }
+                    case 'User Page':
+                      return const FormOptions();
                   }
                   return Container();
                 },

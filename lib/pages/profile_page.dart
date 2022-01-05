@@ -6,7 +6,7 @@ import 'package:learn_languages/widgets/expanded_animation_widget.dart';
 
 import '/constants.dart';
 
-enum Page { screenQuestions, screenAnalytics, manageUsers, language, topic, question, level }
+enum Page { screenQuestions, screenAnalytics, manageUsers, editUser, language, topic, question, level }
 
 extension on Page {
   String get route => describeEnum(this);
@@ -70,7 +70,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         color: iconColour,
                         size: 40,
                       ),
-                      tooltip: 'Manage Users',
+                      tooltip: 'Menu',
                     ),
                   )
                 else
