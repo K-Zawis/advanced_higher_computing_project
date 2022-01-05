@@ -15,7 +15,7 @@ class MyUserData {
   MyUserData({required this.authData, required this.userData});
 }
 
-class UserStateNotifier extends StateNotifier< MyUserData? /*User?*/> {
+class UserStateNotifier extends StateNotifier< MyUserData?> {
   final Reader _read;
 
   StreamSubscription<User?>? _authStateChangeSubscription;
