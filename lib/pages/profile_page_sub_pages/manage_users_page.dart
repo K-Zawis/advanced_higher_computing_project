@@ -75,6 +75,8 @@ class _ManageUserPageState extends ConsumerState<ManageUserPage> {
                       trailing: IconButton(
                         color: iconColour,
                         onPressed: () {
+                          ref.read(usersProvider).setCurrentUser(users[index]);
+                          ref.read(usersProvider).setCustom(true);
                           selectPage(ref, context, 'User Page');
                         },
                         icon: const Icon(

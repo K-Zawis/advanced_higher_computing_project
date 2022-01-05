@@ -8,6 +8,7 @@ class Users extends ChangeNotifier {
 
   final Map<String, MyUser> items = {};
   MyUser? currentUser;
+  bool? custom;
 
   Users() {
     _listenToData();
@@ -41,6 +42,16 @@ class Users extends ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  void setCurrentUser(MyUser user) {
+    currentUser = user;
+    notifyListeners();
+  }
+
+  void setCustom(bool _bool) {
+    custom = _bool;
+    notifyListeners();
   }
 
   Future<void> removeDocument(String id) {

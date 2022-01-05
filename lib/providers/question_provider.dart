@@ -16,29 +16,58 @@ class Questions extends ChangeNotifier {
   }
 
   _listenToData(topics) async {
-    var temp = await topics;
-    var topicIds = temp.values.toList();
-    if (topicIds.isNotEmpty) {
+    if (topics != null) {
+      var temp = await topics;
+      var topicIds = temp.values.toList();
+      if (topicIds.isNotEmpty) {
+        try {
+          _questions.where('topic', whereIn: topicIds.isEmpty ? ['null'] : topicIds).snapshots().listen((snap) {
+            {
+              snap.docChanges.forEach((change) {
+                switch (change.type) {
+                  case (DocumentChangeType.added):
+                    {
+                      print("added: " + change.doc.data().toString());
+                      items.putIfAbsent(change.doc.id, () => Question.fromFirestore(change.doc));
+                      break;
+                    }
+                  case (DocumentChangeType.removed):
+                    {
+                      print("removed: " + change.doc.data().toString());
+                      items.remove(change.doc.id);
+                      break;
+                    }
+                  case (DocumentChangeType.modified):
+                    {
+                      print("modified: " + change.doc.data().toString());
+                      items.update(change.doc.id, (value) => Question.fromFirestore(change.doc));
+                      break;
+                    }
+                }
+              });
+              notifyListeners();
+            }
+          });
+        } catch (e) {}
+      }
+    } else {
       try {
-        _questions.where('topic', whereIn: topicIds.isEmpty ? ['null'] : topicIds).snapshots().listen((snap) {
+        _questions.snapshots().listen((snap) {
           {
             snap.docChanges.forEach((change) {
               switch (change.type) {
                 case (DocumentChangeType.added):
                   {
-                    print("added: " + change.doc.data().toString());
                     items.putIfAbsent(change.doc.id, () => Question.fromFirestore(change.doc));
                     break;
                   }
                 case (DocumentChangeType.removed):
                   {
-                    print("removed: " + change.doc.data().toString());
                     items.remove(change.doc.id);
                     break;
                   }
                 case (DocumentChangeType.modified):
                   {
-                    print("modified: " + change.doc.data().toString());
                     items.update(change.doc.id, (value) => Question.fromFirestore(change.doc));
                     break;
                   }

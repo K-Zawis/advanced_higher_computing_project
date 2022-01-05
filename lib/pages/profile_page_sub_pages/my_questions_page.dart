@@ -65,7 +65,7 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
       var language = ref.watch(languageProvider).getLanguage();
       var level = ref.watch(qualificationProvider).getLevel();
       var questions = ref.watch(questionProvider).getAssignmentLists();
-      var answers = ref.watch(answerProvider);
+      var answers = ref.watch(answerProvider(false));
       // create focus node for each text field
       questions.forEach((key, list) {
         for (var question in list) {
@@ -440,14 +440,20 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
                         var data = {
                           'answer': _formKey.currentState!.value[question.id],
                           'questionId': question.id,
+                          'levelId': _formKey.currentState!.value['level'],
+                          'languageId': _formKey.currentState!.value['language'],
+                          'topicId': question.topic,
                         };
                         var id;
+                        print(data);
                         if (answers.items.values.any((element) {
                           id = element.id;
                           return element.questionId == question.id;
                         })) {
+                          print('update');
                           answers.updateDocument(data, id, user.authData.uid);
                         } else {
+                          print('add');
                           answers.addDocument(data, user.authData.uid);
                         }
                       }

@@ -386,6 +386,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             _formKey.currentState?.save();
                             _multiKey.currentState?.save();
                             if (_formKey.currentState!.validate()) {
+                              ref.read(usersProvider).setCustom(false);
                               selectPage(ref, context, 'Practice Mode');
                             }
                           },
@@ -421,6 +422,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             _multiKey.currentState?.save();
                             if (_formKey.currentState!.validate()) {
                               if (_selectedTopics?.length == 2) {
+                                ref.read(usersProvider).setCustom(false);
                                 selectPage(ref, context, 'Assignment Mode');
                               }
                             }

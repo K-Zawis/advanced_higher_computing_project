@@ -13,7 +13,7 @@ class Languages extends ChangeNotifier {
   }
 
   _listenToData() async {
-    _languages.where('language', isEqualTo: 'Spanish').snapshots().listen((snap) {
+    _languages.snapshots().listen((snap) {
       {
         snap.docChanges.forEach((change) {
           switch (change.type) {

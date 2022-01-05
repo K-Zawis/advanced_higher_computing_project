@@ -14,7 +14,7 @@ class Qualifications extends ChangeNotifier {
   }
 
   _listenToData() async {
-    languages.where('level', isEqualTo: 'Higher').snapshots().listen((snap) {
+    languages.snapshots().listen((snap) {
       {
         snap.docChanges.forEach((change) {
           switch (change.type) {

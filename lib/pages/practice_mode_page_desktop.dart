@@ -34,7 +34,7 @@ class _DesktopPracticeModeState extends ConsumerState<DesktopPracticeMode> with 
   @override
   void initState() {
     super.initState();
-    answers = ref.read(answerProvider).items.values.toList();
+    answers = ref.read(answerProvider(false)).items.values.toList();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(
@@ -79,7 +79,7 @@ class _DesktopPracticeModeState extends ConsumerState<DesktopPracticeMode> with 
 
   @override
   Widget build(BuildContext context) {
-    answers = ref.watch(answerProvider).items.values.toList();
+    answers = ref.watch(answerProvider(false)).items.values.toList();
     return Container(
       color: Colors.black,
       child: Column(

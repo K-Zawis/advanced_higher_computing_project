@@ -144,7 +144,11 @@ final topicProvider = ChangeNotifierProvider<Topics>((ref) {
   return Topics(lan, level);
 });
 final questionProvider = ChangeNotifierProvider<Questions>((ref) {
-  var topic = ref.watch(topicProvider).getTopicIds();
+  var topic;
+  bool custom = ref.watch(usersProvider).custom?? false;
+  if (!custom) {
+    topic = ref.watch(topicProvider).getTopicIds();
+  }
   return Questions(topic);
 });
 final assessmentProvider = ChangeNotifierProvider<AssessmentProvider>((ref) {
@@ -155,8 +159,13 @@ final assessmentProvider = ChangeNotifierProvider<AssessmentProvider>((ref) {
     return AssessmentProvider({});
   }
 });
-final answerProvider = ChangeNotifierProvider((ref) {
-  var uid = ref.watch(userStateProvider);
-  return Answers(uid.authData.uid);
+final answerProvider = ChangeNotifierProvider.family((ref, bool custom) {
+  dynamic uid;
+  if (!custom) {
+    uid = ref.watch(userStateProvider).authData;
+  } else {
+    uid = ref.watch(usersProvider).currentUser;
+  }
+  return Answers(uid.uid);
 });
 final usersProvider = ChangeNotifierProvider((ref) => Users());
