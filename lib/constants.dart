@@ -69,6 +69,7 @@ final _availablePages = <String, WidgetBuilder>{
   'Profile Page': (_) => const ProfilePage(),
   'User Page': (_) => const EditUserPage(),
 };
+// TODO -- add mobile version of profile page etc
 final _availableMobilePages = <String, WidgetBuilder>{
   'Home Page': (_) => const HomePage(),
   'Practice Mode': (_) => const PracticeMode(),

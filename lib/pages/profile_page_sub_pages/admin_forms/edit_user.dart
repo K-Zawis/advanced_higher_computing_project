@@ -210,30 +210,35 @@ class _EditUserPageState extends ConsumerState<EditUserPage> {
                       child: Consumer(builder: (context, ref, child) {
                         var answers = ref.watch(answerProvider(true)).items.values.toList();
                         var questions = ref.watch(questionProvider).items;
-                        answers.sort((a,b) => a.topicId.compareTo(b.topicId));
+                        answers.sort((a, b) => a.topicId.compareTo(b.topicId));
                         if (questions.isNotEmpty) {
-                          return NotificationListener(
-                            onNotification: _handleScrollNotification,
-                            child: ListView.builder(
-                              controller: ScrollController(),
-                              itemCount: answers.length,
-                              itemBuilder: (context, index) {
-                                Answer answer = answers[index];
-                                return ListTile(
-                                  title: Text(
-                                    questions[answer.questionId]!.question,
-                                    style: const TextStyle(
-                                      color: textColour,
+                          return Container(
+                            constraints: const BoxConstraints(
+                              maxWidth: 850,
+                            ),
+                            child: NotificationListener(
+                              onNotification: _handleScrollNotification,
+                              child: ListView.builder(
+                                controller: ScrollController(),
+                                itemCount: answers.length,
+                                itemBuilder: (context, index) {
+                                  Answer answer = answers[index];
+                                  return ListTile(
+                                    title: Text(
+                                      questions[answer.questionId]!.question,
+                                      style: const TextStyle(
+                                        color: textColour,
+                                      ),
                                     ),
-                                  ),
-                                  subtitle: Text(
-                                    '- ${answer.text}',
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.primary,
+                                    subtitle: Text(
+                                      '- ${answer.text}',
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
                           );
                         } else {
@@ -260,9 +265,10 @@ class _EditUserPageState extends ConsumerState<EditUserPage> {
                     if (_formKey.currentState!.validate()) {
                       print(_formKey.currentState!.value);
                       if (_formKey.currentState!.value['isAdmin']) {
-                        // TODO -- add warning
+                        _showDialog(ref, context, user);
+                      } else {
+                        ref.read(usersProvider).updateDocument(_formKey.currentState!.value, user.uid);
                       }
-                      ref.read(usersProvider).updateDocument(_formKey.currentState!.value, user.uid);
                     }
                   },
                   tooltip: 'save',
@@ -274,6 +280,63 @@ class _EditUserPageState extends ConsumerState<EditUserPage> {
           ),
         ),
       ],
+    );
+  }
+
+  _showDialog(WidgetRef ref, BuildContext context, MyUser user) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Warning!"),
+          content: const Text('Are you sure you want to give this user Administrative Rights?'
+              '\n\n   They will be able to manage all data.'
+              '\n   View all users.'
+              '\n   And give out Administrative Rights.'
+              '\n\nContinue?'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(Theme.of(context).brightness == Brightness.light ? Colors.transparent : Colors.black.withOpacity(0.2)),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Yes'),
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(0),
+                backgroundColor: MaterialStateProperty.all(Colors.redAccent),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+              ),
+              onPressed: () {
+                ref.read(usersProvider).updateDocument(_formKey.currentState!.value, user.uid);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

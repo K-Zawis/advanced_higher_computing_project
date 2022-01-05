@@ -445,15 +445,12 @@ class _MyQuestionsPageState extends ConsumerState<MyQuestionsPage> with TickerPr
                           'topicId': question.topic,
                         };
                         var id;
-                        print(data);
                         if (answers.items.values.any((element) {
                           id = element.id;
                           return element.questionId == question.id;
                         })) {
-                          print('update');
                           answers.updateDocument(data, id, user.authData.uid);
                         } else {
-                          print('add');
                           answers.addDocument(data, user.authData.uid);
                         }
                       }

@@ -74,6 +74,7 @@ class _ManageUserPageState extends ConsumerState<ManageUserPage> {
                       ),
                       trailing: IconButton(
                         color: iconColour,
+                        tooltip: 'Edit/ View',
                         onPressed: () {
                           ref.read(usersProvider).setCurrentUser(users[index]);
                           ref.read(usersProvider).setCustom(true);
