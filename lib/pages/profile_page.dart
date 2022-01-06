@@ -200,9 +200,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 Expanded(
                   child: Navigator(
                     key: navigatorKey,
-                    initialRoute: ref.read(userStateProvider).userData.isAdmin
-                        ? Page.manageUsers.route
-                        : Page.screenQuestions.route,
+                    initialRoute: ref.read(userStateProvider).userData.isAdmin ? Page.manageUsers.route : Page.screenQuestions.route,
                     onGenerateRoute: (settings) {
                       final pageName = settings.name;
 
@@ -220,7 +218,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
                           return SlideTransition(
                             position: animation.drive(tween),
-                            child: child,
+                            child: Container(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              child: child,
+                            ),
                           );
                         },
                       );

@@ -7,6 +7,7 @@ class Qualifications extends ChangeNotifier {
   final languages = FirebaseFirestore.instance.collection("qualification");
 
   final Map<String, Qualification> items = {};
+  Qualification? qualification;
   var _level = '';
 
   Qualifications() {
@@ -41,6 +42,11 @@ class Qualifications extends ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  void setQualification(Qualification? level) {
+    qualification = level;
+    notifyListeners();
   }
 
   Future<void> removeDocument(String id) {

@@ -10,8 +10,6 @@ class LanguageEditPage extends ConsumerStatefulWidget {
   _LanguageEditPageState createState() => _LanguageEditPageState();
 }
 
-// TODO -- add Add button
-
 class _LanguageEditPageState extends ConsumerState<LanguageEditPage> {
   double _bottom = 16.0;
 
@@ -53,47 +51,50 @@ class _LanguageEditPageState extends ConsumerState<LanguageEditPage> {
             constraints: const BoxConstraints(
               maxWidth: 850,
             ),
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 50),
-              physics: const BouncingScrollPhysics(),
-              itemCount: languages.length,
-              itemBuilder: (context, index) {
-                var language = languages.values.toList()[index];
-                return ListTile(
-                  title: Text(
-                    language.language,
-                    style: const TextStyle(
-                      color: textColour,
+            child: NotificationListener(
+              onNotification: _handleScrollNotification,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 50),
+                physics: const BouncingScrollPhysics(),
+                itemCount: languages.length,
+                itemBuilder: (context, index) {
+                  var language = languages.values.toList()[index];
+                  return ListTile(
+                    title: Text(
+                      language.language,
+                      style: const TextStyle(
+                        color: textColour,
+                      ),
                     ),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        color: hintColour,
-                        tooltip: 'Delete',
-                        onPressed: () {
-                          ref.read(languageProvider).removeDocument(language.id);
-                        },
-                        icon: const Icon(
-                          Icons.delete,
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          color: hintColour,
+                          tooltip: 'Delete',
+                          onPressed: () {
+                            ref.read(languageProvider).removeDocument(language.id);
+                          },
+                          icon: const Icon(
+                            Icons.delete,
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        color: iconColour,
-                        tooltip: 'Edit',
-                        onPressed: () {
-                          ref.read(languageProvider).setCurrentLanguage(language);
-                          selectPage(ref, context, 'Language Page');
-                        },
-                        icon: const Icon(
-                          Icons.edit,
+                        IconButton(
+                          color: iconColour,
+                          tooltip: 'Edit',
+                          onPressed: () {
+                            ref.read(languageProvider).setCurrentLanguage(language);
+                            selectPage(ref, context, 'Language Page');
+                          },
+                          icon: const Icon(
+                            Icons.edit,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -106,7 +107,7 @@ class _LanguageEditPageState extends ConsumerState<LanguageEditPage> {
               ref.read(languageProvider).setCurrentLanguage(null);
               selectPage(ref, context, 'Language Page');
             },
-            tooltip: 'add language',
+            tooltip: 'Add Language',
             backgroundColor: Theme.of(context).colorScheme.primary,
             child: const Icon(Icons.add),
           ),

@@ -3,10 +3,8 @@ library my_prj.constants;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_language.dart';
-import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_language_desktop.dart';
-import 'package:learn_languages/providers/users_provider.dart';
 
+import 'pages/profile_page_sub_pages/admin_forms/edit_qualifications.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_user.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_user_desktop.dart';
 import 'pages/profile_page_sub_pages/data_admin/level_edit_page.dart';
@@ -26,6 +24,9 @@ import 'pages/login_page_mobile.dart';
 import 'pages/practice_mode_page_desktop.dart';
 import 'pages/home_page.dart';
 import 'pages/home_page_desktop.dart';
+import 'pages/profile_page_sub_pages/admin_forms/edit_language.dart';
+import 'pages/profile_page_sub_pages/admin_forms/edit_language_desktop.dart';
+import 'pages/profile_page_sub_pages/admin_forms/edit_qualifications_desktop.dart';
 
 import 'providers/auth_providers/auth_service.dart';
 import 'providers/auth_providers/user_state_notifier.dart';
@@ -36,6 +37,7 @@ import 'providers/login_provider.dart';
 import 'providers/qualification_provider.dart';
 import 'providers/question_provider.dart';
 import 'providers/topic_provider.dart';
+import 'providers/users_provider.dart';
 
 // * colours
 Map<int, Color> color = {
@@ -71,6 +73,7 @@ final _availablePages = <String, WidgetBuilder>{
   'Profile Page': (_) => const ProfilePage(),
   'User Page': (_) => const EditUserPage(),
   'Language Page': (_) => const LanguagePage(),
+  'Qualification Page': (_) => const QualificationPage(),
 };
 // TODO -- add mobile version of profile page etc
 final _availableMobilePages = <String, WidgetBuilder>{
@@ -81,6 +84,7 @@ final _availableMobilePages = <String, WidgetBuilder>{
   'Profile Page': (_) => const ProfilePage(),
   'User Page': (_) => const EditUserPage(),
   'Language Page': (_) => const LanguagePage(),
+  'Qualification Page': (_) => const QualificationPage(),
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page': (_) => const DesktopHomePage(),
@@ -90,6 +94,7 @@ final _availableDesktopPages = <String, WidgetBuilder>{
   'Profile Page': (_) => const ProfilePageDesktop(),
   'User Page': (_) => const EditUserDesktopPage(),
   'Language Page': (_) => const LanguageDesktopPage(),
+  'Qualification Page': (_) => const QualificationDesktopPage(),
 };
 // Profile
 final navigatorKey = GlobalKey<NavigatorState>();
