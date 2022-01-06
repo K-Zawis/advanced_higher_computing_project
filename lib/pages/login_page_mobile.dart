@@ -89,6 +89,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           FormBuilderTextField(
+                            enableSuggestions: true,
                             name: 'email',
                             controller: state.isLogin() ? state.emailControllerL() : state.emailControllerS(),
                             style: const TextStyle(

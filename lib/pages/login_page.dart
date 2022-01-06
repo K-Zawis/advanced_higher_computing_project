@@ -94,6 +94,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 FormBuilderTextField(
+                                  enableSuggestions: true,
                                   name: 'email',
                                   controller: state.isLogin()
                                       ? state.emailControllerL()

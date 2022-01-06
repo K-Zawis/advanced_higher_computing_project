@@ -170,7 +170,7 @@ class _EditUserPageState extends ConsumerState<EditUserPage> {
                                                       height: 20,
                                                     ),
                                                     Text(
-                                                      user.email.substring(0, user.email.indexOf('@')),
+                                                      user.email != 'Anonymous'? user.email.substring(0, user.email.indexOf('@')) : user.email,
                                                       overflow: TextOverflow.ellipsis,
                                                       softWrap: true,
                                                       style: const TextStyle(

@@ -7,6 +7,7 @@ class Languages extends ChangeNotifier {
   var _language = '';
 
   final Map<String, Language> items = {};
+  Language? currentLanguage;
 
   Languages() {
     _listenToData();
@@ -41,6 +42,12 @@ class Languages extends ChangeNotifier {
       }
     });
   }
+
+  void setCurrentLanguage(Language? language) {
+    currentLanguage = language;
+    notifyListeners();
+  }
+
   Future<Language> getDocumentById(String id) async {
     var doc = await _languages.doc(id).get();
     return Language.fromFirestore(doc, doc.id);

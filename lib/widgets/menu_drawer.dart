@@ -146,6 +146,7 @@ class MenuDrawer extends ConsumerWidget {
                         return const ProfileOptions();
                       }
                     case 'User Page':
+                    case 'Language Page':
                       return const FormOptions();
                   }
                   return Container();
