@@ -9,6 +9,7 @@ class Topics extends ChangeNotifier {
   bool _disposed = false;
 
   final Map<String, Topic> items = {};
+  Topic? currentTopic;
   List? _selectedTopics = [];
   Map<String, String> _topicIds = {};
 
@@ -46,6 +47,11 @@ class Topics extends ChangeNotifier {
         }
       });
     } catch (e){}
+  }
+
+  void setCurrentTopic(Topic? topic) {
+    currentTopic = topic;
+    notifyListeners();
   }
 
   Future<void> removeDocument(String id) {

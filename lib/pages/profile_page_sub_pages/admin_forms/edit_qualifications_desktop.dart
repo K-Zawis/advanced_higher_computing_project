@@ -78,6 +78,7 @@ class _LanguagePageState extends ConsumerState<QualificationDesktopPage> {
                   ref.read(qualificationProvider).updateDocument(_formKey.currentState!.value, qualification.id);
                 } else {
                   ref.read(qualificationProvider).addDocument(_formKey.currentState!.value);
+                  selectPage(ref, context, 'Profile Page');
                 }
               }
             },

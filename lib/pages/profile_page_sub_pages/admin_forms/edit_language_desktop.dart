@@ -142,6 +142,7 @@ class _LanguagePageState extends ConsumerState<LanguageDesktopPage> {
                         ref.read(languageProvider).updateDocument(_formKey.currentState!.value, language.id);
                       } else {
                         ref.read(languageProvider).addDocument(_formKey.currentState!.value);
+                        selectPage(ref, context, 'Profile Page');
                       }
                     }
                   },

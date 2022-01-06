@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'pages/profile_page_sub_pages/admin_forms/edit_topic.dart';
+import 'pages/profile_page_sub_pages/admin_forms/edit_topic_desktop.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_qualifications.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_user.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_user_desktop.dart';
@@ -74,6 +76,7 @@ final _availablePages = <String, WidgetBuilder>{
   'User Page': (_) => const EditUserPage(),
   'Language Page': (_) => const LanguagePage(),
   'Qualification Page': (_) => const QualificationPage(),
+  'Topic Page': (_) => const TopicPage(),
 };
 // TODO -- add mobile version of profile page etc
 final _availableMobilePages = <String, WidgetBuilder>{
@@ -85,6 +88,7 @@ final _availableMobilePages = <String, WidgetBuilder>{
   'User Page': (_) => const EditUserPage(),
   'Language Page': (_) => const LanguagePage(),
   'Qualification Page': (_) => const QualificationPage(),
+  'Topic Page': (_) => const TopicPage(),
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page': (_) => const DesktopHomePage(),
@@ -95,6 +99,7 @@ final _availableDesktopPages = <String, WidgetBuilder>{
   'User Page': (_) => const EditUserDesktopPage(),
   'Language Page': (_) => const LanguageDesktopPage(),
   'Qualification Page': (_) => const QualificationDesktopPage(),
+  'Topic Page': (_) => const TopicDesktopPage(),
 };
 // Profile
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -156,7 +161,7 @@ final topicProvider = ChangeNotifierProvider<Topics>((ref) {
 });
 final questionProvider = ChangeNotifierProvider<Questions>((ref) {
   var topic;
-  bool custom = ref.watch(usersProvider).custom?? false;
+  bool custom = ref.watch(usersProvider).custom ?? false;
   if (!custom) {
     topic = ref.watch(topicProvider).getTopicIds();
   }
