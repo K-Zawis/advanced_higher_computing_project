@@ -3,6 +3,8 @@ library my_prj.constants;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_question.dart';
+import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_question_desktop.dart';
 
 import 'pages/profile_page_sub_pages/admin_forms/edit_topic.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_topic_desktop.dart';
@@ -77,6 +79,7 @@ final _availablePages = <String, WidgetBuilder>{
   'Language Page': (_) => const LanguagePage(),
   'Qualification Page': (_) => const QualificationPage(),
   'Topic Page': (_) => const TopicPage(),
+  'Question Page': (_) => const QuestionPage(),
 };
 // TODO -- add mobile version of profile page etc
 final _availableMobilePages = <String, WidgetBuilder>{
@@ -89,6 +92,7 @@ final _availableMobilePages = <String, WidgetBuilder>{
   'Language Page': (_) => const LanguagePage(),
   'Qualification Page': (_) => const QualificationPage(),
   'Topic Page': (_) => const TopicPage(),
+  'Question Page': (_) => const QuestionPage(),
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
   'Home Page': (_) => const DesktopHomePage(),
@@ -100,6 +104,7 @@ final _availableDesktopPages = <String, WidgetBuilder>{
   'Language Page': (_) => const LanguageDesktopPage(),
   'Qualification Page': (_) => const QualificationDesktopPage(),
   'Topic Page': (_) => const TopicDesktopPage(),
+  'Question Page': (_) => const QuestionDesktopPage(),
 };
 // Profile
 final navigatorKey = GlobalKey<NavigatorState>();

@@ -9,6 +9,7 @@ class Questions extends ChangeNotifier {
   bool _disposed = false;
 
   final Map<String, Question> items = {};
+  Question? currentQuestion;
   bool _visible = false;
 
   Questions(topics) {
@@ -78,6 +79,11 @@ class Questions extends ChangeNotifier {
         });
       } catch (e) {}
     }
+  }
+
+  void setCurrentQuestion(Question? question) {
+    currentQuestion = question;
+    notifyListeners();
   }
 
   Map<String, List<Question>> getAssignmentLists() {

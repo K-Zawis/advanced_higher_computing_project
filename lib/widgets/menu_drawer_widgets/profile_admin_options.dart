@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../constants.dart';
+import '../../providers/topic_provider.dart';
 
 enum Page { manageUsers, language, topic, question, level }
 
@@ -157,7 +158,15 @@ class ProfileAdminOptions extends ConsumerWidget {
                             SizedBox(
                               width: 250,
                               child: ElevatedButton(
-                                onPressed: () => navigatorKey.currentState!.pushNamed(Page.question.route),
+                                onPressed: () {
+                                  Topics topicProv = ref.read(topicProvider);
+                                  var topics = topicProv.getTopics();
+                                  ref.read(usersProvider).setCustom(false);
+                                  if (topics?.length == 2) {
+                                    topicProv.setTopics([topics![0]]);
+                                  }
+                                  navigatorKey.currentState!.pushNamed(Page.question.route);
+                                },
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 15.0),
                                   child: Text(

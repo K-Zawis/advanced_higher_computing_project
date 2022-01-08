@@ -44,7 +44,7 @@ class ProfileOptions extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(
+          /*const SizedBox(
             height: 20,
           ),
           SizedBox(
@@ -70,7 +70,7 @@ class ProfileOptions extends ConsumerWidget {
                 elevation: MaterialStateProperty.all(0),
               ),
             ),
-          ),
+          ),*/
           const Spacer(),
           SizedBox(
             width: 250,

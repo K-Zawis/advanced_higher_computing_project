@@ -212,7 +212,7 @@ class _TopicEditPageState extends ConsumerState<TopicEditPage> {
               ref.read(topicProvider).setCurrentTopic(null);
               selectPage(ref, context, 'Topic Page');
             },
-            tooltip: 'Add Qualification',
+            tooltip: 'Add Topic',
             backgroundColor: Theme.of(context).colorScheme.primary,
             child: const Icon(Icons.add),
           ),

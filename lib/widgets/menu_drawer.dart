@@ -148,6 +148,8 @@ class MenuDrawer extends ConsumerWidget {
                     case 'User Page':
                     case 'Language Page':
                     case 'Qualification Page':
+                    case 'Topic Page':
+                    case 'Question Page':
                       return const FormOptions();
                   }
                   return Container();
