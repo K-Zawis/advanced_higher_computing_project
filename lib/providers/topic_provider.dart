@@ -46,7 +46,7 @@ class Topics extends ChangeNotifier {
           notifyListeners();
         }
       });
-    } catch (e){}
+    } catch (e) {}
   }
 
   void setCurrentTopic(Topic? topic) {
@@ -55,6 +55,13 @@ class Topics extends ChangeNotifier {
   }
 
   Future<void> removeDocument(String id) {
+    FirebaseFirestore.instance.collection("questions").where('topic', isEqualTo: id).get().then(
+          (questions) => questions.docs.forEach(
+            (doc) {
+              FirebaseFirestore.instance.collection("questions").doc(doc.id).delete();
+            },
+          ),
+        );
     return _topics.doc(id).delete();
   }
 
@@ -74,7 +81,7 @@ class Topics extends ChangeNotifier {
     _selectedTopics = values;
     notifyListeners();
   }
-  
+
   Future<Map<String, String>> getTopicIds() async {
     _topicIds = {};
     if (items.isEmpty || _selectedTopics!.isEmpty) {
@@ -88,9 +95,11 @@ class Topics extends ChangeNotifier {
   }
 
   List<MultiSelectItem<dynamic>> getMultiSelectItems() {
-    return items.values.toList().map(
+    return items.values
+        .toList()
+        .map(
           (e) => MultiSelectItem(e.name, e.name),
-    )
+        )
         .toList();
   }
 

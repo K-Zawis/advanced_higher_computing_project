@@ -174,7 +174,7 @@ class _TopicEditPageState extends ConsumerState<TopicEditPage> {
                                   color: hintColour,
                                   tooltip: 'Delete',
                                   onPressed: () {
-                                    ref.read(topicProvider).removeDocument(topic.id);
+                                    _showDialog(ref, context, topic);
                                   },
                                   icon: const Icon(
                                     Icons.delete,
@@ -218,6 +218,60 @@ class _TopicEditPageState extends ConsumerState<TopicEditPage> {
           ),
         ),
       ],
+    );
+  }
+
+  _showDialog(WidgetRef ref, BuildContext context, topic) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Warning!"),
+          content: const Text('All questions linked to this Topic will be deleted.\n\nProceed?'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Theme.of(context).brightness == Brightness.light
+                    ? Colors.transparent
+                    : Colors.black.withOpacity(0.2)),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Delete'),
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(0),
+                backgroundColor: MaterialStateProperty.all(Colors.redAccent),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+              ),
+              onPressed: () {
+                ref.read(topicProvider).removeDocument(topic.id);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -16,7 +16,7 @@ class Languages extends ChangeNotifier {
   _listenToData() async {
     _languages.snapshots().listen((snap) {
       {
-        snap.docChanges.forEach((change) {
+        for (var change in snap.docChanges) {
           switch (change.type) {
             case (DocumentChangeType.added):
               {
@@ -37,7 +37,7 @@ class Languages extends ChangeNotifier {
                 break;
               }
           }
-        });
+        }
         notifyListeners();
       }
     });
@@ -54,6 +54,22 @@ class Languages extends ChangeNotifier {
   }
 
   Future<void> removeDocument(String id) {
+    currentLanguage = null;
+    _language = '';
+    FirebaseFirestore.instance.collection('topic').where('language', isEqualTo: id).get().then(
+          (topics) => topics.docs.forEach(
+            (doc) {
+              FirebaseFirestore.instance.collection('questions').where('topic', isEqualTo: doc.id).get().then(
+                    (questions) => questions.docs.forEach(
+                      (doc2) {
+                        FirebaseFirestore.instance.collection('questions').doc(doc2.id).delete();
+                      },
+                    ),
+                  );
+              FirebaseFirestore.instance.collection('topic').doc(doc.id).delete();
+            },
+          ),
+        );
     return _languages.doc(id).delete();
   }
 
@@ -65,12 +81,12 @@ class Languages extends ChangeNotifier {
     return _languages.doc(id).update(data as Map<String, dynamic>);
   }
 
-  void setLanguage (String val) {
+  void setLanguage(String val) {
     _language = val;
     notifyListeners();
   }
 
-  String getLanguage () {
+  String getLanguage() {
     return _language;
   }
 
