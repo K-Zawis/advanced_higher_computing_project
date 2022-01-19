@@ -64,7 +64,6 @@ class UserStateNotifier extends StateNotifier< MyUserData?> {
   }
 
 
-  // TODO -- add proper document documentation
   // * Firebase management
   Future<void> updateDocument(String uid, Map data) {
     return FirebaseFirestore.instance.collection('users').doc(uid).update(data as Map<String, dynamic>);

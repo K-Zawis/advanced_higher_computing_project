@@ -7,12 +7,14 @@ enum AuthResultStatus {
   userDisabled,
   operationNotAllowed,
   tooManyRequests,
+  weakPassword,
   undefined,
 }
 
 class AuthExceptionHandler {
   static handleException(e) {
     AuthResultStatus status;
+    print(e.code);
     switch (e.code) {
       case "ERROR_INVALID_EMAIL":
       case "invalid-email":
@@ -42,7 +44,11 @@ class AuthExceptionHandler {
       case "account-exists-with-different-credential":
       case 'credential-already-in-use':
       case "email-already-in-use":
+      case "firebase_auth/email-already-in-use":
         status = AuthResultStatus.emailAlreadyExists;
+        break;
+      case "weak-password":
+        status = AuthResultStatus.weakPassword;
         break;
       default:
         status = AuthResultStatus.undefined;
@@ -78,6 +84,9 @@ class AuthExceptionHandler {
       case AuthResultStatus.emailAlreadyExists:
         errorMessage =
         "The e-mail has already been registered. Please login or reset your password.";
+        break;
+      case AuthResultStatus.weakPassword:
+        errorMessage = "Password must be at least 6 characters long.";
         break;
       default:
         errorMessage = "An undefined Error happened.";

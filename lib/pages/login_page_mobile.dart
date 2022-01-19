@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +6,6 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '/constants.dart';
 import '../providers/auth_providers/auth_helper.dart';
-
 
 class MobileLogInPage extends ConsumerStatefulWidget {
   const MobileLogInPage({Key? key}) : super(key: key);
@@ -16,46 +16,6 @@ class MobileLogInPage extends ConsumerStatefulWidget {
 
 class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
   final _formKey = GlobalKey<FormBuilderState>();
-  late final FocusNode _focusNode;
-  late final FocusNode _focusNode2;
-
-  @override
-  void dispose() {
-    super.dispose();
-    _focusNode.dispose();
-    _focusNode2.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode = FocusNode();
-    _focusNode.addListener(_onOnFocusNodeEvent);
-    _focusNode2 = FocusNode();
-    _focusNode2.addListener(_onOnFocusNodeEvent);
-  }
-
-  _onOnFocusNodeEvent() {
-    setState(() {});
-  }
-
-  //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor2(bool valid) {
-    if (valid) {
-      return _focusNode2.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
-    } else {
-      return Theme.of(context).errorColor;
-    }
-  }
-
-  //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor(bool valid) {
-    if (valid) {
-      return _focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
-    } else {
-      return Theme.of(context).errorColor;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +51,6 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                           FormBuilderTextField(
                             enableSuggestions: true,
                             name: 'email',
-                            controller: state.isLogin() ? state.emailControllerL() : state.emailControllerS(),
                             style: const TextStyle(
                               color: textColour,
                             ),
@@ -120,9 +79,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                           ),
                           FormBuilderTextField(
                             name: 'password',
-                            controller: state.isLogin() ? state.passwordControllerL() : state.passwordControllerS(),
                             obscureText: !state.isPasswordVisible(),
-                            focusNode: _focusNode,
                             style: const TextStyle(
                               color: textColour,
                             ),
@@ -145,7 +102,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                 },
                                 icon: Icon(
                                   !state.isPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                  color: getPrefixIconColor(state.isPasswordValid()),
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -161,8 +118,6 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                               ? FormBuilderTextField(
                                   name: 'confirm_password',
                                   controller: state.confirmControllerS(),
-                                  obscureText: !state.isConfirmPasswordVisible(),
-                                  focusNode: _focusNode2,
                                   style: const TextStyle(
                                     color: textColour,
                                   ),
@@ -185,14 +140,13 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                       },
                                       icon: Icon(
                                         !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                        color: getPrefixIconColor2(state.isConfirmValid()),
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
                                   validator: FormBuilderValidators.compose([
                                     FormBuilderValidators.required(context),
-                                    FormBuilderValidators.match(
-                                        context, _formKey.currentState?.value['password'] ?? ''),
+                                    FormBuilderValidators.match(context, _formKey.currentState?.value['password'] ?? ''),
                                   ]),
                                   keyboardType: TextInputType.emailAddress,
                                 )
@@ -231,8 +185,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                   } else {
                                     setState(() {
                                       var temp = AuthExceptionHandler.generateExceptionMessage(status);
-                                      if (status == AuthResultStatus.invalidEmail ||
-                                          status == AuthResultStatus.userDisabled) {
+                                      if (status == AuthResultStatus.invalidEmail || status == AuthResultStatus.userDisabled) {
                                         _formKey.currentState!.invalidateField(name: 'email', errorText: temp);
                                       } else if (status == AuthResultStatus.wrongPassword) {
                                         _formKey.currentState!.invalidateField(name: 'password', errorText: temp);
@@ -244,9 +197,23 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                     });
                                   }
                                 } else {
-                                  await auth.createUserWithEmailAndPassword(
-                                      _formKey.currentState!.value['email'], _formKey.currentState!.value['password']);
-                                  state.setIsLogin();
+                                  try {
+                                    await auth.createUserWithEmailAndPassword(
+                                      _formKey.currentState!.value['email'],
+                                      _formKey.currentState!.value['password'],
+                                    );
+                                    state.setIsLogin();
+                                  } on FirebaseAuthException catch (e) {
+                                    var status = AuthExceptionHandler.handleException(e);
+                                    var temp = AuthExceptionHandler.generateExceptionMessage(status);
+                                    if (status == AuthResultStatus.emailAlreadyExists) {
+                                      _formKey.currentState!.invalidateField(name: 'email', errorText: temp);
+                                    } else if (status == AuthResultStatus.weakPassword) {
+                                      _formKey.currentState!.invalidateField(name: 'password', errorText: temp);
+                                    } else {
+                                      state.setErrorMessage(temp);
+                                    }
+                                  }
                                 }
                               }
                               if (!_formKey.currentState!.fields['password']!.isValid) {
