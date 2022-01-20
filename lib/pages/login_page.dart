@@ -15,57 +15,13 @@ class LogInPage extends ConsumerStatefulWidget {
 }
 
 class _LogInPageState extends ConsumerState<LogInPage> {
-  final _formKeyDesktop = GlobalKey<FormBuilderState>();
-  // TODO -- Fix focus nodes switching to red when re enteing site after logout
-  /*late FocusNode _focusNode;
-  late FocusNode _focusNode2;*/
-
-  @override
-  void dispose() {
-    super.dispose();
-    /*_focusNode.dispose();
-    _focusNode2.dispose();*/
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    /*_focusNode = FocusNode();
-    _focusNode.addListener(_onOnFocusNodeEvent);
-    _focusNode2 = FocusNode();
-    _focusNode2.addListener(_onOnFocusNodeEvent);*/
-  }
-
-  _onOnFocusNodeEvent() {
-    setState(() {});
-  }
-
-  /*//This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor2(bool valid) {
-    if (valid) {
-      return _focusNode2.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
-    } else {
-      return Theme.of(context).errorColor;
-    }
-  }
-
-  //This will change the color of the icon based upon the focus on the field
-  Color getPrefixIconColor(bool valid) {
-    if (valid) {
-      return _focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Colors.white;
-    } else {
-      return Theme.of(context).errorColor;
-    }
-  }*/
+  final _formKey = GlobalKey<FormBuilderState>();
 
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       var auth = ref.watch(userStateProvider.notifier);
       var state = ref.watch(loginProvider);
-      _formKeyDesktop.currentState?.fields['email']?.effectiveFocusNode.attach(context);
-      _formKeyDesktop.currentState?.fields['password']?.effectiveFocusNode.attach(context);
-      _formKeyDesktop.currentState?.fields['confirm_password']?.effectiveFocusNode.attach(context);
       return Center(
         child: Container(
           width: MediaQuery.of(context).size.width * 0.8,
@@ -77,9 +33,9 @@ class _LogInPageState extends ConsumerState<LogInPage> {
             color: const Color(0xFF23252D),
             elevation: 10,
             child: FormBuilder(
-              key: _formKeyDesktop,
+              key: _formKey,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50),
+                padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50),
                 child: Column(
                   children: [
                     Text(
@@ -92,14 +48,13 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                     Expanded(
                       child: Center(
                         child: SingleChildScrollView(
-                          physics: const NeverScrollableScrollPhysics(),
+                          physics: const BouncingScrollPhysics(),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               FormBuilderTextField(
                                 enableSuggestions: true,
                                 name: 'email',
-                                //controller: state.isLogin() ? state.emailControllerL() : state.emailControllerS(),
                                 style: const TextStyle(
                                   color: textColour,
                                 ),
@@ -128,9 +83,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               ),
                               FormBuilderTextField(
                                 name: 'password',
-                                //controller: state.isLogin() ? state.passwordControllerL() : state.passwordControllerS(),
                                 obscureText: !state.isPasswordVisible(),
-                                //focusNode: _focusNode,
                                 style: const TextStyle(
                                   color: textColour,
                                 ),
@@ -153,7 +106,6 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                     },
                                     icon: Icon(
                                       !state.isPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                      //color: getPrefixIconColor(state.isPasswordValid()),
                                       color: Colors.white,
                                     ),
                                   ),
@@ -168,43 +120,41 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               ),
                               !state.isLogin()
                                   ? FormBuilderTextField(
-                                      name: 'confirm_password',
-                                      //controller: state.confirmControllerS(),
-                                      obscureText: !state.isConfirmPasswordVisible(),
-                                      //focusNode: _focusNode2,
-                                      style: const TextStyle(
-                                        color: textColour,
-                                      ),
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                        ),
-                                        hintText: 'Password',
-                                        enabledBorder: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                                          borderSide: BorderSide(
-                                            color: Colors.white,
-                                            width: 1,
-                                          ),
-                                        ),
-                                        suffixIcon: IconButton(
-                                          onPressed: () {
-                                            state.setConfirmPasswordVisible();
-                                          },
-                                          icon: Icon(
-                                            !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                            //color: getPrefixIconColor2(state.isConfirmValid()),
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      validator: FormBuilderValidators.compose([
-                                        FormBuilderValidators.required(context),
-                                        FormBuilderValidators.match(context, _formKeyDesktop.currentState?.value['password'] ?? ''),
-                                      ]),
-                                      keyboardType: TextInputType.emailAddress,
-                                    )
+                                name: 'confirm_password',
+                                controller: state.confirmControllerS(),
+                                obscureText: !state.isConfirmPasswordVisible(),
+                                style: const TextStyle(
+                                  color: textColour,
+                                ),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  hintText: 'Password',
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                                    borderSide: BorderSide(
+                                      color: Colors.white,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      state.setConfirmPasswordVisible();
+                                    },
+                                    icon: Icon(
+                                      !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                validator: FormBuilderValidators.compose([
+                                  FormBuilderValidators.required(context),
+                                  FormBuilderValidators.match(context, _formKey.currentState?.value['password'] ?? ''),
+                                ]),
+                                keyboardType: TextInputType.emailAddress,
+                              )
                                   : Container(),
                               const SizedBox(
                                 height: 15,
@@ -220,71 +170,66 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  if (_formKeyDesktop.currentState!.saveAndValidate()) {
+                                  if (_formKey.currentState!.saveAndValidate()) {
                                     state.setPasswordValid(true);
                                     state.setConfirmValid(true);
-                                    state.setErrorMessage('');
                                     if (state.isLogin()) {
-                                      //kzawistowska109@glow.sch.uk
                                       AuthResultStatus status = await auth.signIn(
-                                        _formKeyDesktop.currentState!.value['email'],
-                                        _formKeyDesktop.currentState!.value['password'],
+                                        _formKey.currentState!.value['email'],
+                                        _formKey.currentState!.value['password'],
                                       );
-                                      print(status);
                                       if (status == AuthResultStatus.successful) {
                                         var verified = ref.read(firebaseAuthProvider).currentUser!.emailVerified;
                                         if (verified) {
-                                          state.setErrorMessage('');
-                                          state.setPasswordValid(true);
-                                          state.setConfirmValid(true);
+                                          state.resetControllers();
                                           selectPage(ref, context, 'Home Page');
                                         } else {
                                           state.setErrorMessage('Please verify your Email!');
                                           ref.read(userStateProvider.notifier).signOut();
                                         }
                                       } else {
+                                        setState(() {
                                           var temp = AuthExceptionHandler.generateExceptionMessage(status);
                                           if (status == AuthResultStatus.invalidEmail || status == AuthResultStatus.userDisabled) {
-                                            _formKeyDesktop.currentState!.invalidateField(name: 'email', errorText: temp);
+                                            _formKey.currentState!.invalidateField(name: 'email', errorText: temp);
                                           } else if (status == AuthResultStatus.wrongPassword) {
-                                            _formKeyDesktop.currentState!.invalidateField(name: 'password', errorText: temp);
+                                            _formKey.currentState!.invalidateField(name: 'password', errorText: temp);
                                           } else if (status == AuthResultStatus.userNotFound) {
                                             state.setIsLogin();
                                           } else {
                                             state.setErrorMessage(temp);
                                           }
+                                        });
                                       }
                                     } else {
                                       try {
                                         await auth.createUserWithEmailAndPassword(
-                                          _formKeyDesktop.currentState!.value['email'],
-                                          _formKeyDesktop.currentState!.value['password'],
+                                          _formKey.currentState!.value['email'],
+                                          _formKey.currentState!.value['password'],
                                         );
                                         state.setIsLogin();
                                       } on FirebaseAuthException catch (e) {
                                         var status = AuthExceptionHandler.handleException(e);
                                         var temp = AuthExceptionHandler.generateExceptionMessage(status);
                                         if (status == AuthResultStatus.emailAlreadyExists) {
-                                          _formKeyDesktop.currentState!.invalidateField(name: 'email', errorText: temp);
+                                          _formKey.currentState!.invalidateField(name: 'email', errorText: temp);
                                         } else if (status == AuthResultStatus.weakPassword) {
-                                          _formKeyDesktop.currentState!.invalidateField(name: 'password', errorText: temp);
+                                          _formKey.currentState!.invalidateField(name: 'password', errorText: temp);
                                         } else {
                                           state.setErrorMessage(temp);
                                         }
                                       }
                                     }
                                   }
-                                  if (_formKeyDesktop.currentState!.fields['password']!.isValid) {
+                                  if (!_formKey.currentState!.fields['password']!.isValid) {
                                     state.setPasswordValid(true);
                                   } else {
                                     state.setPasswordValid(false);
-                                    _formKeyDesktop.currentState!.fields['password']!.validate();
                                   }
-                                  if (_formKeyDesktop.currentState!.fields['confirm_password']!.isValid) {
+                                  if (!_formKey.currentState!.fields['confirm_password']!.isValid) {
                                     state.setConfirmValid(true);
                                   } else {
                                     state.setConfirmValid(false);
-                                    _formKeyDesktop.currentState!.fields['confirm_password']!.validate();
                                   }
                                 },
                                 child: Text(state.isLogin() ? 'LOG IN' : 'SIGN UP'),
@@ -292,62 +237,62 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               const SizedBox(
                                 height: 15,
                               ),
-                              RichText(
-                                text: !state.isLogin()
-                                    ? TextSpan(
-                                        children: [
-                                          const TextSpan(
-                                            text: 'Already have an account? ',
-                                            style: TextStyle(
-                                              color: textColour,
-                                            ),
-                                          ),
-                                          WidgetSpan(
-                                            child: TextButton(
-                                              onPressed: () {
-                                                state.resetControllers();
-                                                state.setIsLogin();
-                                              },
-                                              child: const Text(
-                                                'Log In',
-                                                style: TextStyle(decoration: TextDecoration.underline),
-                                              ),
-                                              style: TextButton.styleFrom(
-                                                padding: EdgeInsets.zero,
-                                                alignment: Alignment.centerLeft,
-                                                minimumSize: Size.zero,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : TextSpan(
-                                        children: [
-                                          const TextSpan(
-                                            text: "Don't have an account? ",
-                                            style: TextStyle(
-                                              color: textColour,
-                                            ),
-                                          ),
-                                          WidgetSpan(
-                                            child: TextButton(
-                                              onPressed: () {
-                                                state.resetControllers();
-                                                state.setIsLogin();
-                                              },
-                                              child: const Text(
-                                                'Sign Up',
-                                                style: TextStyle(decoration: TextDecoration.underline),
-                                              ),
-                                              style: TextButton.styleFrom(
-                                                padding: EdgeInsets.zero,
-                                                alignment: Alignment.centerLeft,
-                                                minimumSize: Size.zero,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                              state.isLogin()
+                                  ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Don't have an account? ",
+                                    style: TextStyle(
+                                      color: textColour,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      state.resetControllers();
+                                      state.setIsLogin();
+                                    },
+                                    child: const Text(
+                                      'Sign Up',
+                                      style: TextStyle(decoration: TextDecoration.underline),
+                                    ),
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                      //alignment: MaterialStateProperty.all(Alignment.centerLeft),
+                                      minimumSize: MaterialStateProperty.all(Size.zero),
+                                    ), /*TextButton.styleFrom(
+                                                  padding: EdgeInsets.zero,
+                                                  alignment: Alignment.bottomLeft,
+                                                  minimumSize: Size.zero,
+                                                ),*/
+                                  ),
+                                ],
+                              )
+                                  : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Already have an account? ',
+                                    style: TextStyle(
+                                      color: textColour,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      state.resetControllers();
+                                      state.setIsLogin();
+                                    },
+                                    child: const Text(
+                                      'Log In',
+                                      style: TextStyle(decoration: TextDecoration.underline),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.zero,
+                                      alignment: Alignment.bottomLeft,
+                                      minimumSize: Size.zero,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
