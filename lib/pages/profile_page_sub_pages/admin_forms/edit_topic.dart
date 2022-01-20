@@ -127,10 +127,13 @@ class _LanguagePageState extends ConsumerState<TopicPage> {
                                 width: 20,
                               ),
                               Flexible(
-                                child: FormBuilderCheckboxGroup(
+                                child: FormBuilderCheckboxGroup<String?>(
                                   name: 'qualification',
-                                  initialValue: initialValue,
+                                  initialValue: initialValue?.cast<String?>(),
                                   activeColor: Theme.of(context).colorScheme.primary,
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context),
+                                  ]),
                                   options: ref
                                       .read(qualificationProvider)
                                       .items
@@ -138,10 +141,10 @@ class _LanguagePageState extends ConsumerState<TopicPage> {
                                       .toList()
                                       .map(
                                         (value) => FormBuilderFieldOption(
-                                          value: value.id,
-                                          child: Text(value.level),
-                                        ),
-                                      )
+                                      value: value.id,
+                                      child: Text(value.level),
+                                    ),
+                                  )
                                       .toList(),
                                 ),
                               ),

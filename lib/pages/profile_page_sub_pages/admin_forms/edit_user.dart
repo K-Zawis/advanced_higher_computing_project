@@ -314,6 +314,7 @@ class _EditUserPageState extends ConsumerState<EditUserPage> {
                 ),
               ),
               onPressed: () {
+                _formKey.currentState!.fields['isAdmin']!.reset();
                 Navigator.pop(context);
               },
             ),

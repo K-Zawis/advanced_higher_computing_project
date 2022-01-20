@@ -100,6 +100,7 @@ class _TopicEditPageState extends ConsumerState<TopicEditPage> {
                                 FormBuilderValidators.required(context),
                               ]),
                               onChanged: (val) {
+                                _bottom = 16.0;
                                 ref.read(topicProvider).setTopics([]);
                                 ref.read(languageProvider.notifier).setLanguage(val.toString());
                               },
@@ -143,6 +144,7 @@ class _TopicEditPageState extends ConsumerState<TopicEditPage> {
                               ]),
                               items: ref.read(qualificationProvider.notifier).getDropdownItems(context),
                               onChanged: (value) {
+                                _bottom = 16.0;
                                 ref.read(topicProvider).setTopics([]);
                                 ref.read(qualificationProvider.notifier).setLevel(value.toString());
                               },

@@ -62,6 +62,7 @@ class Topics extends ChangeNotifier {
             },
           ),
         );
+    setTopics([]);
     return _topics.doc(id).delete();
   }
 

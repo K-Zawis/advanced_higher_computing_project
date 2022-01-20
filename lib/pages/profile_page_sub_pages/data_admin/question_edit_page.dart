@@ -102,6 +102,7 @@ class _QuestionEditPageState extends ConsumerState<QuestionEditPage> {
                                 FormBuilderValidators.required(context),
                               ]),
                               onChanged: (val) {
+                                _bottom = 16.0;
                                 ref.read(topicProvider).setTopics([]);
                                 ref.read(languageProvider.notifier).setLanguage(val.toString());
                               },
@@ -145,6 +146,7 @@ class _QuestionEditPageState extends ConsumerState<QuestionEditPage> {
                               ]),
                               items: ref.read(qualificationProvider.notifier).getDropdownItems(context),
                               onChanged: (value) {
+                                _bottom = 16.0;
                                 ref.read(topicProvider).setTopics([]);
                                 ref.read(qualificationProvider.notifier).setLevel(value.toString());
                               },
@@ -200,6 +202,7 @@ class _QuestionEditPageState extends ConsumerState<QuestionEditPage> {
                                   )
                                   .toList(),
                               onChanged: (value) {
+                                _bottom = 16.0;
                                 ref.read(topicProvider).setTopics([value]);
                               },
                             ),

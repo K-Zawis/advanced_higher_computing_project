@@ -100,9 +100,7 @@ class _LanguagePageState extends ConsumerState<LanguagePage> {
                             FormBuilderTextField(
                               name: 'language',
                               initialValue: language?.language,
-                              style: const TextStyle(
-                                  color: textColour
-                              ),
+                              style: const TextStyle(color: textColour),
                               decoration: InputDecoration(
                                 filled: true,
                                 border: OutlineInputBorder(
@@ -127,9 +125,7 @@ class _LanguagePageState extends ConsumerState<LanguagePage> {
                             FormBuilderTextField(
                               name: 'ISOLanguageCode',
                               initialValue: language?.ISOcode,
-                              style: const TextStyle(
-                                color: textColour
-                              ),
+                              style: const TextStyle(color: textColour),
                               decoration: InputDecoration(
                                 filled: true,
                                 border: OutlineInputBorder(
@@ -146,7 +142,16 @@ class _LanguagePageState extends ConsumerState<LanguagePage> {
                               ),
                               validator: FormBuilderValidators.compose([
                                 FormBuilderValidators.required(context),
-                                FormBuilderValidators.maxLength(context, 2),
+                                FormBuilderValidators.maxLength(
+                                  context,
+                                  2,
+                                  errorText: 'Value must have a length of 2.',
+                                ),
+                                FormBuilderValidators.minLength(
+                                  context,
+                                  2,
+                                  errorText: 'Value must have a length of 2.',
+                                ),
                               ]),
                             ),
                           ],

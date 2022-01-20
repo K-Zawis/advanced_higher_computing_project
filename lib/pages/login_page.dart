@@ -7,6 +7,8 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import '../constants.dart';
 import '../providers/auth_providers/auth_helper.dart';
 
+// todo: maybe add bottom padding?
+
 class LogInPage extends ConsumerStatefulWidget {
   const LogInPage({Key? key}) : super(key: key);
 
@@ -22,6 +24,9 @@ class _LogInPageState extends ConsumerState<LogInPage> {
     return Consumer(builder: (context, ref, child) {
       var auth = ref.watch(userStateProvider.notifier);
       var state = ref.watch(loginProvider);
+      _formKey.currentState?.fields['email']?.effectiveFocusNode.attach(context);
+      _formKey.currentState?.fields['password']?.effectiveFocusNode.attach(context);
+      _formKey.currentState?.fields['confirm_password']?.effectiveFocusNode.attach(context);
       return Center(
         child: Container(
           width: MediaQuery.of(context).size.width * 0.8,
@@ -120,41 +125,41 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               ),
                               !state.isLogin()
                                   ? FormBuilderTextField(
-                                name: 'confirm_password',
-                                controller: state.confirmControllerS(),
-                                obscureText: !state.isConfirmPasswordVisible(),
-                                style: const TextStyle(
-                                  color: textColour,
-                                ),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  hintText: 'Password',
-                                  enabledBorder: const OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                                    borderSide: BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      state.setConfirmPasswordVisible();
-                                    },
-                                    icon: Icon(
-                                      !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context),
-                                  FormBuilderValidators.match(context, _formKey.currentState?.value['password'] ?? ''),
-                                ]),
-                                keyboardType: TextInputType.emailAddress,
-                              )
+                                      name: 'confirm_password',
+                                      controller: state.confirmControllerS(),
+                                      obscureText: !state.isConfirmPasswordVisible(),
+                                      style: const TextStyle(
+                                        color: textColour,
+                                      ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(15.0),
+                                        ),
+                                        hintText: 'Password',
+                                        enabledBorder: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                                          borderSide: BorderSide(
+                                            color: Colors.white,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        suffixIcon: IconButton(
+                                          onPressed: () {
+                                            state.setConfirmPasswordVisible();
+                                          },
+                                          icon: Icon(
+                                            !state.isConfirmPasswordVisible() ? Icons.visibility : Icons.visibility_off,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      validator: FormBuilderValidators.compose([
+                                        FormBuilderValidators.required(context),
+                                        FormBuilderValidators.match(context, _formKey.currentState?.value['password'] ?? 'no_password_entered'),
+                                      ]),
+                                      keyboardType: TextInputType.emailAddress,
+                                    )
                                   : Container(),
                               const SizedBox(
                                 height: 15,
@@ -170,6 +175,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
+                                  state.setErrorMessage('');
                                   if (_formKey.currentState!.saveAndValidate()) {
                                     state.setPasswordValid(true);
                                     state.setConfirmValid(true);
@@ -239,61 +245,61 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               ),
                               state.isLogin()
                                   ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    "Don't have an account? ",
-                                    style: TextStyle(
-                                      color: textColour,
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      state.resetControllers();
-                                      state.setIsLogin();
-                                    },
-                                    child: const Text(
-                                      'Sign Up',
-                                      style: TextStyle(decoration: TextDecoration.underline),
-                                    ),
-                                    style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                      //alignment: MaterialStateProperty.all(Alignment.centerLeft),
-                                      minimumSize: MaterialStateProperty.all(Size.zero),
-                                    ), /*TextButton.styleFrom(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          "Don't have an account? ",
+                                          style: TextStyle(
+                                            color: textColour,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            state.resetControllers();
+                                            state.setIsLogin();
+                                          },
+                                          child: const Text(
+                                            'Sign Up',
+                                            style: TextStyle(decoration: TextDecoration.underline),
+                                          ),
+                                          style: ButtonStyle(
+                                            padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                            //alignment: MaterialStateProperty.all(Alignment.centerLeft),
+                                            minimumSize: MaterialStateProperty.all(Size.zero),
+                                          ), /*TextButton.styleFrom(
                                                   padding: EdgeInsets.zero,
                                                   alignment: Alignment.bottomLeft,
                                                   minimumSize: Size.zero,
                                                 ),*/
-                                  ),
-                                ],
-                              )
+                                        ),
+                                      ],
+                                    )
                                   : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    'Already have an account? ',
-                                    style: TextStyle(
-                                      color: textColour,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          'Already have an account? ',
+                                          style: TextStyle(
+                                            color: textColour,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            state.resetControllers();
+                                            state.setIsLogin();
+                                          },
+                                          child: const Text(
+                                            'Log In',
+                                            style: TextStyle(decoration: TextDecoration.underline),
+                                          ),
+                                          style: TextButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            alignment: Alignment.bottomLeft,
+                                            minimumSize: Size.zero,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      state.resetControllers();
-                                      state.setIsLogin();
-                                    },
-                                    child: const Text(
-                                      'Log In',
-                                      style: TextStyle(decoration: TextDecoration.underline),
-                                    ),
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                      alignment: Alignment.bottomLeft,
-                                      minimumSize: Size.zero,
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ],
                           ),
                         ),

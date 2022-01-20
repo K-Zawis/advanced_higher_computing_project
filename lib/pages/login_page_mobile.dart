@@ -24,6 +24,9 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
     return Consumer(builder: (context, ref, child) {
       var auth = ref.watch(userStateProvider.notifier);
       var state = ref.watch(loginProvider);
+      _formKey.currentState?.fields['email']?.effectiveFocusNode.attach(context);
+      _formKey.currentState?.fields['password']?.effectiveFocusNode.attach(context);
+      _formKey.currentState?.fields['confirm_password']?.effectiveFocusNode.attach(context);
       return Padding(
         padding: EdgeInsets.only(
           bottom: bottom,

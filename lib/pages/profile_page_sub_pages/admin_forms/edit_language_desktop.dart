@@ -120,7 +120,16 @@ class _LanguagePageState extends ConsumerState<LanguageDesktopPage> {
                               ),
                               validator: FormBuilderValidators.compose([
                                 FormBuilderValidators.required(context),
-                                FormBuilderValidators.maxLength(context, 2),
+                                FormBuilderValidators.maxLength(
+                                  context,
+                                  2,
+                                  errorText: 'Value must have a length of 2.',
+                                ),
+                                FormBuilderValidators.minLength(
+                                  context,
+                                  2,
+                                  errorText: 'Value must have a length of 2.',
+                                ),
                               ]),
                             ),
                           ],
