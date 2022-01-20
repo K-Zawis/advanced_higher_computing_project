@@ -24,58 +24,44 @@ class MenuDrawer extends ConsumerWidget {
                 height: 250,
                 width: double.infinity,
                 child: user.authData?.isAnonymous
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            //height: 249,
-                            child: Center(
-                              child: SizedBox(
-                                width: 100,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    if (Scaffold.of(context).isDrawerOpen) {
-                                      Navigator.pop(context);
-                                    }
-                                    selectPage(ref, context, 'LogIn Page');
-                                  },
-                                  style: ButtonStyle(
-                                    shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
-                                      ),
-                                    ),
-                                    backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                                    elevation: MaterialStateProperty.all(0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 15.0,
-                                    ),
-                                    child: Text(
-                                      'LOGIN',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Theme.of(context).colorScheme.primary,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          TextButton(
+                    ? SizedBox(
+                      //height: 249,
+                      child: Center(
+                        child: SizedBox(
+                          width: 100,
+                          child: ElevatedButton(
                             onPressed: () {
                               if (Scaffold.of(context).isDrawerOpen) {
                                 Navigator.pop(context);
                               }
-                              selectPage(ref, context, 'Profile Page');
+                              selectPage(ref, context, 'LogIn Page');
                             },
-                            child: Text('profilePge'),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  side: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                              elevation: MaterialStateProperty.all(0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 15.0,
+                              ),
+                              child: Text(
+                                'LOGIN',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
                           ),
-                        ],
-                      )
+                        ),
+                      ),
+                    )
                     : Stack(
                         alignment: Alignment.center,
                         children: [

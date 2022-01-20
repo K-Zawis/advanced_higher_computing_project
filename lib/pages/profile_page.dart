@@ -87,22 +87,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       tooltip: 'Questions',
                     ),
                   ),
-                if (!ref.read(userStateProvider).userData.isAdmin)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () => navigatorKey.currentState!.pushNamed(Page.screenAnalytics.route),
-                      icon: const Icon(
-                        Icons.analytics_outlined,
-                        color: iconColour,
-                        size: 40,
-                      ),
-                      tooltip: 'Analytics',
-                    ),
-                  )
-                else
-                  SizedBox(),
                 const Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),

@@ -118,6 +118,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                               ? FormBuilderTextField(
                                   name: 'confirm_password',
                                   controller: state.confirmControllerS(),
+                                  obscureText: !state.isConfirmPasswordVisible(),
                                   style: const TextStyle(
                                     color: textColour,
                                   ),
