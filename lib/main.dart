@@ -23,7 +23,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(userStateProvider);
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Learn Languages',
       theme: ThemeData(
         scaffoldBackgroundColor: scaffoldColour,
         canvasColor: canvasColour,
@@ -50,18 +50,20 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const WidgetTree();
+    return Title(color: Colors.black,
+    title: ref.watch(titleProvider),
+    child: const WidgetTree());
   }
 }

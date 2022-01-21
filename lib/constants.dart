@@ -153,6 +153,11 @@ final selectedDesktopPageBuilderProvider = Provider<WidgetBuilder>((ref) {
 });
 
 // * providers
+final titleProvider = Provider<String>((ref) {
+  String title = 'Home Page';
+  title = ref.watch(selectedPageNameProvider.state).state;
+  return title;
+});
 final firebaseAuthProvider = Provider<FirebaseAuth>((_) => FirebaseAuth.instance);
 final authRepositoryProvider = Provider<AuthService>((_) => AuthService(_.read));
 final userStateProvider = StateNotifierProvider<UserStateNotifier, dynamic>((_) => UserStateNotifier(_.read)..appInit());
