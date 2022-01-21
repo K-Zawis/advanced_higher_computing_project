@@ -18,6 +18,7 @@ class LogInPage extends ConsumerStatefulWidget {
 
 class _LogInPageState extends ConsumerState<LogInPage> {
   final _formKey = GlobalKey<FormBuilderState>();
+  String passwordMatch = "no_password_available";
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +118,16 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                 ),
                                 validator: FormBuilderValidators.compose([
                                   FormBuilderValidators.required(context),
+                                  FormBuilderValidators.minLength(context, 6, errorText: "Password must be at least 6 characters long."),
                                 ]),
                                 keyboardType: TextInputType.emailAddress,
+                                onChanged: (value) {
+                                  if (value?.isNotEmpty?? false) {
+                                    passwordMatch = value!;
+                                  } else {
+                                    passwordMatch = 'no_password_available';
+                                  }
+                                },
                               ),
                               const SizedBox(
                                 height: 15,
@@ -156,7 +165,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                       ),
                                       validator: FormBuilderValidators.compose([
                                         FormBuilderValidators.required(context),
-                                        FormBuilderValidators.match(context, _formKey.currentState?.value['password'] ?? 'no_password_entered'),
+                                        FormBuilderValidators.match(context, passwordMatch),
                                       ]),
                                       keyboardType: TextInputType.emailAddress,
                                     )

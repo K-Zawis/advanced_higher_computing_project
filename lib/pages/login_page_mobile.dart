@@ -20,6 +20,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
+    String passwordMatch = "no_password_available";
 
     return Consumer(builder: (context, ref, child) {
       var auth = ref.watch(userStateProvider.notifier);
@@ -111,8 +112,16 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                             ),
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(context),
+                              FormBuilderValidators.minLength(context, 6, errorText: "Password must be at least 6 characters long."),
                             ]),
                             keyboardType: TextInputType.emailAddress,
+                            onChanged: (value) {
+                              if (value?.isNotEmpty?? false) {
+                                passwordMatch = value!;
+                              } else {
+                                passwordMatch = 'no_password_available';
+                              }
+                            },
                           ),
                           const SizedBox(
                             height: 15,
@@ -150,7 +159,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                   ),
                                   validator: FormBuilderValidators.compose([
                                     FormBuilderValidators.required(context),
-                                    FormBuilderValidators.match(context, _formKey.currentState?.value['password'] ?? ''),
+                                    FormBuilderValidators.match(context, passwordMatch),
                                   ]),
                                   keyboardType: TextInputType.emailAddress,
                                 )

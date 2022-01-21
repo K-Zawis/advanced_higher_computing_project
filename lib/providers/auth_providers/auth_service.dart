@@ -57,6 +57,7 @@ class AuthService implements AuthRepository{
     await _read(firebaseAuthProvider).createUserWithEmailAndPassword(email: email, password: password).then((result) {
       result.user?.sendEmailVerification();
       //_read(userStateProvider.notifier).addDocument(result.user!.uid);
+      _read(firebaseAuthProvider).signOut();
       return result.user;
     });
   }
