@@ -122,7 +122,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                 ]),
                                 keyboardType: TextInputType.emailAddress,
                                 onChanged: (value) {
-                                  if (value?.isNotEmpty?? false) {
+                                  if (value?.isNotEmpty ?? false) {
                                     passwordMatch = value!;
                                   } else {
                                     passwordMatch = 'no_password_available';
@@ -309,6 +309,26 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                         ),
                                       ],
                                     ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _formKey.currentState!.save();
+                                  if (_formKey.currentState!.fields['email']!.validate()) {
+                                    FirebaseAuth.instance.sendPasswordResetEmail(email: _formKey.currentState!.value['email'].trim());
+                                  }
+                                },
+                                child: const Text(
+                                  'Forgot Password',
+                                  style: TextStyle(decoration: TextDecoration.underline),
+                                ),
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  alignment: Alignment.bottomLeft,
+                                  minimumSize: Size.zero,
+                                ),
+                              ),
                             ],
                           ),
                         ),

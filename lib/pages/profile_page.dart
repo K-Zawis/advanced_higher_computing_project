@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,6 +88,21 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     ),
                   ),
                 const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(
+                      Icons.delete_forever,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    tooltip: 'Delete Account',
+                    onPressed: () {
+                      _showDialog(ref, context);
+                    },
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
@@ -216,6 +232,66 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ),
         ],
       ),
+    );
+  }
+
+  _showDialog(WidgetRef ref, BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Warning!"),
+          content: const Text('You are about to permanently delete your account!'
+              '\n\nContinue?'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              style: ButtonStyle(
+                backgroundColor:
+                MaterialStateProperty.all(Theme.of(context).brightness == Brightness.light ? Colors.transparent : Colors.black.withOpacity(0.2)),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Yes'),
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(0),
+                backgroundColor: MaterialStateProperty.all(Colors.redAccent),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+              ),
+              onPressed: () async {
+                try {
+                  await FirebaseAuth.instance.currentUser!.delete().then((value) => selectPage(ref, context, 'Home Page'));
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'requires-recent-login') {
+                    print('The user must re-authenticate before this operation can be executed.');
+                  }
+                }
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

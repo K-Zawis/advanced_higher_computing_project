@@ -105,11 +105,7 @@ class _DesktopAssignmentModeState extends ConsumerState<DesktopAssignmentMode> w
                       height: 80,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 0, 0, 0),
-                            Color.fromARGB(150, 0, 0, 0),
-                            Color.fromARGB(0, 0, 0, 0)
-                          ],
+                          colors: [Color.fromARGB(255, 0, 0, 0), Color.fromARGB(150, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                         ),
@@ -139,12 +135,8 @@ class _DesktopAssignmentModeState extends ConsumerState<DesktopAssignmentMode> w
                                     size: 25,
                                   ),
                                   onPressed: () {
-                                    if (assessment.getCompleteStatus()) {
-                                      assessment.reset();
-                                      selectPage(ref, context, 'Home Page');
-                                    } else {
-                                      _showDialog(ref, context);
-                                    }
+                                    assessment.reset();
+                                    selectPage(ref, context, 'Home Page');
                                   },
                                   tooltip: 'Home',
                                 ),
@@ -248,8 +240,7 @@ class _DesktopAssignmentModeState extends ConsumerState<DesktopAssignmentMode> w
                         // * on complete
                         Expanded(
                           child: Container(
-                            decoration:
-                                const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+                            decoration: const BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
                             padding: const EdgeInsets.only(top: 50),
                             child: SingleChildScrollView(
                               physics: const BouncingScrollPhysics(),
@@ -470,10 +461,30 @@ class _DesktopAssignmentModeState extends ConsumerState<DesktopAssignmentMode> w
                                         ),
                                         FloatingActionButton(
                                           onPressed: () {
-                                            tempMap.putIfAbsent('average1', () => (assessment.getUsedQuestions().values.toList()[0].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[0].length).toStringAsFixed(2));
-                                            tempMap.putIfAbsent('average2', () => assessment.getUsedQuestions().values.length == 2
-                                                ? (assessment.getUsedQuestions().values.toList()[1].map((e) => e.played).toList().reduce((value, element) => value + element) / assessment.getUsedQuestions().values.toList()[1].length).toStringAsFixed(2)
-                                                : '');
+                                            tempMap.putIfAbsent(
+                                                'average1',
+                                                () => (assessment
+                                                            .getUsedQuestions()
+                                                            .values
+                                                            .toList()[0]
+                                                            .map((e) => e.played)
+                                                            .toList()
+                                                            .reduce((value, element) => value + element) /
+                                                        assessment.getUsedQuestions().values.toList()[0].length)
+                                                    .toStringAsFixed(2));
+                                            tempMap.putIfAbsent(
+                                                'average2',
+                                                () => assessment.getUsedQuestions().values.length == 2
+                                                    ? (assessment
+                                                                .getUsedQuestions()
+                                                                .values
+                                                                .toList()[1]
+                                                                .map((e) => e.played)
+                                                                .toList()
+                                                                .reduce((value, element) => value + element) /
+                                                            assessment.getUsedQuestions().values.toList()[1].length)
+                                                        .toStringAsFixed(2)
+                                                    : '');
                                             assessment.getSortedPlayed().forEach((question) {
                                               tempMap.putIfAbsent(question.id, () => question.played);
                                             });
@@ -630,59 +641,4 @@ class _DesktopAssignmentModeState extends ConsumerState<DesktopAssignmentMode> w
       );
     });
   }
-}
-
-_showDialog(WidgetRef ref, BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Warning!"),
-        content: const Text('Your progress will not be saved.\nAre you sure you want to continue?'),
-        actions: <Widget>[
-          ElevatedButton(
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
-                color: Colors.red,
-              ),
-            ),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Theme.of(context).brightness == Brightness.light
-                  ? Colors.transparent
-                  : Colors.black.withOpacity(0.2)),
-              elevation: MaterialStateProperty.all(0),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: const BorderSide(color: Colors.red),
-                ),
-              ),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          ElevatedButton(
-            child: const Text('Home'),
-            style: ButtonStyle(
-              elevation: MaterialStateProperty.all(0),
-              backgroundColor: MaterialStateProperty.all(Colors.redAccent),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: const BorderSide(color: Colors.red),
-                ),
-              ),
-            ),
-            onPressed: () {
-              ref.read(assessmentProvider).reset();
-              selectPage(ref, context, 'Home Page');
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      );
-    },
-  );
 }

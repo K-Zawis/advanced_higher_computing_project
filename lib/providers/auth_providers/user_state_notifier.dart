@@ -15,7 +15,7 @@ class MyUserData {
   MyUserData({required this.authData, required this.userData});
 }
 
-class UserStateNotifier extends StateNotifier< MyUserData?> {
+class UserStateNotifier extends StateNotifier<MyUserData?> {
   final Reader _read;
 
   StreamSubscription<User?>? _authStateChangeSubscription;
@@ -34,12 +34,15 @@ class UserStateNotifier extends StateNotifier< MyUserData?> {
 
   Future<void> appInit() async {
     print('init');
-    var user = _read(authRepositoryProvider).getCurrentUser();
-    FirebaseAuth.instance.authStateChanges().listen((event) async {
-      if (event == null) {
-        await _read(firebaseAuthProvider).signInAnonymously();
-      }
-    });
+    //var user = _read(authRepositoryProvider).getCurrentUser();
+    FirebaseAuth.instance.setPersistence(Persistence.LOCAL).then(
+          (value) => FirebaseAuth.instance.authStateChanges().listen((event) async {
+            print(event);
+            if (event == null) {
+              await _read(firebaseAuthProvider).signInAnonymously();
+            }
+          }),
+        );
     /*if (user == null) {
       await _read(firebaseAuthProvider).signInAnonymously();
     }*/
@@ -67,7 +70,6 @@ class UserStateNotifier extends StateNotifier< MyUserData?> {
     var complete = await _read(authRepositoryProvider).deleteUser(email, password);
     return complete;
   }
-
 
   // * Firebase management
   Future<void> updateDocument(String uid, Map data) {
