@@ -7,8 +7,6 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import '../constants.dart';
 import '../providers/auth_providers/auth_helper.dart';
 
-// todo: maybe add bottom padding?
-
 class LogInPage extends ConsumerStatefulWidget {
   const LogInPage({Key? key}) : super(key: key);
 
@@ -17,6 +15,7 @@ class LogInPage extends ConsumerStatefulWidget {
 }
 
 class _LogInPageState extends ConsumerState<LogInPage> {
+  // create form key
   final _formKey = GlobalKey<FormBuilderState>();
   String passwordMatch = "no_password_available";
 
@@ -253,36 +252,56 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                 height: 15,
                               ),
                               state.isLogin()
-                                  ? Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Text(
-                                          "Don't have an account? ",
-                                          style: TextStyle(
-                                            color: textColour,
-                                          ),
+                                  ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Text(
+                                              "Don't have an account? ",
+                                              style: TextStyle(
+                                                color: textColour,
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                state.resetControllers();
+                                                state.setIsLogin();
+                                              },
+                                              child: const Text(
+                                                'Sign Up',
+                                                style: TextStyle(decoration: TextDecoration.underline),
+                                              ),
+                                              style: ButtonStyle(
+                                                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                                minimumSize: MaterialStateProperty.all(Size.zero),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        TextButton(
-                                          onPressed: () {
-                                            state.resetControllers();
-                                            state.setIsLogin();
-                                          },
-                                          child: const Text(
-                                            'Sign Up',
-                                            style: TextStyle(decoration: TextDecoration.underline),
-                                          ),
-                                          style: ButtonStyle(
-                                            padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                            //alignment: MaterialStateProperty.all(Alignment.centerLeft),
-                                            minimumSize: MaterialStateProperty.all(Size.zero),
-                                          ), /*TextButton.styleFrom(
-                                                  padding: EdgeInsets.zero,
-                                                  alignment: Alignment.bottomLeft,
-                                                  minimumSize: Size.zero,
-                                                ),*/
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          _formKey.currentState!.save();
+                                          if (_formKey.currentState!.fields['email']!.validate()) {
+                                            FirebaseAuth.instance.sendPasswordResetEmail(email: _formKey.currentState!.value['email'].trim());
+                                          }
+                                        },
+                                        child: const Text(
+                                          'Forgot Password',
+                                          style: TextStyle(decoration: TextDecoration.underline),
                                         ),
-                                      ],
-                                    )
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          alignment: Alignment.bottomLeft,
+                                          minimumSize: Size.zero,
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                   : Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
@@ -309,26 +328,6 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                         ),
                                       ],
                                     ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  _formKey.currentState!.save();
-                                  if (_formKey.currentState!.fields['email']!.validate()) {
-                                    FirebaseAuth.instance.sendPasswordResetEmail(email: _formKey.currentState!.value['email'].trim());
-                                  }
-                                },
-                                child: const Text(
-                                  'Forgot Password',
-                                  style: TextStyle(decoration: TextDecoration.underline),
-                                ),
-                                style: TextButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  alignment: Alignment.bottomLeft,
-                                  minimumSize: Size.zero,
-                                ),
-                              ),
                             ],
                           ),
                         ),

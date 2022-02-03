@@ -19,12 +19,16 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
 
   @override
   Widget build(BuildContext context) {
+    // bottom padding
     final bottom = MediaQuery.of(context).viewInsets.bottom;
+    // initial password match var
     String passwordMatch = "no_password_available";
 
     return Consumer(builder: (context, ref, child) {
+      //  gets the user provider and login state provider
       var auth = ref.watch(userStateProvider.notifier);
       var state = ref.watch(loginProvider);
+      // attaches focus nodes to the current context
       _formKey.currentState?.fields['email']?.effectiveFocusNode.attach(context);
       _formKey.currentState?.fields['password']?.effectiveFocusNode.attach(context);
       _formKey.currentState?.fields['confirm_password']?.effectiveFocusNode.attach(context);
@@ -38,6 +42,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
             padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50),
             child: Column(
               children: [
+                // based on state show whether page is log in or sign up
                 Text(
                   state.isLogin() ? 'LOG IN' : 'SIGN UP',
                   style: const TextStyle(color: textColour, fontSize: 20, fontWeight: FontWeight.bold),
@@ -126,6 +131,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                           const SizedBox(
                             height: 15,
                           ),
+                          // if state is sign up adds this field to the form otherwise returns an empty container
                           !state.isLogin()
                               ? FormBuilderTextField(
                                   name: 'confirm_password',
@@ -178,14 +184,19 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                           ),
                           ElevatedButton(
                             onPressed: () async {
+                              // validate form and save values
                               if (_formKey.currentState!.saveAndValidate()) {
                                 state.setPasswordValid(true);
                                 state.setConfirmValid(true);
+                                // if user is loggin in those will be the conditions the form will validate
                                 if (state.isLogin()) {
+                                  // user gets signed in
                                   AuthResultStatus status = await auth.signIn(
                                     _formKey.currentState!.value['email'],
                                     _formKey.currentState!.value['password'],
                                   );
+                                  // if sign in was successful, check if email was verified and either sign them out and
+                                  // show message or redirect them to the home page
                                   if (status == AuthResultStatus.successful) {
                                     var verified = ref.read(firebaseAuthProvider).currentUser!.emailVerified;
                                     if (verified) {
@@ -196,6 +207,7 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                       ref.read(userStateProvider.notifier).signOut();
                                     }
                                   } else {
+                                    // otherwise handle the thrown exception and invalidate appropriate fields
                                     setState(() {
                                       var temp = AuthExceptionHandler.generateExceptionMessage(status);
                                       if (status == AuthResultStatus.invalidEmail || status == AuthResultStatus.userDisabled) {
@@ -210,12 +222,16 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                     });
                                   }
                                 } else {
+                                  // if user is signing up this will be validated instead
                                   try {
+                                    // attempts to create a new user
                                     await auth.createUserWithEmailAndPassword(
                                       _formKey.currentState!.value['email'],
                                       _formKey.currentState!.value['password'],
                                     );
                                     state.setIsLogin();
+                                    // on a Firebase Authentication exception handle the error message by invalidating
+                                    // appropriate fields
                                   } on FirebaseAuthException catch (e) {
                                     var status = AuthExceptionHandler.handleException(e);
                                     var temp = AuthExceptionHandler.generateExceptionMessage(status);
@@ -240,39 +256,61 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                 state.setConfirmValid(false);
                               }
                             },
+                            // button will either say log in or sign up based on state
                             child: Text(state.isLogin() ? 'LOG IN' : 'SIGN UP'),
                           ),
                           const SizedBox(
                             height: 15,
                           ),
+                          // links to login and sign up page based on state
                           state.isLogin()
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text(
-                                      "Don't have an account? ",
-                                      style: TextStyle(
-                                        color: textColour,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        state.resetControllers();
-                                        state.setIsLogin();
-                                      },
-                                      child: const Text(
-                                        'Sign Up',
-                                        style: TextStyle(decoration: TextDecoration.underline),
-                                      ),
-                                      style: ButtonStyle(
-                                        padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                        //alignment: MaterialStateProperty.all(Alignment.centerLeft),
-                                        minimumSize: MaterialStateProperty.all(Size.zero),
-                                      ), /*TextButton.styleFrom(
-                                              padding: EdgeInsets.zero,
-                                              alignment: Alignment.bottomLeft,
-                                              minimumSize: Size.zero,
-                                            ),*/
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          "Don't have an account? ",
+                                          style: TextStyle(
+                                            color: textColour,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            state.resetControllers();
+                                            state.setIsLogin();
+                                          },
+                                          child: const Text(
+                                            'Sign Up',
+                                            style: TextStyle(decoration: TextDecoration.underline),
+                                          ),
+                                          style: ButtonStyle(
+                                            padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                            minimumSize: MaterialStateProperty.all(Size.zero),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            _formKey.currentState!.save();
+                                            if (_formKey.currentState!.fields['email']!.validate()) {
+                                              FirebaseAuth.instance.sendPasswordResetEmail(email: _formKey.currentState!.value['email'].trim());
+                                            }
+                                          },
+                                          child: const Text(
+                                            'Forgot Password',
+                                            style: TextStyle(decoration: TextDecoration.underline),
+                                          ),
+                                          style: TextButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            alignment: Alignment.bottomLeft,
+                                            minimumSize: Size.zero,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 )
@@ -302,26 +340,6 @@ class _MobileLogInPageState extends ConsumerState<MobileLogInPage> {
                                     ),
                                   ],
                                 ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              _formKey.currentState!.save();
-                              if (_formKey.currentState!.fields['email']!.validate()) {
-                                FirebaseAuth.instance.sendPasswordResetEmail(email: _formKey.currentState!.value['email'].trim());
-                              }
-                            },
-                            child: const Text(
-                              'Forgot Password',
-                              style: TextStyle(decoration: TextDecoration.underline),
-                            ),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              alignment: Alignment.bottomLeft,
-                              minimumSize: Size.zero,
-                            ),
-                          ),
                         ],
                       ),
                     ),

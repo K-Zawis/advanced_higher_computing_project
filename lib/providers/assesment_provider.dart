@@ -84,23 +84,31 @@ class AssessmentProvider extends ChangeNotifier {
   List<Question> getSortedPlayed() {
     // initially
     List<Question> sorted = [];
+    // for each value within the map and add it initially to sorted list
     for (var value in _usedQuestions.values) {
       for (var element in value) {
         sorted.add(element);
       }
     }
+    // initialise variable value and index
     var value;
     var index = 0;
+    // loop for the length of the list - 1
     for (var i = 1; i <= sorted.length - 1; i++) {
+      // set value to the first indexed value
       value = sorted[i];
+      // set index to the loop index
       index = i;
+      // while value is bigger than previous value and index isn't 0
       while (index > 0 && value.played > sorted[index - 1].played) {
+        // substitute value and set index
         sorted[index] = sorted[index - 1];
         index = index - 1;
       }
+      // set current value in the current index
       sorted[index] = value;
     }
-
+    // return sorted
     return sorted;
   }
 
