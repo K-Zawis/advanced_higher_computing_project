@@ -103,7 +103,7 @@ class _EditQuestionPageState extends ConsumerState<QuestionPage> {
                                     ),
                                   ),
                                   validator: FormBuilderValidators.compose([
-                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.required(),
                                   ]),
                                   onChanged: (val) {
                                     ref.read(topicProvider).setTopics([]);
@@ -147,7 +147,7 @@ class _EditQuestionPageState extends ConsumerState<QuestionPage> {
                                   ),
                                   name: 'level',
                                   validator: FormBuilderValidators.compose([
-                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.required(),
                                   ]),
                                   items: ref.read(qualificationProvider.notifier).getDropdownItems(context),
                                   onChanged: (value) {
@@ -190,7 +190,7 @@ class _EditQuestionPageState extends ConsumerState<QuestionPage> {
                                   ),
                                   name: 'topic',
                                   validator: FormBuilderValidators.compose([
-                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.required(),
                                   ]),
                                   items: topics.values
                                       .map(
@@ -234,7 +234,7 @@ class _EditQuestionPageState extends ConsumerState<QuestionPage> {
                               ),
                             ),
                             validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.required(),
                             ]),
                           ),
                         ],

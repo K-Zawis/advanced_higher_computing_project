@@ -106,7 +106,7 @@ class _DesktopHomePageState extends ConsumerState<DesktopHomePage> {
                                     ),
                                   ),
                                   validator: FormBuilderValidators.compose([
-                                    FormBuilderValidators.required(context),
+                                    FormBuilderValidators.required(),
                                   ]),
                                   onChanged: (val) {
                                     _multiKey.currentState?.save();
@@ -212,7 +212,7 @@ class _DesktopHomePageState extends ConsumerState<DesktopHomePage> {
                                             ),
                                             name: 'level',
                                             validator: FormBuilderValidators.compose([
-                                              FormBuilderValidators.required(context),
+                                              FormBuilderValidators.required(),
                                             ]),
                                             items:
                                                 ref.read(qualificationProvider.notifier).getDropdownItems(context),

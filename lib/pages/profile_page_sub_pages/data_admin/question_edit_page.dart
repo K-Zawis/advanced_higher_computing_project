@@ -99,7 +99,7 @@ class _QuestionEditPageState extends ConsumerState<QuestionEditPage> {
                                 ),
                               ),
                               validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
+                                FormBuilderValidators.required(),
                               ]),
                               onChanged: (val) {
                                 _bottom = 16.0;
@@ -142,7 +142,7 @@ class _QuestionEditPageState extends ConsumerState<QuestionEditPage> {
                               ),
                               name: 'level',
                               validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
+                                FormBuilderValidators.required(),
                               ]),
                               items: ref.read(qualificationProvider.notifier).getDropdownItems(context),
                               onChanged: (value) {
@@ -186,7 +186,7 @@ class _QuestionEditPageState extends ConsumerState<QuestionEditPage> {
                               ),
                               name: 'topic',
                               validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
+                                FormBuilderValidators.required(),
                               ]),
                               items: topics.values
                                   .map(

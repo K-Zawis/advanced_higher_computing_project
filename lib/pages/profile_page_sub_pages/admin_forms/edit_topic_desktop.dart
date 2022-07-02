@@ -71,7 +71,7 @@ class _LanguagePageState extends ConsumerState<TopicDesktopPage> {
                               ),
                             ),
                             validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.required(),
                             ]),
                             onChanged: (val) {
                               ref.read(topicProvider).setTopics([]);
@@ -103,7 +103,7 @@ class _LanguagePageState extends ConsumerState<TopicDesktopPage> {
                             initialValue: initialValue?.cast<String?>(),
                             activeColor: Theme.of(context).colorScheme.primary,
                             validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(context),
+                              FormBuilderValidators.required(),
                             ]),
                             options: ref
                                 .read(qualificationProvider)
@@ -143,7 +143,7 @@ class _LanguagePageState extends ConsumerState<TopicDesktopPage> {
                         ),
                       ),
                       validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(context),
+                        FormBuilderValidators.required(),
                       ]),
                     ),
                   ],

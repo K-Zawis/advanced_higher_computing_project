@@ -108,7 +108,15 @@ final _availableDesktopPages = <String, WidgetBuilder>{
 // Profile
 final navigatorKey = GlobalKey<NavigatorState>();
 
-enum Page { screenQuestions, screenAnalytics, manageUsers, language, topic, question, level }
+enum Page {
+  screenQuestions,
+  screenAnalytics,
+  manageUsers,
+  language,
+  topic,
+  question,
+  level
+}
 
 final Map<Page, Widget> fragments = {
   Page.screenQuestions: const MyQuestionsPage(),
@@ -157,12 +165,18 @@ final titleProvider = Provider<String>((ref) {
   title = ref.watch(selectedPageNameProvider.state).state;
   return title;
 });
-final firebaseAuthProvider = Provider<FirebaseAuth>((_) => FirebaseAuth.instance);
-final authRepositoryProvider = Provider<AuthService>((_) => AuthService(_.read));
-final userStateProvider = StateNotifierProvider<UserStateNotifier, dynamic>((_) => UserStateNotifier(_.read)..appInit());
-final loginProvider = ChangeNotifierProvider<LoginProvider>((_ref) => LoginProvider());
-final languageProvider = ChangeNotifierProvider<Languages>((ref) => Languages());
-final qualificationProvider = ChangeNotifierProvider<Qualifications>((ref) => Qualifications());
+final firebaseAuthProvider =
+    Provider<FirebaseAuth>((_) => FirebaseAuth.instance);
+final authRepositoryProvider =
+    Provider<AuthService>((_) => AuthService(_.read));
+final userStateProvider = StateNotifierProvider<UserStateNotifier, dynamic>(
+    (_) => UserStateNotifier(_.read)..appInit());
+final loginProvider =
+    ChangeNotifierProvider<LoginProvider>((_ref) => LoginProvider());
+final languageProvider =
+    ChangeNotifierProvider<Languages>((ref) => Languages());
+final qualificationProvider =
+    ChangeNotifierProvider<Qualifications>((ref) => Qualifications());
 final topicProvider = ChangeNotifierProvider<Topics>((ref) {
   var lan = ref.watch(languageProvider).getLanguage();
   var level = ref.watch(qualificationProvider).getLevel();

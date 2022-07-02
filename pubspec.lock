@@ -222,7 +222,7 @@ packages:
       name: flutter_lints
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.4"
+    version: "2.0.1"
   flutter_localizations:
     dependency: transitive
     description: flutter
@@ -241,7 +241,7 @@ packages:
       name: flutter_svg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.1+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -272,7 +272,7 @@ packages:
       name: form_builder_validators
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.9.0"
+    version: "8.1.1"
   google_sign_in:
     dependency: transitive
     description:
@@ -342,7 +342,7 @@ packages:
       name: lints
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "2.0.0"
   matcher:
     dependency: transitive
     description:
@@ -364,6 +364,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  move_to_background:
+    dependency: transitive
+    description:
+      name: move_to_background
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   multi_select_flutter:
     dependency: "direct main"
     description:
@@ -572,6 +579,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  url_strategy:
+    dependency: "direct main"
+    description:
+      name: url_strategy
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   vector_math:
     dependency: transitive
     description:
@@ -579,6 +593,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  vrouter:
+    dependency: "direct main"
+    description:
+      name: vrouter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
   xml:
     dependency: transitive
     description:

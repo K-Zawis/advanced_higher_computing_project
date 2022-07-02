@@ -97,7 +97,7 @@ class _TopicEditPageState extends ConsumerState<TopicEditPage> {
                                 ),
                               ),
                               validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
+                                FormBuilderValidators.required(),
                               ]),
                               onChanged: (val) {
                                 _bottom = 16.0;
@@ -140,7 +140,7 @@ class _TopicEditPageState extends ConsumerState<TopicEditPage> {
                               ),
                               name: 'level',
                               validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
+                                FormBuilderValidators.required(),
                               ]),
                               items: ref.read(qualificationProvider.notifier).getDropdownItems(context),
                               onChanged: (value) {
