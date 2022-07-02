@@ -24,7 +24,6 @@ import 'pages/assignment_mode_page.dart';
 import 'pages/profile_page_desktop.dart';
 import 'pages/profile_page.dart';
 import 'pages/login_page.dart';
-import 'pages/login_page_mobile.dart';
 import 'pages/practice_mode_page_desktop.dart';
 import 'pages/home_page.dart';
 import 'pages/home_page_desktop.dart';
@@ -86,7 +85,7 @@ final _availableMobilePages = <String, WidgetBuilder>{
   'Home Page': (_) => const HomePage(),
   'Practice Mode': (_) => const PracticeMode(),
   'Assignment Mode': (_) => const AssignmentMode(),
-  'LogIn Page': (_) => const MobileLogInPage(),
+  'LogIn Page': (_) => const LogInPage(),
   'Profile Page': (_) => const ProfilePage(),
   'User Page': (_) => const EditUserPage(),
   'Language Page': (_) => const LanguagePage(),
