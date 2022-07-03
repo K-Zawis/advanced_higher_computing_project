@@ -102,7 +102,6 @@ class _LogInPageState extends ConsumerState<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.state);
     return WillPopScope(
       onWillPop: () async {
         return true;

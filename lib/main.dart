@@ -8,7 +8,7 @@ import 'package:vrouter/vrouter.dart';
 
 import '/extensions/string_extensions.dart';
 import '/pages/forgot_password_page.dart';
-import '/pages/login_page.dart';
+import 'pages/auth_page.dart';
 import 'pages/home_page.dart';
 
 Future<void> main() async {

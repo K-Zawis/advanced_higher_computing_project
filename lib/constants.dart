@@ -23,7 +23,7 @@ import 'pages/assignment_mode_desktop_page.dart';
 import 'pages/assignment_mode_page.dart';
 import 'pages/profile_page_desktop.dart';
 import 'pages/profile_page.dart';
-import 'pages/login_page.dart';
+import 'pages/auth_page.dart';
 import 'pages/practice_mode_page_desktop.dart';
 import 'pages/home_page.dart';
 import 'pages/home_page_desktop.dart';
