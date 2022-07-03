@@ -277,7 +277,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                   );
                                   print(user);
                                   if (user != null) {
-                                    context.vRouter.to('/');
+                                    context.vRouter.pop();
                                   }
                                 }
                               }
@@ -293,7 +293,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                   );
                                   print(user);
                                   if (user != null) {
-                                    context.vRouter.to('/');
+                                    context.vRouter.pop();
                                   }
                                 }
                               },

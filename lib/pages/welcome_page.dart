@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:learn_languages/widgets/navigation_bar_widget.dart';
 import 'package:vrouter/vrouter.dart';
 
 import '../constants.dart' as constants;
-import '../models/langauge_model.dart';
 import '/providers/auth_providers/user_state_notifier.dart';
 import '/widgets/footer_widget.dart';
 
@@ -20,78 +21,17 @@ class WelcomePage extends ConsumerStatefulWidget {
 class _MyHomePageState extends ConsumerState<WelcomePage> {
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
     MyUserData? user = ref.watch(constants.userStateProvider);
+
     // TODO -- create loading splashcreen
     if (user == null) return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
 
     ref.watch(constants.languageStateProvider);
+    print(VRouter.of(context).historyState['language']);
 
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Text('Learn Languages'),
-              const Spacer(),
-              Visibility(
-                visible: !user.authData.isAnonymous,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      iconSize: 35,
-                      splashRadius: 23,
-                      padding: EdgeInsets.zero,
-                      icon: const Icon(
-                        Icons.account_circle_outlined,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: user.authData.isAnonymous,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        context.vRouter.toNamed(
-                          'auth',
-                          pathParameters: {'state': 'register'},
-                        );
-                      },
-                      child: const Text(
-                        'Sign up',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        context.vRouter.toNamed(
-                          'auth',
-                          pathParameters: {'state': 'login'},
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        side: const BorderSide(color: Colors.white),
-                      ),
-                      child: const Text(
-                        'Log in',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        appBar: webNavigationBar(context: context, user: user),
         body: Padding(
           padding: const EdgeInsets.all(32),
           child: Stack(
@@ -120,6 +60,7 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 400),
                       child: FormBuilder(
+                        key: _formKey,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -128,11 +69,12 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
                                 name: 'language',
                                 initialValue: VRouter.of(context).historyState['language'],
                                 items: ref.read(constants.languageStateProvider.notifier).getDropdownItems(context),
+                                validator: FormBuilderValidators.required(),
                                 onChanged: (String? id) {
                                   VRouter.of(context).to(
                                     context.vRouter.url,
                                     isReplacement: true, // We use replacement to override the history entry
-                                    historyState: {'language': id?? ''},
+                                    historyState: {'language': id ?? ''},
                                   );
                                 },
                               ),
@@ -141,7 +83,14 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
                               width: 32,
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                if (_formKey.currentState!.saveAndValidate()) {
+                                  context.vRouter.toNamed(
+                                    'home',
+                                    queryParameters: {'language': VRouter.of(context).historyState['language'] ?? ''},
+                                  );
+                                }
+                              },
                               child: const Padding(
                                 padding: EdgeInsets.all(16),
                                 child: Text(

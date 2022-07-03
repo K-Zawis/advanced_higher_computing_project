@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:learn_languages/pages/home_page.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:vrouter/vrouter.dart';
 
@@ -51,7 +52,7 @@ class MyApp extends ConsumerWidget {
         ),
         appBarTheme: AppBarTheme(
           color: ThemeData.dark().scaffoldBackgroundColor,
-          titleSpacing: 32,
+          titleSpacing: 0,
         ),
         inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
       ),
@@ -99,6 +100,15 @@ class MyApp extends ConsumerWidget {
                 color: Colors.black,
                 title: 'Forgot password',
                 child: const ForgotPasswordPage(),
+              ),
+            ),
+            VWidget.builder(
+              path: '/home',
+              name: 'home',
+              builder: (context, state) =>  Title(
+                color: Colors.black,
+                title: 'Welcome page',
+                child: HomePage(languageId: state.queryParameters['language']!),
               ),
             ),
           ],
