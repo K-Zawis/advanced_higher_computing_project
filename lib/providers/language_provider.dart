@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/models/langauge_model.dart';
 
 class Languages extends ChangeNotifier {
@@ -21,19 +20,16 @@ class Languages extends ChangeNotifier {
           switch (change.type) {
             case (DocumentChangeType.added):
               {
-                print("added: " + change.doc.data().toString());
                 items.putIfAbsent(change.doc.id, () => Language.fromFirestore(change.doc, change.doc.id));
                 break;
               }
             case (DocumentChangeType.removed):
               {
-                print("removed: " + change.doc.data().toString());
                 items.remove(change.doc.id);
                 break;
               }
             case (DocumentChangeType.modified):
               {
-                print("modified: " + change.doc.data().toString());
                 items.update(change.doc.id, (value) => Language.fromFirestore(change.doc, change.doc.id));
                 break;
               }

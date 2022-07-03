@@ -188,7 +188,7 @@ class _DesktopAssignmentModeState extends ConsumerState<DesktopAssignmentMode> w
                           builder: (context, ref, child) {
                             var user = ref.watch(userStateProvider);
                             if (user != null) {
-                              if (!(user?.authData?.isAnonymous ?? false)) {
+                              if (!(user.authData.isAnonymous)) {
                                 return IconButton(
                                   onPressed: () {
                                     setState(() {

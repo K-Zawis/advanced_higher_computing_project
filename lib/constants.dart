@@ -69,7 +69,7 @@ const hintColour = Color(0xFF494B50);
 // * pages
 // a map of ("page name", WidgetBuilder) pairs
 final _availablePages = <String, WidgetBuilder>{
-  'Home Page': (_) => const HomePage(),
+  //'Home Page': (_) => const HomePage(),
   'Practice Mode': (_) => const PracticeMode(),
   'Assignment Mode': (_) => const AssignmentMode(),
   //'LogIn Page': (_) => const LogInPage(),
@@ -82,7 +82,7 @@ final _availablePages = <String, WidgetBuilder>{
 };
 // TODO -- add mobile version of profile page etc
 final _availableMobilePages = <String, WidgetBuilder>{
-  'Home Page': (_) => const HomePage(),
+  //'Home Page': (_) => const HomePage(),
   'Practice Mode': (_) => const PracticeMode(),
   'Assignment Mode': (_) => const AssignmentMode(),
   //'LogIn Page': (_) => const LogInPage(),

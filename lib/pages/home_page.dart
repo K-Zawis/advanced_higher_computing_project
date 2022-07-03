@@ -1,12 +1,216 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:vrouter/vrouter.dart';
 
-import '../constants.dart';
+import '../constants.dart' as constants;
+import '/providers/auth_providers/user_state_notifier.dart';
+import '/providers/language_provider.dart';
 
-class HomePage extends ConsumerStatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
+  const MyHomePage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends ConsumerState<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    MyUserData? user = ref.watch(constants.userStateProvider);
+    // TODO -- create loading splashcreen
+    if (user == null) return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
+
+    Languages languageProvider = ref.watch(constants.languageProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Text('Learn Languages'),
+            const Spacer(),
+            Visibility(
+              visible: !user.authData.isAnonymous,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    iconSize: 35,
+                    splashRadius: 23,
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(
+                      Icons.account_circle_outlined,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Visibility(
+              visible: user.authData.isAnonymous,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      context.vRouter.toNamed(
+                        'auth',
+                        pathParameters: {'state': 'register'},
+                      );
+                    },
+                    child: const Text(
+                      'Sign up',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      context.vRouter.toNamed(
+                        'auth',
+                        pathParameters: {'state': 'login'},
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      side: const BorderSide(color: Colors.white),
+                    ),
+                    child: const Text(
+                      'Log in',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Stack(
+          children: [
+            FittedBox(
+              child: Text(
+                'Welcome!',
+                style: Theme.of(context).textTheme.headline1,
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FittedBox(
+                    child: Text(
+                      'I want to practice...',
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: FormBuilder(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: FormBuilderDropdown(
+                              name: 'language',
+                              initialValue: languageProvider.currentLanguage?.id,
+                              items: languageProvider.getDropdownItems(context),
+                              onChanged: (String? id) {
+                                if (id != null) languageProvider.setCurrentLanguage(languageProvider.items[id]);
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 32,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Text(
+                                'Lets go!',
+                                style: TextStyle(fontSize: 21),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        width: double.maxFinite,
+        height: 108,
+        color: Theme.of(context).dialogBackgroundColor,
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Contact me at zawistowska.kasia@outlook.com',
+                style: TextStyle(color: Theme.of(context).hintColor),
+              ),
+              const Divider(
+                indent: 64,
+                endIndent: 64,
+                height: 32,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: () => launchUrl(Uri.parse('https://github.com/K-Zawis')),
+                    child: const Text(
+                      'Github',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () =>
+                        launchUrl(Uri.parse('https://www.linkedin.com/in/katarzyna-zawistowska-843302196')),
+                    child: const Text(
+                      'LinkedIn',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => launchUrl(Uri.parse('https://www.buymeacoffee.com/zawistowskQ')),
+                    child: const Text(
+                      'Buy Me a Coffee',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ); // const WidgetTree());
+  }
+}
+
+/*class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -459,4 +663,4 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
-}
+}*/
