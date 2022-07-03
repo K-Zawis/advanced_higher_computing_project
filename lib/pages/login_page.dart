@@ -17,7 +17,7 @@ class LogInPage extends ConsumerStatefulWidget {
 
 class _LogInPageState extends ConsumerState<LogInPage> {
   String errorMessage = '';
-  String password = '';
+  TextEditingController password = TextEditingController(text: '');
   // create form key
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
 
@@ -26,11 +26,12 @@ class _LogInPageState extends ConsumerState<LogInPage> {
     super.initState();
   }
 
-  Future<User?> loginUsingEmailPassword(
-      {required String email,
-      required String password,
-      required BuildContext context,
-      required GlobalKey<FormBuilderState> formKey}) async {
+  Future<User?> loginUsingEmailPassword({
+    required String email,
+    required String password,
+    required BuildContext context,
+    required GlobalKey<FormBuilderState> formKey,
+  }) async {
     setState((() => errorMessage = ''));
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
@@ -43,12 +44,48 @@ class _LogInPageState extends ConsumerState<LogInPage> {
           AuthExceptionHandler.handleException(e));
       switch (AuthExceptionHandler.handleException(e)) {
         case AuthResultStatus.invalidEmail:
-        case AuthResultStatus.emailAlreadyExists:
         case AuthResultStatus.userDisabled:
         case AuthResultStatus.userNotFound:
           formKey.currentState!.fields['email']!.invalidate(response);
           break;
         case AuthResultStatus.wrongPassword:
+          formKey.currentState!.fields['password']!.invalidate(response);
+          break;
+        case AuthResultStatus.tooManyRequests:
+        case AuthResultStatus.operationNotAllowed:
+          setState((() => errorMessage = response));
+          break;
+        default:
+          // undefined
+          setState((() => errorMessage = response));
+          break;
+      }
+    }
+
+    return user;
+  }
+
+  Future<User?> registerUsingEmailPassword({
+    required String email,
+    required String password,
+    required BuildContext context,
+    required GlobalKey<FormBuilderState> formKey,
+  }) async {
+    setState((() => errorMessage = ''));
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user;
+    try {
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      user = userCredential.user;
+    } on FirebaseAuthException catch (e) {
+      String response = AuthExceptionHandler.generateExceptionMessage(
+          AuthExceptionHandler.handleException(e));
+      switch (AuthExceptionHandler.handleException(e)) {
+        case AuthResultStatus.invalidEmail:
+        case AuthResultStatus.emailAlreadyExists:
+          formKey.currentState!.fields['email']!.invalidate(response);
+          break;
         case AuthResultStatus.weakPassword:
           formKey.currentState!.fields['password']!.invalidate(response);
           break;
@@ -119,7 +156,8 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                   child: TextButton(
                                     child: const Text('Register'),
                                     onPressed: () {
-                                      context.vRouter.toSegments(['auth', 'register']);
+                                      context.vRouter
+                                          .toSegments(['auth', 'register']);
                                     },
                                   ),
                                 ),
@@ -141,7 +179,8 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                   child: TextButton(
                                     child: const Text('Sign in'),
                                     onPressed: () {
-                                      context.vRouter.toSegments(['auth', 'login']);
+                                      context.vRouter
+                                          .toSegments(['auth', 'login']);
                                       //context.vRouter.toNamed('auth', pathParameters: {'state': 'login'});
                                     },
                                   ),
@@ -154,7 +193,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                     ),
                     FormBuilderTextField(
                       name: 'email',
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Enter your email',
                       ),
                       validator: FormBuilderValidators.compose(
@@ -169,10 +208,11 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                     ),
                     FormBuilderTextField(
                       name: 'password',
+                      controller: password,
                       obscureText: true,
                       enableSuggestions: false,
                       autocorrect: false,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Password',
                       ),
                       validator: FormBuilderValidators.compose(
@@ -193,15 +233,14 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                             obscureText: true,
                             enableSuggestions: false,
                             autocorrect: false,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: 'Confirm password',
                             ),
                             validator: FormBuilderValidators.compose(
                               [
                                 FormBuilderValidators.required(),
                                 FormBuilderValidators.match(
-                                  _formKey.currentState?.value['password'] ??
-                                      'no-match',
+                                  password.text,
                                 )
                               ],
                             ),
@@ -219,7 +258,9 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                             alignment: Alignment.centerRight,
                             child: TextButton(
                               child: const Text('Forgot password?'),
-                              onPressed: () {},
+                              onPressed: () {
+                                context.vRouter.to('forgot-password');
+                              },
                             ),
                           ),
                           const SizedBox(
@@ -249,7 +290,25 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                   }
                                 }
                               }
-                            : null,
+                            : () async {
+                                print(password.text);
+                                if (_formKey.currentState?.saveAndValidate() ??
+                                    false) {
+                                  print(_formKey.currentState!.value);
+                                  User? user = await registerUsingEmailPassword(
+                                    context: context,
+                                    email:
+                                        _formKey.currentState!.value['email'],
+                                    password: _formKey
+                                        .currentState!.value['password'],
+                                    formKey: _formKey,
+                                  );
+                                  print(user);
+                                  if (user != null) {
+                                    context.vRouter.to('/');
+                                  }
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           side: BorderSide(color: Theme.of(context).focusColor),
                         ),
@@ -257,6 +316,9 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                             ? const Text('Sign in')
                             : const Text('Register'),
                       ),
+                    ),
+                    const SizedBox(
+                      height: 12,
                     ),
                     Visibility(
                       visible: errorMessage.isNotEmpty,

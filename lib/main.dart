@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:learn_languages/pages/forgot_password_page.dart';
 import 'package:learn_languages/pages/login_page.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -65,12 +66,32 @@ class MyApp extends ConsumerWidget {
           path: '/',
           widget: const MyHomePage(),
         ),
-        VWidget.builder(
-          path: '/auth/:state',
-          name: 'auth',
-          builder: (context, params) =>
-              LogInPage(state: params.pathParameters['state'] ?? 'register'),
-          aliases: const ['/auth/register', '/auth/login'],
+        VPopHandler(
+          onSystemPop: (vRedirector) async {
+            // DO check if going back is possible
+            if (vRedirector.historyCanBack()) {
+              vRedirector.historyBack();
+            }
+          },
+          onPop: (vRedirector) async {
+            // DO check if going back is possible
+            if (vRedirector.historyCanBack()) {
+              vRedirector.historyBack();
+            }
+          },
+          stackedRoutes: [
+            VWidget.builder(
+              path: '/auth/:state',
+              name: 'auth',
+              builder: (context, params) => LogInPage(
+                  state: params.pathParameters['state'] ?? 'register'),
+              aliases: const ['/auth/register', '/auth/login'],
+            ),
+            VWidget(
+              path: '/auth/login/forgot-password',
+              widget: const ForgotPasswordPage(),
+            ),
+          ],
         ),
         VRouteRedirector(
           redirectTo: '/',
