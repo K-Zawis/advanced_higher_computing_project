@@ -3,6 +3,7 @@ library my_prj.constants;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_languages/models/langauge_model.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_question.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_question_desktop.dart';
 
@@ -25,7 +26,7 @@ import 'pages/profile_page_desktop.dart';
 import 'pages/profile_page.dart';
 import 'pages/auth_page.dart';
 import 'pages/practice_mode_page_desktop.dart';
-import 'pages/home_page.dart';
+import 'pages/welcome_page.dart';
 import 'pages/home_page_desktop.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_language.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_language_desktop.dart';
@@ -165,7 +166,8 @@ final userStateProvider = StateNotifierProvider<UserStateNotifier, MyUserData?>(
 );
 
 // * App Providers
-final languageProvider = ChangeNotifierProvider<Languages>((ref) => Languages());
+final languageProvider = ChangeNotifierProvider<Languages2>((ref) => Languages2());
+final languageStateProvider = StateNotifierProvider<Languages, Map<String, Language>>((ref) => Languages());
 
 // * Unsorted
 final authRepositoryProvider = Provider<AuthService>((_) => AuthService(_.read));

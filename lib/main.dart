@@ -9,7 +9,7 @@ import 'package:vrouter/vrouter.dart';
 import '/extensions/string_extensions.dart';
 import '/pages/forgot_password_page.dart';
 import 'pages/auth_page.dart';
-import 'pages/home_page.dart';
+import 'pages/welcome_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,8 +65,8 @@ class MyApp extends ConsumerWidget {
           path: '/',
           widget: Title(
             color: Colors.black,
-            title: 'Home page',
-            child: const MyHomePage(),
+            title: 'Welcome page',
+            child: const WelcomePage(),
           ),
         ),
         VPopHandler(

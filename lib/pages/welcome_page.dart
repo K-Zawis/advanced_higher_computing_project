@@ -4,160 +4,163 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vrouter/vrouter.dart';
 
 import '../constants.dart' as constants;
+import '../models/langauge_model.dart';
 import '/providers/auth_providers/user_state_notifier.dart';
-import '/providers/language_provider.dart';
 import '/widgets/footer_widget.dart';
 
-class MyHomePage extends ConsumerStatefulWidget {
-  const MyHomePage({
+class WelcomePage extends ConsumerStatefulWidget {
+  const WelcomePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  ConsumerState<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<WelcomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends ConsumerState<MyHomePage> {
+class _MyHomePageState extends ConsumerState<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     MyUserData? user = ref.watch(constants.userStateProvider);
     // TODO -- create loading splashcreen
     if (user == null) return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
 
-    Languages languageProvider = ref.watch(constants.languageProvider);
+    ref.watch(constants.languageStateProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const Text('Learn Languages'),
-            const Spacer(),
-            Visibility(
-              visible: !user.authData.isAnonymous,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    iconSize: 35,
-                    splashRadius: 23,
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(
-                      Icons.account_circle_outlined,
-                    ),
-                  )
-                ],
+        appBar: AppBar(
+          elevation: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              const Text('Learn Languages'),
+              const Spacer(),
+              Visibility(
+                visible: !user.authData.isAnonymous,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      iconSize: 35,
+                      splashRadius: 23,
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(
+                        Icons.account_circle_outlined,
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-            Visibility(
-              visible: user.authData.isAnonymous,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      context.vRouter.toNamed(
-                        'auth',
-                        pathParameters: {'state': 'register'},
-                      );
-                    },
-                    child: const Text(
-                      'Sign up',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      context.vRouter.toNamed(
-                        'auth',
-                        pathParameters: {'state': 'login'},
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      side: const BorderSide(color: Colors.white),
-                    ),
-                    child: const Text(
-                      'Log in',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Stack(
-          children: [
-            FittedBox(
-              child: Text(
-                'Welcome!',
-                style: Theme.of(context).textTheme.headline1,
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FittedBox(
-                    child: Text(
-                      'I want to practice...',
-                      style: Theme.of(context).textTheme.headline3,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 32,
-                  ),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 400),
-                    child: FormBuilder(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Flexible(
-                            child: FormBuilderDropdown(
-                              name: 'language',
-                              initialValue: languageProvider.currentLanguage?.id,
-                              items: languageProvider.getDropdownItems(context),
-                              onChanged: (String? id) {
-                                if (id != null) languageProvider.setCurrentLanguage(languageProvider.items[id]);
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 32,
-                          ),
-                          ElevatedButton(
-                            onPressed: () {},
-                            child: const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Text(
-                                'Lets go!',
-                                style: TextStyle(fontSize: 21),
-                              ),
-                            ),
-                          ),
-                        ],
+              Visibility(
+                visible: user.authData.isAnonymous,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        context.vRouter.toNamed(
+                          'auth',
+                          pathParameters: {'state': 'register'},
+                        );
+                      },
+                      child: const Text(
+                        'Sign up',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        context.vRouter.toNamed(
+                          'auth',
+                          pathParameters: {'state': 'login'},
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        side: const BorderSide(color: Colors.white),
+                      ),
+                      child: const Text(
+                        'Log in',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: const WebFooter()
-    ); // const WidgetTree());
+        body: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Stack(
+            children: [
+              FittedBox(
+                child: Text(
+                  'Welcome!',
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FittedBox(
+                      child: Text(
+                        'I want to practice...',
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 32,
+                    ),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: FormBuilder(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: FormBuilderDropdown(
+                                name: 'language',
+                                initialValue: VRouter.of(context).historyState['language'],
+                                items: ref.read(constants.languageStateProvider.notifier).getDropdownItems(context),
+                                onChanged: (String? id) {
+                                  VRouter.of(context).to(
+                                    context.vRouter.url,
+                                    isReplacement: true, // We use replacement to override the history entry
+                                    historyState: {'language': id?? ''},
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 32,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {},
+                              child: const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Text(
+                                  'Lets go!',
+                                  style: TextStyle(fontSize: 21),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+        bottomNavigationBar: const WebFooter()); // const WidgetTree());
   }
 }
 
