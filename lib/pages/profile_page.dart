@@ -59,7 +59,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     tooltip: 'Profile',
                   ),
                 ),
-                if (ref.read(userStateProvider).userData.isAdmin)
+                if (ref.read(userStateProvider)!.isAdmin)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: IconButton(
@@ -159,7 +159,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    user.userData.isAdmin ? 'Admin' : 'Student',
+                                                    user!.isAdmin ? 'Admin' : 'Student',
                                                     style: const TextStyle(
                                                       fontSize: 20,
                                                       fontWeight: FontWeight.bold,
@@ -169,7 +169,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                     height: 20,
                                                   ),
                                                   Text(
-                                                    user.authData.email.substring(0, user.authData.email.indexOf('@')),
+                                                    user.authData.email!.substring(0, user.authData.email!.indexOf('@')),
                                                     overflow: TextOverflow.ellipsis,
                                                     softWrap: true,
                                                     style: const TextStyle(
@@ -199,7 +199,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 Expanded(
                   child: Navigator(
                     key: navigatorKey,
-                    initialRoute: ref.read(userStateProvider).userData.isAdmin ? Page.manageUsers.route : Page.screenQuestions.route,
+                    initialRoute: ref.read(userStateProvider)!.isAdmin ? Page.manageUsers.route : Page.screenQuestions.route,
                     onGenerateRoute: (settings) {
                       final pageName = settings.name;
 

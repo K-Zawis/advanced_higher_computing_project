@@ -23,7 +23,7 @@ class MenuDrawer extends ConsumerWidget {
               return SizedBox(
                 height: 250,
                 width: double.infinity,
-                child: user.authData?.isAnonymous
+                child: user.authData.isAnonymous
                     ? SizedBox(
                       //height: 249,
                       child: Center(
@@ -81,7 +81,7 @@ class MenuDrawer extends ConsumerWidget {
                           Positioned(
                             top: 200,
                             child: Text(
-                              user.authData.email.substring(0, user.authData.email.indexOf('@')),
+                              user.authData.email!.substring(0, user.authData.email!.indexOf('@')),
                               style: const TextStyle(
                                 fontSize: 20,
                               ),
@@ -126,7 +126,7 @@ class MenuDrawer extends ConsumerWidget {
                     case 'LogIn Page':
                       break;
                     case 'Profile Page':
-                      if (ref.read(userStateProvider).userData.isAdmin) {
+                      if (ref.read(userStateProvider)!.isAdmin) {
                         return const ProfileAdminOptions();
                       } else {
                         return const ProfileOptions();

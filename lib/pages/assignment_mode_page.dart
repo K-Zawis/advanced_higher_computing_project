@@ -207,7 +207,7 @@ class _AssignmentModeState extends ConsumerState<AssignmentMode> with TickerProv
                               builder: (context, ref, child) {
                                 var user = ref.watch(userStateProvider);
                                 if (user != null) {
-                                  if (!user?.authData.isAnonymous) {
+                                  if (!user.authData.isAnonymous) {
                                     return IconButton(
                                       onPressed: () {
                                         setState(() {

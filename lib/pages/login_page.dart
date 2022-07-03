@@ -1,10 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:learn_languages/providers/auth_providers/auth_helper.dart';
 import 'package:vrouter/vrouter.dart';
+
+import '../constants.dart' as constants;
+import '../providers/auth_providers/auth_helper.dart';
 
 class LogInPage extends ConsumerStatefulWidget {
   final String state;
@@ -12,6 +16,7 @@ class LogInPage extends ConsumerStatefulWidget {
   const LogInPage({required this.state, Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _LogInPageState createState() => _LogInPageState();
 }
 
@@ -33,15 +38,13 @@ class _LogInPageState extends ConsumerState<LogInPage> {
     required GlobalKey<FormBuilderState> formKey,
   }) async {
     setState((() => errorMessage = ''));
-    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseAuth auth = ref.read(constants.firebaseAuthProvider);
     User? user;
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
       user = userCredential.user;
     } on FirebaseAuthException catch (e) {
-      String response = AuthExceptionHandler.generateExceptionMessage(
-          AuthExceptionHandler.handleException(e));
+      String response = AuthExceptionHandler.generateExceptionMessage(AuthExceptionHandler.handleException(e));
       switch (AuthExceptionHandler.handleException(e)) {
         case AuthResultStatus.invalidEmail:
         case AuthResultStatus.userDisabled:
@@ -72,15 +75,14 @@ class _LogInPageState extends ConsumerState<LogInPage> {
     required GlobalKey<FormBuilderState> formKey,
   }) async {
     setState((() => errorMessage = ''));
-    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseAuth auth = ref.read(constants.firebaseAuthProvider);
     User? user;
     try {
-      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      final credential = EmailAuthProvider.credential(email: email, password: password);
+      UserCredential userCredential = await auth.currentUser!.linkWithCredential(credential);
       user = userCredential.user;
     } on FirebaseAuthException catch (e) {
-      String response = AuthExceptionHandler.generateExceptionMessage(
-          AuthExceptionHandler.handleException(e));
+      String response = AuthExceptionHandler.generateExceptionMessage(AuthExceptionHandler.handleException(e));
       switch (AuthExceptionHandler.handleException(e)) {
         case AuthResultStatus.invalidEmail:
         case AuthResultStatus.emailAlreadyExists:
@@ -89,17 +91,12 @@ class _LogInPageState extends ConsumerState<LogInPage> {
         case AuthResultStatus.weakPassword:
           formKey.currentState!.fields['password']!.invalidate(response);
           break;
-        case AuthResultStatus.tooManyRequests:
-        case AuthResultStatus.operationNotAllowed:
-          setState((() => errorMessage = response));
-          break;
         default:
-          // undefined
           setState((() => errorMessage = response));
           break;
       }
     }
-
+    if (user != null) FirebaseFirestore.instance.collection('users').doc(user.uid).update({'email': user.email});
     return user;
   }
 
@@ -156,8 +153,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                   child: TextButton(
                                     child: const Text('Register'),
                                     onPressed: () {
-                                      context.vRouter
-                                          .toSegments(['auth', 'register']);
+                                      context.vRouter.toSegments(['auth', 'register']);
                                     },
                                   ),
                                 ),
@@ -179,8 +175,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                                   child: TextButton(
                                     child: const Text('Sign in'),
                                     onPressed: () {
-                                      context.vRouter
-                                          .toSegments(['auth', 'login']);
+                                      context.vRouter.toSegments(['auth', 'login']);
                                       //context.vRouter.toNamed('auth', pathParameters: {'state': 'login'});
                                     },
                                   ),
@@ -273,15 +268,12 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                       child: TextButton(
                         onPressed: widget.state == 'login'
                             ? () async {
-                                if (_formKey.currentState?.saveAndValidate() ??
-                                    false) {
+                                if (_formKey.currentState?.saveAndValidate() ?? false) {
                                   print(_formKey.currentState!.value);
                                   User? user = await loginUsingEmailPassword(
                                     context: context,
-                                    email:
-                                        _formKey.currentState!.value['email'],
-                                    password: _formKey
-                                        .currentState!.value['password'],
+                                    email: _formKey.currentState!.value['email'],
+                                    password: _formKey.currentState!.value['password'],
                                     formKey: _formKey,
                                   );
                                   print(user);
@@ -292,15 +284,12 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                               }
                             : () async {
                                 print(password.text);
-                                if (_formKey.currentState?.saveAndValidate() ??
-                                    false) {
+                                if (_formKey.currentState?.saveAndValidate() ?? false) {
                                   print(_formKey.currentState!.value);
                                   User? user = await registerUsingEmailPassword(
                                     context: context,
-                                    email:
-                                        _formKey.currentState!.value['email'],
-                                    password: _formKey
-                                        .currentState!.value['password'],
+                                    email: _formKey.currentState!.value['email'],
+                                    password: _formKey.currentState!.value['password'],
                                     formKey: _formKey,
                                   );
                                   print(user);
@@ -312,9 +301,7 @@ class _LogInPageState extends ConsumerState<LogInPage> {
                         style: ElevatedButton.styleFrom(
                           side: BorderSide(color: Theme.of(context).focusColor),
                         ),
-                        child: widget.state == 'login'
-                            ? const Text('Sign in')
-                            : const Text('Register'),
+                        child: widget.state == 'login' ? const Text('Sign in') : const Text('Register'),
                       ),
                     ),
                     const SizedBox(

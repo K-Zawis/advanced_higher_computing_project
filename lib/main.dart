@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -9,7 +10,9 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vrouter/vrouter.dart';
 
-import '../constants.dart';
+import '../constants.dart' as constants;
+import 'providers/auth_providers/user_state_notifier.dart';
+import 'providers/language_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,8 +56,7 @@ class MyApp extends ConsumerWidget {
           color: ThemeData.dark().scaffoldBackgroundColor,
           titleSpacing: 32,
         ),
-        inputDecorationTheme:
-            const InputDecorationTheme(border: OutlineInputBorder()),
+        inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
       ),
       localizationsDelegates: const [
         FormBuilderLocalizations.delegate,
@@ -83,8 +85,7 @@ class MyApp extends ConsumerWidget {
             VWidget.builder(
               path: '/auth/:state',
               name: 'auth',
-              builder: (context, params) => LogInPage(
-                  state: params.pathParameters['state'] ?? 'register'),
+              builder: (context, params) => LogInPage(state: params.pathParameters['state'] ?? 'register'),
               aliases: const ['/auth/register', '/auth/login'],
             ),
             VWidget(
@@ -115,9 +116,15 @@ class MyHomePage extends ConsumerStatefulWidget {
 class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    MyUserData? user = ref.watch(constants.userStateProvider);
+    // TODO -- create loading splashcreen
+    if (user == null) return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
+
+    Languages languageProvider = ref.watch(constants.languageProvider);
+
     return Title(
       color: Colors.black,
-      title: ref.watch(titleProvider),
+      title: ref.watch(constants.titleProvider),
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -126,30 +133,59 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
             children: [
               const Text('Learn Languages'),
               const Spacer(),
-              TextButton(
-                onPressed: () {
-                  context.vRouter
-                      .toNamed('auth', pathParameters: {'state': 'register'});
-                },
-                child: const Text(
-                  'Sign up',
-                  style: TextStyle(color: Colors.white),
+              Visibility(
+                visible: !user.authData.isAnonymous,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      iconSize: 35,
+                      splashRadius: 23,
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(
+                        Icons.account_circle_outlined,
+                      ),
+                    )
+                  ],
                 ),
               ),
-              const SizedBox(
-                width: 8,
-              ),
-              TextButton(
-                onPressed: () async {
-                  context.vRouter
-                      .toNamed('auth', pathParameters: {'state': 'login'});
-                },
-                style: ElevatedButton.styleFrom(
-                  side: const BorderSide(color: Colors.white),
-                ),
-                child: const Text(
-                  'Log in',
-                  style: TextStyle(color: Colors.white),
+              Visibility(
+                visible: user.authData.isAnonymous,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        context.vRouter.toNamed(
+                          'auth',
+                          pathParameters: {'state': 'register'},
+                        );
+                      },
+                      child: const Text(
+                        'Sign up',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        context.vRouter.toNamed(
+                          'auth',
+                          pathParameters: {'state': 'login'},
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        side: const BorderSide(color: Colors.white),
+                      ),
+                      child: const Text(
+                        'Log in',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -189,7 +225,11 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                             Flexible(
                               child: FormBuilderDropdown(
                                 name: 'language',
-                                items: const [],
+                                initialValue: languageProvider.currentLanguage?.id,
+                                items: languageProvider.getDropdownItems(context),
+                                onChanged: (String? id) {
+                                  if (id != null) languageProvider.setCurrentLanguage(languageProvider.items[id]);
+                                },
                               ),
                             ),
                             const SizedBox(
@@ -238,24 +278,22 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextButton(
-                      onPressed: () =>
-                          launchUrl(Uri.parse('https://github.com/K-Zawis')),
+                      onPressed: () => launchUrl(Uri.parse('https://github.com/K-Zawis')),
                       child: const Text(
                         'Github',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
                     TextButton(
-                      onPressed: () => launchUrl(Uri.parse(
-                          'https://www.linkedin.com/in/katarzyna-zawistowska-843302196')),
+                      onPressed: () =>
+                          launchUrl(Uri.parse('https://www.linkedin.com/in/katarzyna-zawistowska-843302196')),
                       child: const Text(
                         'LinkedIn',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
                     TextButton(
-                      onPressed: () => launchUrl(Uri.parse(
-                          'https://www.buymeacoffee.com/zawistowskQ')),
+                      onPressed: () => launchUrl(Uri.parse('https://www.buymeacoffee.com/zawistowskQ')),
                       child: const Text(
                         'Buy Me a Coffee',
                         style: TextStyle(fontSize: 12),

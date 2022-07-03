@@ -22,7 +22,7 @@ class _ProfilePageDesktopState extends ConsumerState<ProfilePageDesktop> {
   Widget build(BuildContext context) {
     return Navigator(
       key: navigatorKey,
-      initialRoute: ref.read(userStateProvider).userData.isAdmin ? Page.manageUsers.route : Page.screenQuestions.route,
+      initialRoute: ref.read(userStateProvider)!.isAdmin ? Page.manageUsers.route : Page.screenQuestions.route,
       onGenerateRoute: (settings) {
         final pageName = settings.name;
 

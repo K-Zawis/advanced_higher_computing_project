@@ -9,6 +9,8 @@ enum AuthResultStatus {
   tooManyRequests,
   weakPassword,
   undefined,
+  alreadyLinked,
+  invalidCreditential,
 }
 
 class AuthExceptionHandler {
@@ -50,6 +52,12 @@ class AuthExceptionHandler {
       case "weak-password":
         status = AuthResultStatus.weakPassword;
         break;
+      case "provider-already-linked":
+        status = AuthResultStatus.alreadyLinked;
+        break;
+      case "invalid-credential":
+        status = AuthResultStatus.invalidCreditential;
+        break;
       default:
         status = AuthResultStatus.undefined;
     }
@@ -83,10 +91,16 @@ class AuthExceptionHandler {
         break;
       case AuthResultStatus.emailAlreadyExists:
         errorMessage =
-        "The e-mail has already been registered. Please login or reset your password.";
+            "The e-mail has already been registered. Please login or reset your password.";
         break;
       case AuthResultStatus.weakPassword:
         errorMessage = "Password must be at least 6 characters long.";
+        break;
+      case AuthResultStatus.alreadyLinked:
+        errorMessage = 'The provider has already been linked to the user.';
+        break;
+      case AuthResultStatus.invalidCreditential:
+        errorMessage = "The provider's credential is not valid.";
         break;
       default:
         errorMessage = "An undefined Error happened.";

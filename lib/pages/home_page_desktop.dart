@@ -126,7 +126,7 @@ class _DesktopHomePageState extends ConsumerState<DesktopHomePage> {
                             builder: (context, ref, child) {
                               var user = ref.watch(userStateProvider);
                               if (user != null) {
-                                if (!user?.authData?.isAnonymous) {
+                                if (!user.authData.isAnonymous) {
                                   return IconButton(
                                     onPressed: () {
                                       setState(() {

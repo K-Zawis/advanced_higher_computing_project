@@ -5,59 +5,57 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../../constants.dart';
-import '../../models/user_model.dart';
 import 'auth_helper.dart';
 
 class MyUserData {
-  User authData;
-  MyUser userData;
+  final String uid;
+  final bool isAdmin;
+  final String email;
+  final User authData;
 
-  MyUserData({required this.authData, required this.userData});
+  MyUserData({
+    required this.authData,
+    required this.uid,
+    required this.isAdmin,
+    required this.email,
+  });
+
+  factory MyUserData.fromFirestore(DocumentSnapshot doc, User user) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return MyUserData(
+      uid: user.uid,
+      email: data['email'] ?? 'Anonymous',
+      isAdmin: data['isAdmin'] ?? false,
+      authData: user,
+    );
+  }
 }
 
 class UserStateNotifier extends StateNotifier<MyUserData?> {
   final Reader _read;
-
   StreamSubscription<User?>? _authStateChangeSubscription;
-  UserStateNotifier(this._read) : super(null) {
-    _authStateChangeSubscription?.cancel();
-    _authStateChangeSubscription = _read(authRepositoryProvider).authStateChanges.listen((user) {
-      if (user != null) {
-        FirebaseFirestore.instance.collection("users").doc(user.uid).snapshots().listen((userData) {
-          state = MyUserData(authData: user, userData: MyUser.fromFirestore(userData, userData.id));
-        });
-      } else {
-        state = null;
-      }
-    });
-  }
+
+  UserStateNotifier(this._read) : super(null);
 
   Future<void> appInit() async {
     print('init');
-    //var user = _read(authRepositoryProvider).getCurrentUser();
-    FirebaseAuth.instance.setPersistence(Persistence.LOCAL).then(
-          (value) => FirebaseAuth.instance.authStateChanges().listen((event) async {
-            print(event);
-            if (event == null) {
-              await _read(firebaseAuthProvider).signInAnonymously();
-            }
-          }),
-        );
-    /*if (user == null) {
-      await _read(firebaseAuthProvider).signInAnonymously();
-    }*/
+    _read(firebaseAuthProvider).setPersistence(Persistence.LOCAL).then(
+      (value) {
+        _authStateChangeSubscription = _read(firebaseAuthProvider).authStateChanges().listen((user) async {
+          print(user?.uid);
+          if (user == null) {
+            await _read(firebaseAuthProvider).signInAnonymously();
+          } else {
+            FirebaseFirestore.instance.collection("users").doc(user.uid).snapshots().listen((userData) {
+              state = MyUserData.fromFirestore(userData, user);
+            });
+          }
+        });
+      },
+    );
   }
 
-  Future<AuthResultStatus> signIn(email, password) async {
-    var status = await _read(authRepositoryProvider).signInWithEmailAndPassword(email, password);
-    return status;
-  }
-
-  Future<User?> createUserWithEmailAndPassword(email, password) async {
-    var user = await _read(authRepositoryProvider).createUserWithEmailAndPassword(email.trim(), password);
-    return user;
-  }
-
+  // TODO -- will most likely remove all of those..
   Future<void> signOut() async {
     await _read(authRepositoryProvider).signOut();
   }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/models/langauge_model.dart';
 
 class Languages extends ChangeNotifier {
@@ -96,7 +97,7 @@ class Languages extends ChangeNotifier {
           (item) => DropdownMenuItem<String>(
             value: item.id,
             child: Text(
-              item.ISOcode,
+              item.language,
               style: const TextStyle(
                 color: Colors.white,
               ),
