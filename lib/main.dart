@@ -107,7 +107,7 @@ class MyApp extends ConsumerWidget {
               name: 'home',
               builder: (context, state) =>  Title(
                 color: Colors.black,
-                title: 'Welcome page',
+                title: 'Home page',
                 child: HomePage(languageId: state.queryParameters['language']!),
               ),
             ),
