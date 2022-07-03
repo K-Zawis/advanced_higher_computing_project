@@ -13,6 +13,12 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
     "public": "build/web",
     "ignore": [
       "firebase.json",

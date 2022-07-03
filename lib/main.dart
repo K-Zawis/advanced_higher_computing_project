@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutterfire_ui/auth.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:learn_languages/pages/login_page.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_strategy/url_strategy.dart';
 import 'package:vrouter/vrouter.dart';
 
 import '../constants.dart';
 
 Future<void> main() async {
-  setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
@@ -61,46 +58,19 @@ class MyApp extends ConsumerWidget {
       localizationsDelegates: const [
         FormBuilderLocalizations.delegate,
       ],
-      //backButtonDispatcher: RootBackButtonDispatcher(),
-      // routeInformationParser: VxInformationParser(),
-      /* routerDelegate: VxNavigator(routes: {
-        '/': (uri, params) => MaterialPage(
-              key: ValueKey('Home'),
-              child: MyHomePage(),
-            ),
-        '/loginTest': (uri, params) => MaterialPage(
-              child: Theme(
-                data: ThemeData.dark().copyWith(
-                  primaryColorDark: Colors.amber,
-                  colorScheme: const ColorScheme.dark().copyWith(
-                    primary: Colors.amber,
-                    secondary: Colors.amberAccent,
-                  ),
-                  inputDecorationTheme: InputDecorationTheme(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                child: SignInScreen(
-                  providerConfigs: [EmailProviderConfiguration()],
-                ),
-              ),
-            ),
-        '/login': (uri, params) => MaterialPage(
-              key: ValueKey('Login'),
-              child: LogInPage(),
-            )
-      }),*/
-      //home: const MyHomePage(),
+      mode: VRouterMode.history,
+      initialUrl: '/',
       routes: [
         VWidget(
           path: '/',
-          widget: MyHomePage(),
+          widget: const MyHomePage(),
         ),
-        VWidget(
-          path: '/login',
-          widget: LogInPage(),
+        VWidget.builder(
+          path: '/auth/:state',
+          name: 'auth',
+          builder: (context, params) =>
+              LogInPage(state: params.pathParameters['state'] ?? 'register'),
+          aliases: const ['/auth/register', '/auth/login'],
         ),
         VRouteRedirector(
           redirectTo: '/',
@@ -136,7 +106,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               const Text('Learn Languages'),
               const Spacer(),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.vRouter
+                      .toNamed('auth', pathParameters: {'state': 'register'});
+                },
                 child: const Text(
                   'Sign up',
                   style: TextStyle(color: Colors.white),
@@ -147,14 +120,15 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               ),
               TextButton(
                 onPressed: () async {
-                  context.vRouter.to('/login');
+                  context.vRouter
+                      .toNamed('auth', pathParameters: {'state': 'login'});
                 },
+                style: ElevatedButton.styleFrom(
+                  side: const BorderSide(color: Colors.white),
+                ),
                 child: const Text(
                   'Log in',
                   style: TextStyle(color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  side: const BorderSide(color: Colors.white),
                 ),
               ),
             ],
@@ -194,7 +168,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                             Flexible(
                               child: FormBuilderDropdown(
                                 name: 'language',
-                                items: [],
+                                items: const [],
                               ),
                             ),
                             const SizedBox(
