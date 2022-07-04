@@ -1,9 +1,72 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/models/topic_model.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-class Topics extends ChangeNotifier {
+class Topics extends StateNotifier<Map<String, Topic>> {
+  final topics = FirebaseFirestore.instance.collection("topic");
+  final Map<String, Topic> items = {};
+
+  Topics({
+    required String lan,
+    required String level,
+  }) : super({}) {
+    _listenToData(lan, level);
+  }
+
+  _listenToData(lan, level) async {
+    try {
+      topics.where('qualification', arrayContains: level).where('language', isEqualTo: lan).snapshots().listen((snap) {
+        {
+          for (var change in snap.docChanges) {
+            switch (change.type) {
+              case (DocumentChangeType.added):
+                {
+                  items.putIfAbsent(change.doc.id, () => Topic.fromFirestore(change.doc, change.doc.id));
+                  break;
+                }
+              case (DocumentChangeType.removed):
+                {
+                  items.remove(change.doc.id);
+                  break;
+                }
+              case (DocumentChangeType.modified):
+                {
+                  items.update(change.doc.id, (value) => Topic.fromFirestore(change.doc, change.doc.id));
+                  break;
+                }
+            }
+          }
+          state = Map.from(items);
+        }
+      });
+    } catch (e) {}
+  }
+
+  // * Firebase
+  Future<void> removeDocument(String id) {
+    FirebaseFirestore.instance.collection("questions").where('topic', isEqualTo: id).get().then(
+          (questions) => questions.docs.forEach(
+            (doc) {
+              FirebaseFirestore.instance.collection("questions").doc(doc.id).delete();
+            },
+          ),
+        );
+    return topics.doc(id).delete();
+  }
+
+  Future<DocumentReference> addDocument(Map data) {
+    return topics.add(data as Map<String, dynamic>);
+  }
+
+  Future<void> updateDocument(Map data, String id) {
+    return topics.doc(id).update(data as Map<String, dynamic>);
+  }
+}
+
+class Topics2 extends ChangeNotifier {
   final _topics = FirebaseFirestore.instance.collection("topic");
   // https://stackoverflow.com/questions/63884633/unhandled-exception-a-changenotifier-was-used-after-being-disposed
   bool _disposed = false;
@@ -13,7 +76,7 @@ class Topics extends ChangeNotifier {
   List? _selectedTopics = [];
   Map<String, String> _topicIds = {};
 
-  Topics(lan, level) {
+  Topics2(lan, level) {
     _listenToData(lan, level);
   }
 

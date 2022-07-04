@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:multiselect/multiselect.dart';
 import 'package:vrouter/vrouter.dart';
 
 import '../constants.dart' as constants;
+import '../models/topic_model.dart';
 import '../widgets/navigation_bar_widget.dart';
 import '/providers/auth_providers/user_state_notifier.dart';
 import '/widgets/footer_widget.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   final String languageId;
+  final String levelId;
 
   const HomePage({
     required this.languageId,
+    required this.levelId,
     Key? key,
   }) : super(key: key);
 
@@ -23,12 +25,22 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<HomePage> {
+  late String ids;
+
+  @override
+  void initState() {
+    ids = "${widget.languageId}-${widget.levelId}";
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
     MyUserData? user = ref.watch(constants.userStateProvider);
     // TODO -- create loading splashcreen
     if (user == null) return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
+
+    Map<String, Topic> topics = ref.watch(constants.topicStateProvider(ids));
 
     return Scaffold(
       appBar: webNavigationBar(
@@ -39,7 +51,9 @@ class _MyHomePageState extends ConsumerState<HomePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                if (_formKey.currentState!.saveAndValidate()) {}
+              },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(50, 30),
@@ -55,7 +69,15 @@ class _MyHomePageState extends ConsumerState<HomePage> {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                if (_formKey.currentState!.saveAndValidate()) {
+                  if (_formKey.currentState!.value['topic2'] == null) {
+                    _formKey.currentState!.fields['topic2']!.invalidate('Field cannot be empty for this mode.');
+                  } else {
+                    print(_formKey.currentState!.value);
+                  }
+                }
+              },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(50, 30),
@@ -116,22 +138,89 @@ class _MyHomePageState extends ConsumerState<HomePage> {
                           const SizedBox(
                             height: 32,
                           ),
-                          FormBuilderDropdown(
+                          FormBuilderDropdown<String>(
                             name: 'topic1',
+                            initialValue: (VRouter.of(context).historyState['topic1']?.isEmpty ?? true)
+                                ? null
+                                : VRouter.of(context).historyState['topic1'],
                             decoration: const InputDecoration(hintText: 'Topic 1'),
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(),
+                              (topic) {
+                                if (VRouter.of(context).historyState['topic2']?.isNotEmpty ?? false) {
+                                  if (VRouter.of(context).historyState['topic2'] == topic) {
+                                    return 'Topics muct not be the same';
+                                  }
+                                }
+                                return null;
+                              }
                             ]),
-                            items: [],
+                            items: topics.values
+                                .map(
+                                  (item) => DropdownMenuItem<String>(
+                                    value: item.id,
+                                    child: Text(
+                                      item.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (topic) {
+                              VRouter.of(context).to(
+                                context.vRouter.url,
+                                isReplacement: true, // We use replacement to override the history entry
+                                historyState: {
+                                  'topic1': topic ?? '',
+                                  'topic2': VRouter.of(context).historyState['topic2'] ?? ''
+                                },
+                              );
+                            },
                           ),
                           const SizedBox(
                             height: 8,
                           ),
                           FormBuilderDropdown<String>(
                             name: 'topic2',
-                            validator: (topic) {},
+                            initialValue: (VRouter.of(context).historyState['topic2']?.isEmpty ?? true)
+                                ? null
+                                : VRouter.of(context).historyState['topic2'],
+                            validator: (topic) {
+                              if (VRouter.of(context).historyState['topic1']?.isNotEmpty ?? false) {
+                                if (VRouter.of(context).historyState['topic1'] == topic) {
+                                  return 'Topics muct not be the same';
+                                }
+                              }
+                              return null;
+                            },
                             decoration: const InputDecoration(hintText: 'Topic 2'),
-                            items: [],
+                            items: topics.values
+                                .map(
+                                  (item) => DropdownMenuItem<String>(
+                                    value: item.id,
+                                    child: Text(
+                                      item.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (topic) {
+                              VRouter.of(context).to(
+                                context.vRouter.url,
+                                isReplacement: true, // We use replacement to override the history entry
+                                historyState: {
+                                  'topic2': topic ?? '',
+                                  'topic1': VRouter.of(context).historyState['topic1'] ?? ''
+                                },
+                              );
+                            },
                           ),
                           const SizedBox(
                             height: 32,
@@ -144,7 +233,10 @@ class _MyHomePageState extends ConsumerState<HomePage> {
                                 historyState: {},
                               );
                             },
-                            child: Text('Clear selections'),
+                            child: const Text(
+                              'Clear selections',
+                              style: TextStyle(fontSize: 21),
+                            ),
                           ),
                         ],
                       ),

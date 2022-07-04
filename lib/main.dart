@@ -105,10 +105,13 @@ class MyApp extends ConsumerWidget {
             VWidget.builder(
               path: '/home',
               name: 'home',
-              builder: (context, state) =>  Title(
+              builder: (context, state) => Title(
                 color: Colors.black,
                 title: 'Home page',
-                child: HomePage(languageId: state.queryParameters['language']!),
+                child: HomePage(
+                  languageId: state.queryParameters['language']!,
+                  levelId: state.queryParameters['level']!,
+                ),
               ),
             ),
           ],

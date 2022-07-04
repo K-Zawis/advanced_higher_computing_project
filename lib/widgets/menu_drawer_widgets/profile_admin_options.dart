@@ -162,13 +162,13 @@ class ProfileAdminOptions extends ConsumerWidget {
                                 width: 250,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Topics topicProv = ref.read(topicProvider);
-                                    var topics = topicProv.getTopics();
-                                    ref.read(usersProvider).setCustom(false);
-                                    if (topics?.length == 2) {
-                                      topicProv.setTopics([topics![0]]);
-                                    }
-                                    navigatorKey.currentState!.pushNamed(Page.question.route);
+                                    //Topics topicProv = ref.read(topicProvider);
+                                    //var topics = topicProv.getTopics();
+                                    //ref.read(usersProvider).setCustom(false);
+                                    //if (topics?.length == 2) {
+                                    //  topicProv.setTopics([topics![0]]);
+                                    //}
+                                    //navigatorKey.currentState!.pushNamed(Page.question.route);
                                   },
                                   child: const Padding(
                                     padding: EdgeInsets.symmetric(vertical: 15.0),

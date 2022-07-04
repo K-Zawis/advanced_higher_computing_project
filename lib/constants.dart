@@ -8,6 +8,7 @@ import 'package:learn_languages/models/qualification_model.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_question.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_question_desktop.dart';
 
+import 'models/topic_model.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_topic.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_topic_desktop.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_qualifications.dart';
@@ -169,19 +170,23 @@ final userStateProvider = StateNotifierProvider<UserStateNotifier, MyUserData?>(
 // * App Providers
 final languageStateProvider = StateNotifierProvider<Languages, Map<String, Language>>((ref) => Languages());
 final qualificationStateProvider = StateNotifierProvider<Qualifications, Map<String, Qualification>>((ref) => Qualifications());
+final topicStateProvider = StateNotifierProvider.family<Topics, Map<String, Topic>, String>((ref, ids) {
+  List values = ids.split('-');
+  return Topics(lan: values[0], level: values[1]);
+});
 
 // TODO: delete
 final languageProvider = ChangeNotifierProvider<Languages2>((ref) => Languages2());
 final qualificationProvider = ChangeNotifierProvider<Qualifications2>((ref) => Qualifications2());
+final topicProvider = ChangeNotifierProvider<Topics2>((ref) {
+  var lan = ref.watch(languageProvider).getLanguage();
+  var level = ref.watch(qualificationProvider).getLevel();
+  return Topics2(lan, level);
+});
 
 // * Unsorted
 final authRepositoryProvider = Provider<AuthService>((_) => AuthService(_.read));
 final loginProvider = ChangeNotifierProvider<LoginProvider>((_ref) => LoginProvider());
-final topicProvider = ChangeNotifierProvider<Topics>((ref) {
-  var lan = ref.watch(languageProvider).getLanguage();
-  var level = ref.watch(qualificationProvider).getLevel();
-  return Topics(lan, level);
-});
 final questionProvider = ChangeNotifierProvider<Questions>((ref) {
   var topic;
   bool custom = ref.watch(usersProvider).custom ?? false;
