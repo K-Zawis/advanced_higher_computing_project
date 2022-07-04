@@ -31,113 +31,130 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
     ref.watch(constants.qualificationStateProvider);
 
     return Scaffold(
-        appBar: webNavigationBar(context: context, user: user, ref: ref),
-        body: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Stack(
-            children: [
-              FittedBox(
-                child: Text(
-                  'Welcome!',
-                  style: Theme.of(context).textTheme.headline1,
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      child: Text(
-                        'I want to practice...',
-                        style: Theme.of(context).textTheme.headline3,
-                      ),
+      appBar: webNavigationBar(context: context, user: user, ref: ref),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 973 - 208),
+              height: MediaQuery.of(context).size.height - 208,
+              width: double.infinity,
+              padding: const EdgeInsets.all(32),
+              child: Stack(
+                children: [
+                  FittedBox(
+                    child: Text(
+                      'Welcome!',
+                      style: Theme.of(context).textTheme.headline1,
                     ),
-                    const SizedBox(
-                      height: 32,
-                    ),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 500),
-                      child: FormBuilder(
-                        key: _formKey,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Flexible(
-                              child: FormBuilderDropdown<String>(
-                                name: 'level',
-                                decoration: const InputDecoration(hintText: 'Level'),
-                                initialValue: VRouter.of(context).historyState['level'],
-                                validator: FormBuilderValidators.required(),
-                                items:
-                                    ref.read(constants.qualificationStateProvider.notifier).getDropdownItems(context),
-                                onChanged: (value) {
-                                  VRouter.of(context).to(
-                                    context.vRouter.url,
-                                    isReplacement: true, // We use replacement to override the history entry
-                                    historyState: {
-                                      'level': value ?? '',
-                                      'language': VRouter.of(context).historyState['language'] ?? ''
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            Flexible(
-                              child: FormBuilderDropdown(
-                                name: 'language',
-                                initialValue: VRouter.of(context).historyState['language'],
-                                items: ref.read(constants.languageStateProvider.notifier).getDropdownItems(context),
-                                validator: FormBuilderValidators.required(),
-                                onChanged: (String? id) {
-                                  VRouter.of(context).to(
-                                    context.vRouter.url,
-                                    isReplacement: true, // We use replacement to override the history entry
-                                    historyState: {
-                                      'language': id ?? '',
-                                      'level': VRouter.of(context).historyState['level'] ?? ''
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.saveAndValidate()) {
-                                  context.vRouter.toNamed(
-                                    'home',
-                                    queryParameters: {
-                                      'language': VRouter.of(context).historyState['language'] ?? '',
-                                      'level': VRouter.of(context).historyState['level'] ?? ''
-                                    },
-                                  );
-                                }
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.all(15),
-                                child: Text(
-                                  'Lets go!',
-                                  style: TextStyle(fontSize: 21),
-                                ),
-                              ),
-                            ),
-                          ],
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FittedBox(
+                          child: Text(
+                            'I want to practice...',
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
                         ),
-                      ),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 500),
+                          child: FormBuilder(
+                            key: _formKey,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: FormBuilderDropdown<String>(
+                                    name: 'level',
+                                    decoration: const InputDecoration(hintText: 'Level'),
+                                    initialValue: VRouter.of(context).historyState['level'],
+                                    validator: FormBuilderValidators.required(),
+                                    items: ref
+                                        .read(constants.qualificationStateProvider.notifier)
+                                        .getDropdownItems(context),
+                                    onChanged: (value) {
+                                      VRouter.of(context).to(
+                                        context.vRouter.url,
+                                        isReplacement: true, // We use replacement to override the history entry
+                                        historyState: {
+                                          'level': value ?? '',
+                                          'language': VRouter.of(context).historyState['language'] ?? ''
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Flexible(
+                                  child: FormBuilderDropdown(
+                                    name: 'language',
+                                    initialValue: VRouter.of(context).historyState['language'],
+                                    items: ref.read(constants.languageStateProvider.notifier).getDropdownItems(context),
+                                    validator: FormBuilderValidators.required(),
+                                    onChanged: (String? id) {
+                                      VRouter.of(context).to(
+                                        context.vRouter.url,
+                                        isReplacement: true, // We use replacement to override the history entry
+                                        historyState: {
+                                          'language': id ?? '',
+                                          'level': VRouter.of(context).historyState['level'] ?? ''
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.saveAndValidate()) {
+                                      context.vRouter.toNamed(
+                                        'home',
+                                        queryParameters: {
+                                          'language': VRouter.of(context).historyState['language'] ?? '',
+                                          'level': VRouter.of(context).historyState['level'] ?? ''
+                                        },
+                                      );
+                                    }
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Text(
+                                      'Lets go!',
+                                      style: TextStyle(fontSize: 21),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )
-            ],
+                  )
+                ],
+              ),
+            ),
           ),
-        ),
-        bottomNavigationBar: const WebFooter()); // const WidgetTree());
+          const SliverFillRemaining(
+            hasScrollBody: false,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: WebFooter(),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
