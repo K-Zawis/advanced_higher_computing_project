@@ -26,10 +26,7 @@ import 'pages/assignment_mode_desktop_page.dart';
 import 'pages/assignment_mode_page.dart';
 import 'pages/profile_page_desktop.dart';
 import 'pages/profile_page.dart';
-import 'pages/auth_page.dart';
 import 'pages/practice_mode_page_desktop.dart';
-import 'pages/welcome_page.dart';
-import 'pages/home_page_desktop.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_language.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_language_desktop.dart';
 import 'pages/profile_page_sub_pages/admin_forms/edit_qualifications_desktop.dart';
@@ -97,7 +94,7 @@ final _availableMobilePages = <String, WidgetBuilder>{
   'Question Page': (_) => const QuestionPage(),
 };
 final _availableDesktopPages = <String, WidgetBuilder>{
-  'Home Page': (_) => const DesktopHomePage(),
+  //'Home Page': (_) => const DesktopHomePage(),
   'Practice Mode': (_) => const DesktopPracticeMode(),
   'Assignment Mode': (_) => const DesktopAssignmentMode(),
   //'LogIn Page': (_) => const LogInPage(),

@@ -72,10 +72,13 @@ class _MyHomePageState extends ConsumerState<HomePage> {
               onPressed: () {
                 if (_formKey.currentState!.saveAndValidate()) {
                   if (_formKey.currentState!.value['topic2'] == null) {
-                    _formKey.currentState!.fields['topic2']!.invalidate('Field cannot be empty for this mode.');
+                    _formKey.currentState!.fields['topic2']!.invalidate('This field cannot be empty for this mode.');
                   } else {
                     print(_formKey.currentState!.value);
                   }
+                }
+                if (_formKey.currentState!.value['topic2'] == null) {
+                  _formKey.currentState!.fields['topic2']!.invalidate('This field cannot be empty for this mode.');
                 }
               },
               style: TextButton.styleFrom(
