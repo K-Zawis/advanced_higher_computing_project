@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quds_popup_menu/quds_popup_menu.dart';
 import 'package:vrouter/vrouter.dart';
 
+import '../constants.dart' as constants;
 import '../providers/auth_providers/user_state_notifier.dart';
 
 AppBar webNavigationBar({
   required BuildContext context,
   required MyUserData user,
+  required WidgetRef ref,
   Widget? nav,
 }) {
   return AppBar(
@@ -42,13 +46,48 @@ AppBar webNavigationBar({
         visible: !user.authData.isAnonymous,
         child: Padding(
           padding: const EdgeInsets.only(right: 32),
-          child: IconButton(
-            onPressed: () {},
-            iconSize: 35,
-            splashRadius: 23,
-            padding: EdgeInsets.zero,
-            icon: const Icon(
+          child: QudsPopupButton(
+            radius: 23,
+            items: [
+              QudsPopupMenuItem(
+                title: const Text('Profile page'),
+                onPressed: () {},
+              ),
+              QudsPopupMenuItem(
+                title: const Text('Manage users'),
+                onPressed: () {},
+              ),
+              QudsPopupMenuSection(
+                titleText: 'Data admin',
+                subItems: [
+                  QudsPopupMenuItem(
+                    title: const Text('Languages'),
+                    onPressed: () {},
+                  ),
+                  QudsPopupMenuItem(
+                    title: const Text('Levels'),
+                    onPressed: () {},
+                  ),
+                  QudsPopupMenuItem(
+                    title: const Text('Topics'),
+                    onPressed: () {},
+                  ),
+                  QudsPopupMenuItem(
+                    title: const Text('Questions'),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              QudsPopupMenuItem(
+                    title: const Text('Sign out'),
+                    onPressed: () async {
+                      await ref.read(constants.firebaseAuthProvider).signInAnonymously();
+                    },
+                  ),
+            ],
+            child: const Icon(
               Icons.account_circle_outlined,
+              size: 35,
             ),
           ),
         ),

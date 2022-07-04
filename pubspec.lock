@@ -245,6 +245,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.2"
+  multiselect:
+    dependency: "direct main"
+    description:
+      name: multiselect
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.7"
   path:
     dependency: transitive
     description:
@@ -259,6 +266,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  quds_popup_menu:
+    dependency: "direct main"
+    description:
+      name: quds_popup_menu
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1+1"
+  quds_ui_kit:
+    dependency: transitive
+    description:
+      name: quds_ui_kit
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.7+8"
   responsive_framework:
     dependency: "direct main"
     description:
@@ -299,6 +320,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.2+1"
+  states_rebuilder:
+    dependency: transitive
+    description:
+      name: states_rebuilder
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.1.0+1"
   stream_channel:
     dependency: transitive
     description:

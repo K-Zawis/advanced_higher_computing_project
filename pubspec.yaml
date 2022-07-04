@@ -47,6 +47,8 @@ dependencies:
   url_launcher: ^6.1.4
   url_strategy: ^0.2.0
   vrouter: ^1.2.1
+  quds_popup_menu: ^0.0.1+1
+  multiselect: ^0.0.7
 
 dev_dependencies:
   flutter_test:

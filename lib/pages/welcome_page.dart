@@ -28,10 +28,9 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
     if (user == null) return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
 
     ref.watch(constants.languageStateProvider);
-    print(VRouter.of(context).historyState['language']);
 
     return Scaffold(
-        appBar: webNavigationBar(context: context, user: user),
+        appBar: webNavigationBar(context: context, user: user, ref: ref),
         body: Padding(
           padding: const EdgeInsets.all(32),
           child: Stack(
