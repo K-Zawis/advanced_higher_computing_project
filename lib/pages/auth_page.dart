@@ -9,6 +9,7 @@ import 'package:vrouter/vrouter.dart';
 
 import '../constants.dart' as constants;
 import '../providers/auth_providers/auth_helper.dart';
+import '../widgets/footer_widget.dart';
 
 class LogInPage extends ConsumerStatefulWidget {
   final String state;
@@ -107,217 +108,235 @@ class _LogInPageState extends ConsumerState<LogInPage> {
         return true;
       },
       child: Scaffold(
-        body: Theme(
-          data: ThemeData.dark().copyWith(
-            primaryColorDark: Colors.amber,
-            colorScheme: const ColorScheme.dark().copyWith(
-              primary: Colors.amber,
-              secondary: Colors.amberAccent,
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 350),
-              child: FormBuilder(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.state == 'login' ? 'Sign in' : 'Register',
-                      style: Theme.of(context).textTheme.headline5,
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 973 - 208),
+                height: MediaQuery.of(context).size.height - 208,
+                width: double.infinity,
+                child: Theme(
+                  data: ThemeData.dark().copyWith(
+                    primaryColorDark: Colors.amber,
+                    colorScheme: const ColorScheme.dark().copyWith(
+                      primary: Colors.amber,
+                      secondary: Colors.amberAccent,
                     ),
-                    const SizedBox(
-                      height: 12,
+                    inputDecorationTheme: InputDecorationTheme(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    widget.state == 'login'
-                        ? RichText(
-                            text: TextSpan(
-                              children: [
-                                const WidgetSpan(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 8, bottom: 8),
-                                  child: Text(
-                                    "Don't have an account?",
-                                    style: TextStyle(fontSize: 12),
+                  ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 350),
+                      child: FormBuilder(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.state == 'login' ? 'Sign in' : 'Register',
+                              style: Theme.of(context).textTheme.headline5,
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            widget.state == 'login'
+                                ? RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        const WidgetSpan(
+                                            child: Padding(
+                                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                                          child: Text(
+                                            "Don't have an account?",
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        )),
+                                        WidgetSpan(
+                                          child: TextButton(
+                                            child: const Text('Register'),
+                                            onPressed: () {
+                                              context.vRouter.toSegments(['auth', 'register']);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        const WidgetSpan(
+                                            child: Padding(
+                                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                                          child: Text(
+                                            "Already have an account?",
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        )),
+                                        WidgetSpan(
+                                          child: TextButton(
+                                            child: const Text('Sign in'),
+                                            onPressed: () {
+                                              context.vRouter.toSegments(['auth', 'login']);
+                                              //context.vRouter.toNamed('auth', pathParameters: {'state': 'login'});
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                )),
-                                WidgetSpan(
-                                  child: TextButton(
-                                    child: const Text('Register'),
-                                    onPressed: () {
-                                      context.vRouter.toSegments(['auth', 'register']);
-                                    },
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            FormBuilderTextField(
+                              name: 'email',
+                              decoration: const InputDecoration(
+                                hintText: 'Enter your email',
+                              ),
+                              validator: FormBuilderValidators.compose(
+                                [
+                                  FormBuilderValidators.email(),
+                                  FormBuilderValidators.required(),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            FormBuilderTextField(
+                              name: 'password',
+                              controller: password,
+                              obscureText: true,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              decoration: const InputDecoration(
+                                hintText: 'Password',
+                              ),
+                              validator: FormBuilderValidators.compose(
+                                [
+                                  FormBuilderValidators.required(),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            if (widget.state == 'register')
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FormBuilderTextField(
+                                    name: 'confrim_password',
+                                    obscureText: true,
+                                    enableSuggestions: false,
+                                    autocorrect: false,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Confirm password',
+                                    ),
+                                    validator: FormBuilderValidators.compose(
+                                      [
+                                        FormBuilderValidators.required(),
+                                        FormBuilderValidators.match(
+                                          password.text,
+                                        )
+                                      ],
+                                    ),
                                   ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                ],
+                              ),
+                            if (widget.state == 'login')
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton(
+                                      child: const Text('Forgot password?'),
+                                      onPressed: () {
+                                        context.vRouter.to('forgot-password');
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                ],
+                              ),
+                            SizedBox(
+                              width: double.maxFinite,
+                              child: TextButton(
+                                onPressed: widget.state == 'login'
+                                    ? () async {
+                                        if (_formKey.currentState?.saveAndValidate() ?? false) {
+                                          print(_formKey.currentState!.value);
+                                          User? user = await loginUsingEmailPassword(
+                                            context: context,
+                                            email: _formKey.currentState!.value['email'],
+                                            password: _formKey.currentState!.value['password'],
+                                            formKey: _formKey,
+                                          );
+                                          print(user);
+                                          if (user != null) {
+                                            context.vRouter.pop();
+                                          }
+                                        }
+                                      }
+                                    : () async {
+                                        print(password.text);
+                                        if (_formKey.currentState?.saveAndValidate() ?? false) {
+                                          print(_formKey.currentState!.value);
+                                          User? user = await registerUsingEmailPassword(
+                                            context: context,
+                                            email: _formKey.currentState!.value['email'],
+                                            password: _formKey.currentState!.value['password'],
+                                            formKey: _formKey,
+                                          );
+                                          print(user);
+                                          if (user != null) {
+                                            context.vRouter.pop();
+                                          }
+                                        }
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  side: BorderSide(color: Theme.of(context).focusColor),
                                 ),
-                              ],
+                                child: widget.state == 'login' ? const Text('Sign in') : const Text('Register'),
+                              ),
                             ),
-                          )
-                        : RichText(
-                            text: TextSpan(
-                              children: [
-                                const WidgetSpan(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 8, bottom: 8),
-                                  child: Text(
-                                    "Already have an account?",
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                )),
-                                WidgetSpan(
-                                  child: TextButton(
-                                    child: const Text('Sign in'),
-                                    onPressed: () {
-                                      context.vRouter.toSegments(['auth', 'login']);
-                                      //context.vRouter.toNamed('auth', pathParameters: {'state': 'login'});
-                                    },
-                                  ),
-                                ),
-                              ],
+                            const SizedBox(
+                              height: 12,
                             ),
-                          ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    FormBuilderTextField(
-                      name: 'email',
-                      decoration: const InputDecoration(
-                        hintText: 'Enter your email',
-                      ),
-                      validator: FormBuilderValidators.compose(
-                        [
-                          FormBuilderValidators.email(),
-                          FormBuilderValidators.required(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    FormBuilderTextField(
-                      name: 'password',
-                      controller: password,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                        hintText: 'Password',
-                      ),
-                      validator: FormBuilderValidators.compose(
-                        [
-                          FormBuilderValidators.required(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    if (widget.state == 'register')
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FormBuilderTextField(
-                            name: 'confrim_password',
-                            obscureText: true,
-                            enableSuggestions: false,
-                            autocorrect: false,
-                            decoration: const InputDecoration(
-                              hintText: 'Confirm password',
+                            Visibility(
+                              visible: errorMessage.isNotEmpty,
+                              child: Text(
+                                errorMessage,
+                                style: TextStyle(color: Theme.of(context).errorColor),
+                              ),
                             ),
-                            validator: FormBuilderValidators.compose(
-                              [
-                                FormBuilderValidators.required(),
-                                FormBuilderValidators.match(
-                                  password.text,
-                                )
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                        ],
-                      ),
-                    if (widget.state == 'login')
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              child: const Text('Forgot password?'),
-                              onPressed: () {
-                                context.vRouter.to('forgot-password');
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                        ],
-                      ),
-                    SizedBox(
-                      width: double.maxFinite,
-                      child: TextButton(
-                        onPressed: widget.state == 'login'
-                            ? () async {
-                                if (_formKey.currentState?.saveAndValidate() ?? false) {
-                                  print(_formKey.currentState!.value);
-                                  User? user = await loginUsingEmailPassword(
-                                    context: context,
-                                    email: _formKey.currentState!.value['email'],
-                                    password: _formKey.currentState!.value['password'],
-                                    formKey: _formKey,
-                                  );
-                                  print(user);
-                                  if (user != null) {
-                                    context.vRouter.pop();
-                                  }
-                                }
-                              }
-                            : () async {
-                                print(password.text);
-                                if (_formKey.currentState?.saveAndValidate() ?? false) {
-                                  print(_formKey.currentState!.value);
-                                  User? user = await registerUsingEmailPassword(
-                                    context: context,
-                                    email: _formKey.currentState!.value['email'],
-                                    password: _formKey.currentState!.value['password'],
-                                    formKey: _formKey,
-                                  );
-                                  print(user);
-                                  if (user != null) {
-                                    context.vRouter.pop();
-                                  }
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                          side: BorderSide(color: Theme.of(context).focusColor),
+                          ],
                         ),
-                        child: widget.state == 'login' ? const Text('Sign in') : const Text('Register'),
                       ),
                     ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    Visibility(
-                      visible: errorMessage.isNotEmpty,
-                      child: Text(
-                        errorMessage,
-                        style: TextStyle(color: Theme.of(context).errorColor),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: WebFooter(),
+              ),
+            ),
+          ],
         ),
       ),
     );
