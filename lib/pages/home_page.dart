@@ -100,7 +100,7 @@ class _MyHomePageState extends ConsumerState<HomePage> {
                 children: [
                   FittedBox(
                     child: Text(
-                      'Select your level and topics...\nPick a mode from the menu above...\nStart learning!',
+                      'Select your topics...\nPick a mode from the menu above...\nStart learning!',
                       style: Theme.of(context).textTheme.headline3,
                       textAlign: TextAlign.left,
                     ),
@@ -117,33 +117,34 @@ class _MyHomePageState extends ConsumerState<HomePage> {
                             height: 32,
                           ),
                           FormBuilderDropdown(
-                            name: 'level',
-                            validator: FormBuilderValidators.required(),
-                            items: [],
-                          ),
-                          FormBuilderField<List<String>>(
+                            name: 'topic1',
+                            decoration: const InputDecoration(hintText: 'Topic 1'),
                             validator: FormBuilderValidators.compose([
                               FormBuilderValidators.required(),
                             ]),
-                            builder: (field) {
-                              return InputDecorator(
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.only(top: 10.0, bottom: 0.0),
-                                  border: InputBorder.none,
-                                  errorText: field.errorText,
-                                ),
-                                child: DropDownMultiSelect(
-                                  decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(vertical: 19, horizontal: 10)),
-                                  selectedValues: field.value ?? [],
-                                  onChanged: (value) {
-                                    field.didChange(value);
-                                  },
-                                  options: [],
-                                ),
+                            items: [],
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          FormBuilderDropdown<String>(
+                            name: 'topic2',
+                            validator: (topic) {},
+                            decoration: const InputDecoration(hintText: 'Topic 2'),
+                            items: [],
+                          ),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              VRouter.of(context).to(
+                                context.vRouter.url,
+                                isReplacement: true, // We use replacement to override the history entry
+                                historyState: {},
                               );
                             },
-                            name: 'topics',
+                            child: Text('Clear selections'),
                           ),
                         ],
                       ),

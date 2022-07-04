@@ -1,16 +1,84 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/constants.dart';
 import 'package:learn_languages/models/qualification_model.dart';
 
-class Qualifications extends ChangeNotifier {
+class Qualifications extends StateNotifier<Map<String, Qualification>> {
+  final languages = FirebaseFirestore.instance.collection("qualification");
+  final Map<String, Qualification> items = {};
+
+  Qualifications() : super({}) {
+    _listenToData();
+  }
+
+  _listenToData() async {
+    languages.snapshots().listen((snap) {
+      {
+        snap.docChanges.forEach((change) {
+          switch (change.type) {
+            case (DocumentChangeType.added):
+              {
+                items.putIfAbsent(change.doc.id, () => Qualification.fromFirestore(change.doc, change.doc.id));
+                break;
+              }
+            case (DocumentChangeType.removed):
+              {
+                items.remove(change.doc.id);
+                break;
+              }
+            case (DocumentChangeType.modified):
+              {
+                items.update(change.doc.id, (value) => Qualification.fromFirestore(change.doc, change.doc.id));
+                break;
+              }
+          }
+        });
+        state = Map.from(items);
+      }
+    });
+  }
+
+  //* Firebase
+  Future<void> removeDocument(String id) {
+    return languages.doc(id).delete();
+  }
+
+  Future<DocumentReference> addDocument(Map data) {
+    return languages.add(data as Map<String, dynamic>);
+  }
+
+  Future<void> updateDocument(Map data, String id) {
+    return languages.doc(id).update(data as Map<String, dynamic>);
+  }
+
+  // * Other
+  List<DropdownMenuItem<String>> getDropdownItems(context) {
+    return items.values
+        .map(
+          (item) => DropdownMenuItem<String>(
+            value: item.id,
+            child: Text(
+              item.level,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: textColour,
+              ),
+            ),
+          ),
+        )
+        .toList();
+  }
+}
+
+class Qualifications2 extends ChangeNotifier {
   final languages = FirebaseFirestore.instance.collection("qualification");
 
   final Map<String, Qualification> items = {};
   Qualification? qualification;
   var _level = '';
 
-  Qualifications() {
+  Qualifications2() {
     _listenToData();
   }
 
@@ -61,12 +129,12 @@ class Qualifications extends ChangeNotifier {
     return languages.doc(id).update(data as Map<String, dynamic>);
   }
 
-  void setLevel (String val) {
+  void setLevel(String val) {
     _level = val;
     notifyListeners();
   }
 
-  String getLevel () {
+  String getLevel() {
     return _level;
   }
 
@@ -74,16 +142,16 @@ class Qualifications extends ChangeNotifier {
     return items.values
         .map(
           (item) => DropdownMenuItem<String>(
-        value: item.id,
-        child: Text(
-          item.level,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: textColour,
+            value: item.id,
+            child: Text(
+              item.level,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: textColour,
+              ),
+            ),
           ),
-        ),
-      ),
-    )
+        )
         .toList();
   }
 }

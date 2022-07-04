@@ -28,6 +28,7 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
     if (user == null) return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
 
     ref.watch(constants.languageStateProvider);
+    ref.watch(constants.qualificationStateProvider);
 
     return Scaffold(
         appBar: webNavigationBar(context: context, user: user, ref: ref),
@@ -57,12 +58,35 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
                       height: 32,
                     ),
                     ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 400),
+                      constraints: const BoxConstraints(maxWidth: 500),
                       child: FormBuilder(
                         key: _formKey,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            Flexible(
+                              child: FormBuilderDropdown<String>(
+                                name: 'level',
+                                decoration: const InputDecoration(hintText: 'Level'),
+                                initialValue: VRouter.of(context).historyState['level'],
+                                validator: FormBuilderValidators.required(),
+                                items:
+                                    ref.read(constants.qualificationStateProvider.notifier).getDropdownItems(context),
+                                onChanged: (value) {
+                                  VRouter.of(context).to(
+                                    context.vRouter.url,
+                                    isReplacement: true, // We use replacement to override the history entry
+                                    historyState: {
+                                      'level': value ?? '',
+                                      'language': VRouter.of(context).historyState['language'] ?? ''
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
                             Flexible(
                               child: FormBuilderDropdown(
                                 name: 'language',
@@ -73,25 +97,31 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
                                   VRouter.of(context).to(
                                     context.vRouter.url,
                                     isReplacement: true, // We use replacement to override the history entry
-                                    historyState: {'language': id ?? ''},
+                                    historyState: {
+                                      'language': id ?? '',
+                                      'level': VRouter.of(context).historyState['level'] ?? ''
+                                    },
                                   );
                                 },
                               ),
                             ),
                             const SizedBox(
-                              width: 32,
+                              width: 8,
                             ),
                             ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.saveAndValidate()) {
                                   context.vRouter.toNamed(
                                     'home',
-                                    queryParameters: {'language': VRouter.of(context).historyState['language'] ?? ''},
+                                    queryParameters: {
+                                      'language': VRouter.of(context).historyState['language'] ?? '',
+                                      'level': VRouter.of(context).historyState['level'] ?? ''
+                                    },
                                   );
                                 }
                               },
                               child: const Padding(
-                                padding: EdgeInsets.all(16),
+                                padding: EdgeInsets.all(15),
                                 child: Text(
                                   'Lets go!',
                                   style: TextStyle(fontSize: 21),

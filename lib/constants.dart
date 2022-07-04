@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_languages/models/langauge_model.dart';
+import 'package:learn_languages/models/qualification_model.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_question.dart';
 import 'package:learn_languages/pages/profile_page_sub_pages/admin_forms/edit_question_desktop.dart';
 
@@ -166,13 +167,16 @@ final userStateProvider = StateNotifierProvider<UserStateNotifier, MyUserData?>(
 );
 
 // * App Providers
-final languageProvider = ChangeNotifierProvider<Languages2>((ref) => Languages2());
 final languageStateProvider = StateNotifierProvider<Languages, Map<String, Language>>((ref) => Languages());
+final qualificationStateProvider = StateNotifierProvider<Qualifications, Map<String, Qualification>>((ref) => Qualifications());
+
+// TODO: delete
+final languageProvider = ChangeNotifierProvider<Languages2>((ref) => Languages2());
+final qualificationProvider = ChangeNotifierProvider<Qualifications2>((ref) => Qualifications2());
 
 // * Unsorted
 final authRepositoryProvider = Provider<AuthService>((_) => AuthService(_.read));
 final loginProvider = ChangeNotifierProvider<LoginProvider>((_ref) => LoginProvider());
-final qualificationProvider = ChangeNotifierProvider<Qualifications>((ref) => Qualifications());
 final topicProvider = ChangeNotifierProvider<Topics>((ref) {
   var lan = ref.watch(languageProvider).getLanguage();
   var level = ref.watch(qualificationProvider).getLevel();
