@@ -25,6 +25,7 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<HomePage> {
+  final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   late String ids;
 
   @override
@@ -35,7 +36,6 @@ class _MyHomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
     MyUserData? user = ref.watch(constants.userStateProvider);
     // TODO -- create loading splashcreen
     if (user == null) return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));

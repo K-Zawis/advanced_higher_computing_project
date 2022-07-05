@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:learn_languages/pages/home_page.dart';
+import 'package:learn_languages/pages/profile_page.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:vrouter/vrouter.dart';
 
@@ -113,6 +114,18 @@ class MyApp extends ConsumerWidget {
                   levelId: state.queryParameters['level']!,
                 ),
               ),
+            ),
+            VWidget.builder(
+              path: '/profile',
+              name: 'profile',
+              builder: (context, state) {
+                print(state.queryParameters['language']);
+                return Title(
+                  color: Colors.black,
+                  title: 'Profile page',
+                  child: ProfilePage(),
+                );
+              },
             ),
           ],
         ),

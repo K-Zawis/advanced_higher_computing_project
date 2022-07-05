@@ -46,50 +46,66 @@ AppBar webNavigationBar({
         visible: !user.authData.isAnonymous,
         child: Padding(
           padding: const EdgeInsets.only(right: 32),
-          child: QudsPopupButton(
-            radius: 23,
-            items: [
-              QudsPopupMenuItem(
-                title: const Text('Profile page'),
-                onPressed: () {},
-              ),
-              QudsPopupMenuItem(
-                title: const Text('Manage users'),
-                onPressed: () {},
-              ),
-              QudsPopupMenuSection(
-                titleText: 'Data admin',
-                subItems: [
-                  QudsPopupMenuItem(
-                    title: const Text('Languages'),
-                    onPressed: () {},
+          child: user.isAdmin
+              ? QudsPopupButton(
+                  radius: 23,
+                  items: [
+                    QudsPopupMenuItem(
+                      title: const Text('Profile page'),
+                      onPressed: () => context.vRouter.toNamed('profile'),
+                    ),
+                    QudsPopupMenuItem(
+                      title: const Text('Manage users'),
+                      onPressed: () {},
+                    ),
+                    QudsPopupMenuSection(
+                      titleText: 'Data admin',
+                      subItems: [
+                        QudsPopupMenuItem(
+                          title: const Text('Languages'),
+                          onPressed: () {},
+                        ),
+                        QudsPopupMenuItem(
+                          title: const Text('Levels'),
+                          onPressed: () {},
+                        ),
+                        QudsPopupMenuItem(
+                          title: const Text('Topics'),
+                          onPressed: () {},
+                        ),
+                        QudsPopupMenuItem(
+                          title: const Text('Questions'),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                    QudsPopupMenuItem(
+                      title: const Text('Sign out'),
+                      onPressed: () async => await ref.read(constants.firebaseAuthProvider).signInAnonymously(),
+                    ),
+                  ],
+                  child: const Icon(
+                    Icons.account_circle_outlined,
+                    size: 35,
                   ),
-                  QudsPopupMenuItem(
-                    title: const Text('Levels'),
-                    onPressed: () {},
+                )
+              : QudsPopupButton(
+                  radius: 23,
+                  items: [
+                    QudsPopupMenuItem(
+                      title: const Text('Profile page'),
+                      onPressed: () => context.vRouter.toNamed('profile'),
+                    ),
+                    QudsPopupMenuItem(
+                      title: const Text('Sign out'),
+                      onPressed: () async => await ref.read(constants.firebaseAuthProvider).signInAnonymously(),
+                    ),
+                  ],
+                  child: const Icon(
+                    Icons.account_circle_outlined,
+                    size: 35,
                   ),
-                  QudsPopupMenuItem(
-                    title: const Text('Topics'),
-                    onPressed: () {},
-                  ),
-                  QudsPopupMenuItem(
-                    title: const Text('Questions'),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-              QudsPopupMenuItem(
-                    title: const Text('Sign out'),
-                    onPressed: () async {
-                      await ref.read(constants.firebaseAuthProvider).signInAnonymously();
-                    },
-                  ),
-            ],
-            child: const Icon(
-              Icons.account_circle_outlined,
-              size: 35,
-            ),
-          ),
+                ),
         ),
       ),
       Visibility(

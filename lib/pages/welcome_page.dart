@@ -74,7 +74,11 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
                                   child: FormBuilderDropdown<String>(
                                     name: 'level',
                                     decoration: const InputDecoration(hintText: 'Level'),
-                                    initialValue: VRouter.of(context).historyState['level'],
+                                    initialValue: VRouter.of(context).historyState['level'] != null
+                                        ? VRouter.of(context).historyState['level']!.isNotEmpty
+                                            ? VRouter.of(context).historyState['level']
+                                            : null
+                                        : null,
                                     validator: FormBuilderValidators.required(),
                                     items: ref
                                         .read(constants.qualificationStateProvider.notifier)
@@ -97,7 +101,12 @@ class _MyHomePageState extends ConsumerState<WelcomePage> {
                                 Flexible(
                                   child: FormBuilderDropdown(
                                     name: 'language',
-                                    initialValue: VRouter.of(context).historyState['language'],
+                                    initialValue: VRouter.of(context).historyState['language'] != null
+                                        ? VRouter.of(context).historyState['language']!.isNotEmpty
+                                            ? VRouter.of(context).historyState['language']
+                                            : null
+                                        : null,
+                                    decoration: const InputDecoration(hintText: 'Language'),
                                     items: ref.read(constants.languageStateProvider.notifier).getDropdownItems(context),
                                     validator: FormBuilderValidators.required(),
                                     onChanged: (String? id) {
